@@ -1,10 +1,11 @@
 0
-====================================
-=     |/ EK                        =
-=     |\                           =
-=                       ====       =
-=         ===                      =
-=                    =             =
-=                    =             =
-=                 p=====           =
-====================================
+aaaaaaaaaaaaaaaaaaa
+a                 a
+a                 a
+a       b         a
+a      b          a
+a     b           a
+a           bbb   a
+a                 a
+a                 a
+aaaaaaaaaaaaaaaaaaa
