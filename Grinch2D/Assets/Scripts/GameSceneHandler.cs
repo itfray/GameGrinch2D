@@ -19,21 +19,24 @@ public class GameSceneHandler : MonoBehaviour
     public int currentLevel
     {
         get { return currentLevel; }
-        set { ConstructLevel(current_level); }
+        set 
+        { 
+            ConstructLevel(value); 
+        }
     }
 
     void Start()
     {
         fileParser = GetComponent<LevelFileParser>();
-        currentLevel = 1;
+        currentLevel = 2;
     }
 
+    // Function create level by level files and level dictionary file
     public void ConstructLevel(int level)
     {
-        Debug.Log("Kek");
         current_level = level;
-        fileParser.parseLevelDict(levelDictPath);
-        fileParser.parseLevelFile(levelsPath, level, (int)maxLevelSize.y, (int)maxLevelSize.x);
+        fileParser.parseLevelDict(levelDictPath);                                                     // get level dict
+        fileParser.parseLevelFile(levelsPath, level, (int)maxLevelSize.y, (int)maxLevelSize.x);       // get level map
 
         foreach (KeyValuePair<char, string> pair in fileParser.levelDict)
         {
@@ -41,6 +44,8 @@ public class GameSceneHandler : MonoBehaviour
         }
 
         if (fileParser.levelMap == null) return;
+
+        Debug.Log(fileParser.levelBackground);
 
         for (int i = 0; i < (int)fileParser.mapSize.y; i++)
         {
