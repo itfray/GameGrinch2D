@@ -420,7 +420,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -10}
+  m_LocalPosition: {x: 0, y: 20, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -643,15 +643,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568abf2e7b200204e9a6306266ec1dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  bgField: {fileID: 1794582261}
+  bgSample: {fileID: 7126480939734684452, guid: f2d608c80f4cfb749b90f935f6876e76,
+    type: 3}
+  bgPrefabs:
+  - {fileID: 7126480939734684452, guid: f2d608c80f4cfb749b90f935f6876e76, type: 3}
+  - {fileID: 7126480939734684452, guid: 7c2b5089de3e5f34c88e1fd8df23ffc3, type: 3}
+  - {fileID: 7126480939734684452, guid: ab42808c4fbf5c74ca04f51635cf6f09, type: 3}
+  blocksField: {fileID: 756761930}
   blockSample: {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec,
     type: 3}
-  blocksField: {fileID: 756761930}
   blockPrefabs:
   - {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec, type: 3}
   - {fileID: 308226852408147019, guid: 9cf00b70b9213ac479a77c8749b57da6, type: 3}
   - {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
   maxLevelSize: {x: 255, y: 255}
   levelDictPath: Assets/Resources/level_dict.txt
+  bgLevelDictPath: Assets/Resources/bg_dict.txt
   levelsPath: Assets/Resources/levels
 --- !u!114 &1455934991
 MonoBehaviour:
@@ -689,7 +697,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1776835742}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1455934989}
@@ -719,7 +727,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1794582261}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1455934989}

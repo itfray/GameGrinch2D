@@ -1,3 +1,4 @@
+  : empty
 p : player
 a : stone1_0
 b : stone1_1

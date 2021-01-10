@@ -10,6 +10,7 @@ using UnityEngine;
 public class LevelFileParser : MonoBehaviour
 {
     /* example level dict: {'i': 'ice_block', 's': 'stone_block', ... }
+     * example background level dict: {'0': 'bg0', 'h': 'bg_h', ... }
      * example level map, byte matrix:
      * ssssssssssssssssssssssssssssssssssss
      * s                                  s
@@ -18,12 +19,14 @@ public class LevelFileParser : MonoBehaviour
      * s                 sss              s
      * ssssssssssssssssssssssssssssssssssss
      */
-    private Dictionary<char, string> level_dict;
+    private Dictionary<char, string> level_dict = new Dictionary<char, string>();
+    private Dictionary<char, string> bg_dict = new Dictionary<char, string>();
     private char[,] level_map;
     private Vector2 map_size;
     private char level_bg;
 
     public Dictionary<char, string> levelDict { get { return level_dict; } }            // level dictionary
+    public Dictionary<char, string> backgroundDict { get { return bg_dict; } }          // background level dictionary
     public char[,] levelMap { get { return level_map; } }                               // level map, blocks matrix
     public Vector2 mapSize { get { return map_size; } }                                 // size map matrix, (x: count columns, y: count rows)
     public char levelBackground { get { return level_bg; } }                            // level background, background key
@@ -34,21 +37,36 @@ public class LevelFileParser : MonoBehaviour
     /// <param name="levelDictPath"> path to the file with level dictionary </param>
     public void parseLevelDict(string levelDictPath)
     {
-        if (level_dict == null)
-            level_dict = new Dictionary<char, string>();
-        else
-            level_dict.Clear();
+        parseDict(level_dict, levelDictPath);
+    }
 
-        if (!File.Exists(levelDictPath)) return;                                    // check file exists
+    /// <summary>
+    /// Method parse file with background level dictionary
+    /// </summary>
+    /// <param name="levelDictPath"> path to the file with background level dictionary </param>
+    public void parseBgLevelDict(string bgDictPath)
+    {
+        parseDict(bg_dict, bgDictPath);
+    }
 
-        using (StreamReader sr = File.OpenText(levelDictPath))                      // open text file with level dictionary
+    /// <summary>
+    /// Method parse text file with dictionary
+    /// </summary>
+    /// <param name="dictPath"> path to the text file with dictionary </param>
+    private void parseDict(Dictionary<char, string> dict, string dictPath)
+    {
+        dict.Clear();
+
+        if (!File.Exists(dictPath)) return;                                    // check file exists
+
+        using (StreamReader sr = File.OpenText(dictPath))                      // open text file with level dictionary
         {
             string line;
-            while ((line = sr.ReadLine()) != null)                                  // load line of file
+            while ((line = sr.ReadLine()) != null)                             // load line of file
             {
                 string[] pair = line.Split(':');
                 if (pair[0].Length == 0) continue;
-                level_dict.Add(pair[0][0], pair[1].Split(' ')[1]);                  // load pair of file, example: "e : evil_block"
+                dict.Add(pair[0][0], pair[1].Split(' ')[1]);                    // load pair of file, example: "e : evil_block"
             }
         }
     }

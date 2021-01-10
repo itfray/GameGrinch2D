@@ -2,9 +2,9 @@
 aaaaaaaaaaaaaaaaaaa
 a                 a
 a                 a
-a     p           a
-a    bbb          a
+a     b           a
+a    bab          a
 a           bbb   a
 a                 a
-a                 a
-aaaaaaaaaaaaaaaaaaa
+a   p             a
+abbbbbbbbbbbbbbbbba
