@@ -58,7 +58,7 @@ public class GameSceneHandler : MonoBehaviour
 
         Vector2 bgSmplSize = sizeObjByBoxCollider2D(bgSample);
 
-        int count_bgs = (int)(Mathf.Abs(Camera.main.transform.position.y) / bgSmplSize.y);
+        int count_bgs = (int)Mathf.Round((Mathf.Abs(Camera.main.transform.position.y) / bgSmplSize.y));
 
         List<GameObject> rightBgs = new List<GameObject>();
         foreach (GameObject bgObj in bgPrefabs)
@@ -67,11 +67,15 @@ public class GameSceneHandler : MonoBehaviour
 
         for (int i = -1; i < 2; i++)
         {
-            int count_bgsi = count_bgs - i;
+            int count_bgsi = count_bgs + i;
+            GameObject prefab;
             if (count_bgsi < 0) continue;
-            else if (count_bgsi >= rightBgs.Count) count_bgsi = rightBgs.Count - 1;
+            else if (count_bgsi >= rightBgs.Count)
+                prefab = rightBgs[rightBgs.Count - 1];
+            else
+                prefab = rightBgs[count_bgsi];
 
-            GameObject bg = Instantiate(rightBgs[count_bgsi], new Vector3(Camera.main.transform.position.x, count_bgsi * bgSmplSize.y, 0), Quaternion.identity) as GameObject;
+            GameObject bg = Instantiate(prefab, new Vector3(Camera.main.transform.position.x, count_bgsi * bgSmplSize.y, 0), Quaternion.identity) as GameObject;
             bg.transform.parent = bgField.transform;
             Destroy(bg.GetComponent<BoxCollider2D>());
         }
