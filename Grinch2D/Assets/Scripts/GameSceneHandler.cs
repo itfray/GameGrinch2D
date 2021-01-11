@@ -48,36 +48,71 @@ public class GameSceneHandler : MonoBehaviour
         fileParser.parseBgLevelDict(bgLevelDictPath);
         fileParser.parseLevelFile(levelsPath, level, (int)maxLevelSize.y, (int)maxLevelSize.x);
         CreateLevelObjsByMap(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize);
-        CreateLevelBackground(fileParser.backgroundDict, fileParser.levelBackground);
+        CreateLevelBackground(fileParser.backgroundDict, fileParser.levelBackground, fileParser.mapSize);
     }
 
-    private void CreateLevelBackground(Dictionary<char, string> bg_dict, char bg_sign)
+    /// <summary>
+    /// Method is create background for level.
+    /// 
+    /// </summary>
+    /// <param name="bg_dict"> background dictionary </param>
+    /// <param name="bg_sign"> background symbol </param>
+    /// <param name="map_blocks_size"> map size in number of blocks </param>
+    private void CreateLevelBackground(Dictionary<char, string> bg_dict, char bg_sign, Vector2 map_blocks_size)
     {
         string bgName;
-        if (!bg_dict.TryGetValue(bg_sign, out bgName)) Debug.LogError("Uncorrect level background symbol!!!");
+        if (!bg_dict.TryGetValue(bg_sign, out bgName))                                                  // get background prefab name from background dictionary
+            Debug.LogError("Uncorrect level background symbol!!!");
 
+        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                                    // get size sample prefabs by BoxCollider2D component
         Vector2 bgSmplSize = sizeObjByBoxCollider2D(bgSample);
 
-        int count_bgs = (int)Mathf.Round((Mathf.Abs(Camera.main.transform.position.y) / bgSmplSize.y));
+        float mapCenterY = blockSmplSize.y * (map_blocks_size.y - 1) / 2;                               // calculate map center 'Y' position
 
-        List<GameObject> rightBgs = new List<GameObject>();
-        foreach (GameObject bgObj in bgPrefabs)
-            if (bgObj.name.Contains(bgName))
-                rightBgs.Add(bgObj);
+        float fcbg_from_center = (Camera.main.transform.position.y - mapCenterY) / bgSmplSize.y;        // calculate offset current background in number of backgrounds between main camera and central background
+        int cbg_from_center = fcbg_from_center >= 0 ?                                                   // int offset current background in number of backgrounds
+                              Mathf.CeilToInt(fcbg_from_center) : Mathf.FloorToInt(fcbg_from_center);
 
-        for (int i = -1; i < 2; i++)
+        List<GameObject> level_bgs = new List<GameObject>();                                            // get list backgrounds on this level
+        foreach (GameObject bg_prefab in bgPrefabs)
+            if (bg_prefab.name.Contains(bgName))
+                level_bgs.Add(bg_prefab);
+
+        int ind_mid_bg = level_bgs.Count / 2;                                                           // get central background index in list
+        if (level_bgs.Count % 2 == 0) ind_mid_bg -= 1;
+
+        int ind_bg = ind_mid_bg + cbg_from_center;                                                      // get current background index
+
+        int istart = -1;
+        int iend = 2;
+
+        if (fcbg_from_center > 0)
+            iend -= 1;
+        else
+            istart += 1;
+
+        // Create 2 lines of 3 backgrounds relative to the center of the map
+        for (int i = istart; i < iend; i++)
         {
-            int count_bgsi = count_bgs + i;
+            int ind_bgi = ind_bg + i;
             GameObject prefab;
-            if (count_bgsi < 0) continue;
-            else if (count_bgsi >= rightBgs.Count)
-                prefab = rightBgs[rightBgs.Count - 1];
+            if (ind_bgi < 0)                                    // if (background index < 0) then repeat background first
+                prefab = level_bgs[0];
+            else if (ind_bgi >= level_bgs.Count)                // if (background index >= count backgrounds) then repeat background last
+                prefab = level_bgs[level_bgs.Count - 1];
             else
-                prefab = rightBgs[count_bgsi];
+                prefab = level_bgs[ind_bgi];
 
-            GameObject bg = Instantiate(prefab, new Vector3(Camera.main.transform.position.x, count_bgsi * bgSmplSize.y, 0), Quaternion.identity) as GameObject;
-            bg.transform.parent = bgField.transform;
-            Destroy(bg.GetComponent<BoxCollider2D>());
+            // Create 3 backgrounds in a line relative to the center of the map
+            for (int j = -1; j < 1; j++)
+            {
+                // Create background on game scene
+                GameObject bg = Instantiate(prefab,
+                    new Vector3(Camera.main.transform.position.x + j * bgSmplSize.x + bgSmplSize.x / 2,
+                                mapCenterY + (cbg_from_center + i) * bgSmplSize.y, 0), Quaternion.identity) as GameObject;
+                bg.transform.parent = bgField.transform;
+                Destroy(bg.GetComponent<BoxCollider2D>());
+            }
         }
     }
 
@@ -123,6 +158,11 @@ public class GameSceneHandler : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Function is calculate size game object by BoxCollider2D component
+    /// </summary>
+    /// <param name="obj"> any game object </param>
+    /// <returns></returns>
     private static Vector2 sizeObjByBoxCollider2D(GameObject obj)
     {
         BoxCollider2D objBox = obj.GetComponent<BoxCollider2D>();
