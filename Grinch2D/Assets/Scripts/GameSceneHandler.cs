@@ -91,7 +91,7 @@ public class GameSceneHandler : MonoBehaviour
         else
             istart += 1;
 
-        // Create 2 lines of 3 backgrounds relative to the center of the map
+        // Create big background ( 2 x 2 backgrounds in front of the main camera )
         for (int i = istart; i < iend; i++)
         {
             int ind_bgi = ind_bg + i;
@@ -103,7 +103,7 @@ public class GameSceneHandler : MonoBehaviour
             else
                 prefab = level_bgs[ind_bgi];
 
-            // Create 3 backgrounds in a line relative to the center of the map
+            // Create 2 backgrounds in a line
             for (int j = -1; j < 1; j++)
             {
                 // Create background on game scene
