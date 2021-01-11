@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-
+using System.Linq;
 
 
 /// <summary>
@@ -27,6 +27,12 @@ public class GameSceneHandler : MonoBehaviour
 
     private int current_level;                                      // number current running level
 
+    // ====================================================================
+/*    private List<Transform> bg_sorted_byx = new List<Transform>();
+    private List<Transform> bg_sorted_byy = new List<Transform>();
+    private delegate bool ConditionScrollBG();*/
+    // ====================================================================
+
     public int currentLevel
     {
         get { return currentLevel; }
@@ -51,6 +57,63 @@ public class GameSceneHandler : MonoBehaviour
         fileParser.parseLevelFile(levelsPath, level, (int)maxLevelSize.y, (int)maxLevelSize.x);             // parse data of level map file
         CreateLevelObjsByMap(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize);                // generate level game objects by level file data about map    
         CreateLevelBackground(fileParser.backgroundDict, fileParser.levelBackground, fileParser.mapSize);   // generate level backgrounds by level file data about background
+    }
+
+    /// <summary>
+    /// Function is calculate size game object by BoxCollider2D component
+    /// </summary>
+    /// <param name="obj"> any game object </param>
+    /// <returns></returns>
+    private static Vector2 sizeObjByBoxCollider2D(GameObject obj)
+    {
+        BoxCollider2D objBox = obj.GetComponent<BoxCollider2D>();
+        return new Vector2(objBox.size.x * obj.transform.localScale.x,
+                           objBox.size.y * obj.transform.localScale.y);
+    }
+
+    /// <summary>
+    /// Method create level objects by level dictionary and level map
+    /// </summary>
+    /// <param name="level_dict"> level dictionary </param>
+    /// <param name="level_map"> level map </param>
+    /// <param name="map_size"> level map size </param>
+    private void CreateLevelObjsByMap(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size)
+    {
+        if (blockPrefabs.Length <= 0) return;
+
+        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                        // get block sample size
+
+        for (int i = (int)map_size.y - 1; i >= 0; i--)                                      // reverse step, because file with map was readed top down
+        {
+            for (int j = 0; j < (int)map_size.x; j++)
+            {
+                string prefabName;
+                if (!level_dict.TryGetValue(level_map[i, j], out prefabName)) continue;     // get prefab name of level dictionary
+
+                if (prefabName == emptyBlockName) continue;                                 // check empty block
+
+                GameObject block = null;                                                    // search prefab object by prefab name
+                foreach (GameObject blockPrefab in blockPrefabs)
+                {
+                    if (prefabName == blockPrefab.name)
+                    {
+                        block = blockPrefab;
+                        break;
+                    }
+                }
+                if (block == null) continue;
+
+                float x = j * blockSmplSize.x;                                              // calculate position for instantiate prefab object
+                float y = ((int)map_size.y - 1 - i) * blockSmplSize.y;
+
+                // create block game object
+                GameObject blockObject =
+                    Instantiate(block, new Vector3(x, y, block.transform.position.z), Quaternion.identity) as GameObject;
+
+                // add block in blocks field
+                blockObject.transform.parent = blocksField.transform;
+            }
+        }
     }
 
     /// <summary>
@@ -117,62 +180,43 @@ public class GameSceneHandler : MonoBehaviour
                 ind_in_bgfield++;                                                                                                   // next background game object
             }
         }
-    }
-
-    /// <summary>
-    /// Method create level objects by level dictionary and level map
-    /// </summary>
-    /// <param name="level_dict"> level dictionary </param>
-    /// <param name="level_map"> level map </param>
-    /// <param name="map_size"> level map size </param>
-    private void CreateLevelObjsByMap(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size)
-    {
-        if (blockPrefabs.Length <= 0) return;
-
-        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                        // get block sample size
-
-        for (int i = (int)map_size.y - 1; i >= 0; i--)                                      // reverse step, because file with map was readed top down
+/*        for (int i = 0; i < bgField.transform.childCount; i++)
         {
-            for (int j = 0; j < (int)map_size.x; j++)
-            {
-                string prefabName;
-                if (!level_dict.TryGetValue(level_map[i, j], out prefabName)) continue;     // get prefab name of level dictionary
-
-                if (prefabName == emptyBlockName) continue;                                 // check empty block
-
-                GameObject block = null;                                                    // search prefab object by prefab name
-                foreach (GameObject blockPrefab in blockPrefabs)
-                {
-                    if (prefabName == blockPrefab.name)
-                    {
-                        block = blockPrefab;
-                        break;
-                    }
-                }
-                if (block == null) continue;
-
-                float x = j * blockSmplSize.x;                                              // calculate position for instantiate prefab object
-                float y = ((int)map_size.y - 1 - i) * blockSmplSize.y;
-
-                // create block game object
-                GameObject blockObject =                                                
-                    Instantiate(block, new Vector3(x, y, block.transform.position.z), Quaternion.identity) as GameObject;
-
-                // add block in blocks field
-                blockObject.transform.parent = blocksField.transform;       
-            }
+            bg_sorted_byx.Add(bgField.transform.GetChild(i));
+            bg_sorted_byy.Add(bgField.transform.GetChild(i));
         }
+        bg_sorted_byx = bg_sorted_byx.OrderBy(t => t.position.x).ToList();
+        bg_sorted_byy = bg_sorted_byy.OrderBy(t => t.position.y).ToList();*/
     }
 
-    /// <summary>
-    /// Function is calculate size game object by BoxCollider2D component
-    /// </summary>
-    /// <param name="obj"> any game object </param>
-    /// <returns></returns>
-    private static Vector2 sizeObjByBoxCollider2D(GameObject obj)
+   /* private void ScrollLevelBackground()
     {
-        BoxCollider2D objBox = obj.GetComponent<BoxCollider2D>();
-        return new Vector2(objBox.size.x * obj.transform.localScale.x,
-                           objBox.size.y * obj.transform.localScale.y);
-    }
+        if (bg_sorted_byx.Count == 0) return;
+
+        Transform firstChild = bg_sorted_byx.FirstOrDefault();
+        Transform secondChild = bg_sorted_byx.FirstOrDefault();
+
+        if (firstChild == null || secondChild == null) return;
+
+        Renderer firstRenderer = firstChild.GetComponent<Renderer>();
+        Vector3 firstSize = (firstRenderer.bounds.max - firstRenderer.bounds.min);
+
+        if (firstChild.position.x + firstSize.x < Camera.main.transform.position.x
+            && firstRenderer.isVisible == false)
+        {
+            Transform lastChild = bg_sorted_byx.LastOrDefault();
+            Vector3 lastPosition = lastChild.transform.position;
+            Renderer lastRenderer = lastChild.GetComponent<Renderer>();
+            Vector3 lastSize = (lastRenderer.bounds.max - lastRenderer.bounds.min);
+
+            bg_sorted_byx.Remove(firstChild);
+            bg_sorted_byx.Remove(secondChild);
+
+            firstChild.position = new Vector3(lastPosition.x + lastSize.x, firstChild.position.y, firstChild.position.z);
+            secondChild.position = new Vector3(lastPosition.x + lastSize.x, secondChild.position.y, secondChild.position.z);
+
+            bg_sorted_byx.Add(firstChild);
+            bg_sorted_byx.Add(secondChild);
+        }
+    }*/
 }
