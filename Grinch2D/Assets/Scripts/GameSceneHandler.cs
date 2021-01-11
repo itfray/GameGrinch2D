@@ -9,21 +9,23 @@ using System.Collections.Generic;
 /// </summary>
 public class GameSceneHandler : MonoBehaviour
 {
-    public GameObject bgField;                              // field for created backgrounds
-    public GameObject bgSample;                             // background sample with box colider2d for generating other backgrounds
-    public GameObject[] bgPrefabs;                                  // background prefab samples
+    public GameObject bgField;                                      // field for store 4 childs (background game objects)
+    public GameObject bgSample;                                     // background sample with box colider2d for getting size background game object
+    public Sprite[] bgSprites;                                      // all background sprites
 
     public GameObject blocksField;                                  // field for created blocks
     public GameObject blockSample;                                  // block sample with box colider2d for generating other blocks
-    public GameObject[] blockPrefabs;                               // block prefab samples
+    public GameObject[] blockPrefabs;                               // all block prefabs
     public Vector2 maxLevelSize;                                    // max level height (count blocks)
 
     public string levelDictPath;                                    // path for level dictionary file
-    public string bgLevelDictPath;                                  // path for background level dictionary file
+    public string bgDictPath;                                       // path for background level dictionary file
     public string levelsPath;                                       // path for levels directory
     private LevelFileParser fileParser;                             // parser level files
 
-    private int current_level = 1;                                  // index current running level
+    public string emptyBlockName = "empty";                         // empty block prefab name
+
+    private int current_level;                                      // number current running level
 
     public int currentLevel
     {
@@ -44,16 +46,15 @@ public class GameSceneHandler : MonoBehaviour
     public void ConstructLevel(int level)
     {
         current_level = level;
-        fileParser.parseLevelDict(levelDictPath);
-        fileParser.parseBgLevelDict(bgLevelDictPath);
-        fileParser.parseLevelFile(levelsPath, level, (int)maxLevelSize.y, (int)maxLevelSize.x);
-        CreateLevelObjsByMap(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize);
-        CreateLevelBackground(fileParser.backgroundDict, fileParser.levelBackground, fileParser.mapSize);
+        fileParser.parseLevelDict(levelDictPath);                                                           // parse data of level dictionary file
+        fileParser.parseBgLevelDict(bgDictPath);                                                            // parse data of background dictionary file
+        fileParser.parseLevelFile(levelsPath, level, (int)maxLevelSize.y, (int)maxLevelSize.x);             // parse data of level map file
+        CreateLevelObjsByMap(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize);                // generate level game objects by level file data about map    
+        CreateLevelBackground(fileParser.backgroundDict, fileParser.levelBackground, fileParser.mapSize);   // generate level backgrounds by level file data about background
     }
 
     /// <summary>
     /// Method is create background for level.
-    /// 
     /// </summary>
     /// <param name="bg_dict"> background dictionary </param>
     /// <param name="bg_sign"> background symbol </param>
@@ -62,7 +63,7 @@ public class GameSceneHandler : MonoBehaviour
     {
         string bgName;
         if (!bg_dict.TryGetValue(bg_sign, out bgName))                                                  // get background prefab name from background dictionary
-            Debug.LogError("Uncorrect level background symbol!!!");
+            Debug.LogError("Uncorrect level background symbol!!!", this);
 
         Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                                    // get size sample prefabs by BoxCollider2D component
         Vector2 bgSmplSize = sizeObjByBoxCollider2D(bgSample);
@@ -73,45 +74,47 @@ public class GameSceneHandler : MonoBehaviour
         int cbg_from_center = fcbg_from_center >= 0 ?                                                   // int offset current background in number of backgrounds
                               Mathf.CeilToInt(fcbg_from_center) : Mathf.FloorToInt(fcbg_from_center);
 
-        List<GameObject> level_bgs = new List<GameObject>();                                            // get list backgrounds on this level
-        foreach (GameObject bg_prefab in bgPrefabs)
-            if (bg_prefab.name.Contains(bgName))
-                level_bgs.Add(bg_prefab);
+        List<Sprite> level_bgs = new List<Sprite>();                                                    // get list background sprites on this level
+        foreach (Sprite bg in bgSprites)
+            if (bg.name.Contains(bgName))
+                level_bgs.Add(bg);
 
-        int ind_mid_bg = level_bgs.Count / 2;                                                           // get central background index in list
+        int ind_mid_bg = level_bgs.Count / 2;                                                           // get central background index in list sprites
         if (level_bgs.Count % 2 == 0) ind_mid_bg -= 1;
 
         int ind_bg = ind_mid_bg + cbg_from_center;                                                      // get current background index
 
-        int istart = -1;
-        int iend = 2;
+        int istart = -1;                                                                                // offset bottom background from current background
+        int iend = 1;                                                                                   // offset top background from current background
 
-        if (fcbg_from_center > 0)
-            iend -= 1;
+        if (fcbg_from_center > 0)                                                                       // check which side (top or bottom) there is no background in front of the camera
+            iend -= 1;                                                                                  // need a background lower than the current one
         else
-            istart += 1;
+            istart += 1;                                                                                // need a background upper than the current one
+
+        int ind_in_bgfield = 0;                                                                         // index background game object in background field
 
         // Create big background ( 2 x 2 backgrounds in front of the main camera )
-        for (int i = istart; i < iend; i++)
+        for (int i = istart; i <= iend; i++)
         {
-            int ind_bgi = ind_bg + i;
-            GameObject prefab;
-            if (ind_bgi < 0)                                    // if (background index < 0) then repeat background first
-                prefab = level_bgs[0];
-            else if (ind_bgi >= level_bgs.Count)                // if (background index >= count backgrounds) then repeat background last
-                prefab = level_bgs[level_bgs.Count - 1];
+            int ind_bgi = ind_bg + i;                           // index in background sprite list
+            Sprite bg_sprite;
+            if (ind_bgi < 0)                                    // if (background index < 0) then repeat background first sprite
+                bg_sprite = level_bgs[0];
+            else if (ind_bgi >= level_bgs.Count)                // if (background index >= count backgrounds) then repeat background last sprite
+                bg_sprite = level_bgs[level_bgs.Count - 1];
             else
-                prefab = level_bgs[ind_bgi];
+                bg_sprite = level_bgs[ind_bgi];
 
             // Create 2 backgrounds in a line
             for (int j = -1; j < 1; j++)
             {
-                // Create background on game scene
-                GameObject bg = Instantiate(prefab,
-                    new Vector3(Camera.main.transform.position.x + j * bgSmplSize.x + bgSmplSize.x / 2,
-                                mapCenterY + (cbg_from_center + i) * bgSmplSize.y, 0), Quaternion.identity) as GameObject;
-                bg.transform.parent = bgField.transform;
-                Destroy(bg.GetComponent<BoxCollider2D>());
+                Transform bg_trnsfm = bgField.transform.GetChild(ind_in_bgfield);
+                SpriteRenderer bg_srndr = bg_trnsfm.gameObject.GetComponent<SpriteRenderer>();
+                bg_srndr.sprite = bg_sprite;                                                                                        // change background sprite
+                bg_trnsfm.position = new Vector3(Camera.main.transform.position.x + j * bgSmplSize.x + bgSmplSize.x / 2,            // change position background game object
+                                                 mapCenterY + (cbg_from_center + i) * bgSmplSize.y, 0);
+                ind_in_bgfield++;                                                                                                   // next background game object
             }
         }
     }
@@ -126,7 +129,7 @@ public class GameSceneHandler : MonoBehaviour
     {
         if (blockPrefabs.Length <= 0) return;
 
-        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);
+        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                        // get block sample size
 
         for (int i = (int)map_size.y - 1; i >= 0; i--)                                      // reverse step, because file with map was readed top down
         {
@@ -135,25 +138,28 @@ public class GameSceneHandler : MonoBehaviour
                 string prefabName;
                 if (!level_dict.TryGetValue(level_map[i, j], out prefabName)) continue;     // get prefab name of level dictionary
 
-                float x = j * blockSmplSize.x;                                              // calculate position for instantiate prefab object
-                float y = ((int)map_size.y - 1 - i) * blockSmplSize.y;
+                if (prefabName == emptyBlockName) continue;                                 // check empty block
 
-                GameObject block = null;                                                    // search prefab object by name
+                GameObject block = null;                                                    // search prefab object by prefab name
                 foreach (GameObject blockPrefab in blockPrefabs)
                 {
-                    if (blockPrefab.name == "empty") break;
-                    if (blockPrefab.name == prefabName)
+                    if (prefabName == blockPrefab.name)
                     {
                         block = blockPrefab;
                         break;
                     }
                 }
                 if (block == null) continue;
-                                                                 
-                // Create block and add it in blocks field object.
+
+                float x = j * blockSmplSize.x;                                              // calculate position for instantiate prefab object
+                float y = ((int)map_size.y - 1 - i) * blockSmplSize.y;
+
+                // create block game object
                 GameObject blockObject =                                                
                     Instantiate(block, new Vector3(x, y, block.transform.position.z), Quaternion.identity) as GameObject;
-                blockObject.transform.parent = blocksField.transform;
+
+                // add block in blocks field
+                blockObject.transform.parent = blocksField.transform;       
             }
         }
     }
