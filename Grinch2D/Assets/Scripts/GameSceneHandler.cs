@@ -28,9 +28,9 @@ public class GameSceneHandler : MonoBehaviour
     private int current_level;                                      // number current running level
 
     // ====================================================================
-/*    private List<Transform> bg_sorted_byx = new List<Transform>();
-    private List<Transform> bg_sorted_byy = new List<Transform>();
-    private delegate bool ConditionScrollBG();*/
+    private LinkedList<Transform> bg_sorted_byx = new LinkedList<Transform>();
+    private LinkedList<Transform> bg_sorted_byy = new LinkedList<Transform>();
+    private delegate bool CondScrollBg();
     // ====================================================================
 
     public int currentLevel
@@ -43,6 +43,11 @@ public class GameSceneHandler : MonoBehaviour
     {
         fileParser = GetComponent<LevelFileParser>();
         currentLevel = 1;
+    }
+
+    void Update()
+    {
+        ScrollLevelBackground();
     }
 
     /// <summary>
@@ -180,43 +185,57 @@ public class GameSceneHandler : MonoBehaviour
                 ind_in_bgfield++;                                                                                                   // next background game object
             }
         }
-/*        for (int i = 0; i < bgField.transform.childCount; i++)
+
+        List<Transform> bg_byx = new List<Transform>();
+        List<Transform> bg_byy = new List<Transform>();
+        for (int i = 0; i < bgField.transform.childCount; i++)
         {
-            bg_sorted_byx.Add(bgField.transform.GetChild(i));
-            bg_sorted_byy.Add(bgField.transform.GetChild(i));
+            bg_byx.Add(bgField.transform.GetChild(i));
+            bg_byy.Add(bgField.transform.GetChild(i));
         }
-        bg_sorted_byx = bg_sorted_byx.OrderBy(t => t.position.x).ToList();
-        bg_sorted_byy = bg_sorted_byy.OrderBy(t => t.position.y).ToList();*/
+        bg_byx = bg_byx.OrderBy(t => t.position.x).ToList();
+        bg_byy = bg_byy.OrderBy(t => t.position.y).ToList();
+
+        for (int i = 0; i < bgField.transform.childCount; i++)
+        {
+            bg_sorted_byx.AddLast(bg_byx[i]);
+            bg_sorted_byy.AddLast(bg_byy[i]);
+        }
     }
 
-   /* private void ScrollLevelBackground()
+    private void ScrollLevelBackground()
     {
         if (bg_sorted_byx.Count == 0) return;
 
         Transform firstChild = bg_sorted_byx.FirstOrDefault();
-        Transform secondChild = bg_sorted_byx.FirstOrDefault();
-
-        if (firstChild == null || secondChild == null) return;
-
         Renderer firstRenderer = firstChild.GetComponent<Renderer>();
         Vector3 firstSize = (firstRenderer.bounds.max - firstRenderer.bounds.min);
 
-        if (firstChild.position.x + firstSize.x < Camera.main.transform.position.x
-            && firstRenderer.isVisible == false)
+        Transform lastChild = bg_sorted_byx.LastOrDefault();
+        Renderer lastRenderer = lastChild.GetComponent<Renderer>();
+        Vector3 lastSize = (lastRenderer.bounds.max - lastRenderer.bounds.min);
+
+        if (firstRenderer.isVisible == false && Camera.main.transform.position.x > lastChild.position.x)
         {
-            Transform lastChild = bg_sorted_byx.LastOrDefault();
-            Vector3 lastPosition = lastChild.transform.position;
-            Renderer lastRenderer = lastChild.GetComponent<Renderer>();
-            Vector3 lastSize = (lastRenderer.bounds.max - lastRenderer.bounds.min);
-
             bg_sorted_byx.Remove(firstChild);
+            Transform secondChild = bg_sorted_byx.FirstOrDefault();
             bg_sorted_byx.Remove(secondChild);
+            bg_sorted_byx.AddLast(firstChild);
+            bg_sorted_byx.AddLast(secondChild);
 
-            firstChild.position = new Vector3(lastPosition.x + lastSize.x, firstChild.position.y, firstChild.position.z);
-            secondChild.position = new Vector3(lastPosition.x + lastSize.x, secondChild.position.y, secondChild.position.z);
-
-            bg_sorted_byx.Add(firstChild);
-            bg_sorted_byx.Add(secondChild);
+            firstChild.position = new Vector3(lastChild.position.x + lastSize.x, firstChild.position.y, firstChild.position.z);
+            secondChild.position = new Vector3(lastChild.position.x + lastSize.x, secondChild.position.y, secondChild.position.z);
         }
-    }*/
+        else if (lastRenderer.isVisible == false && Camera.main.transform.position.x < firstChild.position.x)
+        {
+            bg_sorted_byx.Remove(lastChild);
+            Transform prelastChild = bg_sorted_byx.LastOrDefault();
+            bg_sorted_byx.Remove(prelastChild);
+            bg_sorted_byx.AddFirst(prelastChild);
+            bg_sorted_byx.AddFirst(lastChild);
+
+            lastChild.position = new Vector3(firstChild.position.x - firstSize.x, lastChild.position.y, lastChild.position.z);
+            prelastChild.position = new Vector3(firstChild.position.x - firstSize.x, prelastChild.position.y, prelastChild.position.z);
+        }
+    }
 }
