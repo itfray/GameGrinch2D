@@ -9,6 +9,11 @@ using UnityEngine;
 /// </summary>
 public class LevelFileParser : MonoBehaviour
 {
+    public string levelDictPath;                                                    // path for level dictionary file
+    public string bgDictPath;                                                       // path for background level dictionary file
+    public string levelsPath;                                                       // path for levels directory
+    public Vector2 maxLevelSize;                                                    // max level height (count blocks)
+
     /* example level dict: {'i': 'ice_block', 's': 'stone_block', ... }
      * example background level dict: {'0': 'bg0', 'h': 'bg_h', ... }
      * example level map, byte matrix:
@@ -34,8 +39,7 @@ public class LevelFileParser : MonoBehaviour
     /// <summary>
     /// Method parse file with level dictionary
     /// </summary>
-    /// <param name="levelDictPath"> path to the file with level dictionary </param>
-    public void parseLevelDict(string levelDictPath)
+    public void parseLevelDict()
     {
         parseDict(level_dict, levelDictPath);
     }
@@ -43,8 +47,7 @@ public class LevelFileParser : MonoBehaviour
     /// <summary>
     /// Method parse file with background level dictionary
     /// </summary>
-    /// <param name="levelDictPath"> path to the file with background level dictionary </param>
-    public void parseBgLevelDict(string bgDictPath)
+    public void parseBgLevelDict()
     {
         parseDict(bg_dict, bgDictPath);
     }
@@ -74,12 +77,12 @@ public class LevelFileParser : MonoBehaviour
     /// <summary>
     /// Method parse file with level map
     /// </summary>
-    /// <param name="levelsPath"> path to the file with level map </param>
     /// <param name="ind_level"> level number </param>
-    /// <param name="max_h"> max blocks count in height </param>
-    /// <param name="max_w"> max blocks count in width </param>
-    public void parseLevelFile(string levelsPath, int ind_level, int max_h, int max_w)
+    public void parseLevelFile(int ind_level)
     {
+        int max_h = (int)maxLevelSize.y;
+        int max_w = (int)maxLevelSize.x;
+
         level_map = null;
         map_size = new Vector2(0, 0);
         if (max_h <= 0 || max_w <= 0) return;                                   // check params correctness

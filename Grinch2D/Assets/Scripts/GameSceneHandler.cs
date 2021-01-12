@@ -10,6 +10,8 @@ using System;
 /// </summary>
 public class GameSceneHandler : MonoBehaviour
 {
+    public LevelFileParser fileParser;                                              // parser level files
+
     public GameObject bgField;                                                      // field for store 4 childs (background game objects)
     public GameObject bgSample;                                                     // background sample with box colider2d for getting size background game object
     public Sprite[] bgSprites;                                                      // all background sprites
@@ -17,13 +19,6 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject blocksField;                                                  // field for created blocks
     public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
     public GameObject[] blockPrefabs;                                               // all block prefabs
-    public Vector2 maxLevelSize;                                                    // max level height (count blocks)
-
-    public string levelDictPath;                                                    // path for level dictionary file
-    public string bgDictPath;                                                       // path for background level dictionary file
-    public string levelsPath;                                                       // path for levels directory
-    public LevelFileParser fileParser;                                              // parser level files
-
     public string emptyBlockName = "empty";                                         // empty block prefab name
 
     private int current_level;                                                      // number current running level
@@ -42,6 +37,9 @@ public class GameSceneHandler : MonoBehaviour
 
     void Start()
     {
+        fileParser.parseLevelDict();                                                                        // parse data of level dictionary file
+        fileParser.parseBgLevelDict();                                                                      // parse data of background dictionary file
+
         currentLevel = 1;
     }
 
@@ -57,9 +55,7 @@ public class GameSceneHandler : MonoBehaviour
     public void ConstructLevel(int level)
     {
         current_level = level;
-        fileParser.parseLevelDict(levelDictPath);                                                           // parse data of level dictionary file
-        fileParser.parseBgLevelDict(bgDictPath);                                                            // parse data of background dictionary file
-        fileParser.parseLevelFile(levelsPath, level, (int)maxLevelSize.y, (int)maxLevelSize.x);             // parse data of level map file
+        fileParser.parseLevelFile(level);                                                                   // parse data of level map file
         CreateLevelObjsByMap(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize);                // generate level game objects by level file data about map    
         CreateLevelBackground(fileParser.backgroundDict, fileParser.levelBackground);                       // generate level backgrounds by level file data about background
     }

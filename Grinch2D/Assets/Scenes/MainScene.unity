@@ -899,6 +899,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 568abf2e7b200204e9a6306266ec1dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fileParser: {fileID: 1455934991}
   bgField: {fileID: 1794582261}
   bgSample: {fileID: 9213578557887392444, guid: 665dcc9c262ace64a98f9cace2ed5193,
     type: 3}
@@ -914,11 +915,6 @@ MonoBehaviour:
   - {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec, type: 3}
   - {fileID: 308226852408147019, guid: 9cf00b70b9213ac479a77c8749b57da6, type: 3}
   - {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
-  maxLevelSize: {x: 255, y: 255}
-  levelDictPath: Assets/Resources/level_dict.txt
-  bgDictPath: Assets/Resources/bg_dict.txt
-  levelsPath: Assets/Resources/levels
-  fileParser: {fileID: 1455934991}
   emptyBlockName: empty
 --- !u!114 &1455934991
 MonoBehaviour:
@@ -932,6 +928,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93c5591b86633ea449f64b5c36d6c7f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  levelDictPath: Assets/Resources/level_dict.txt
+  bgDictPath: Assets/Resources/bg_dict.txt
+  levelsPath: Assets/Resources/levels
+  maxLevelSize: {x: 1000, y: 100}
 --- !u!1 &1776835742
 GameObject:
   m_ObjectHideFlags: 0
