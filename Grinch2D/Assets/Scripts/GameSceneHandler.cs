@@ -110,13 +110,25 @@ public class GameSceneHandler : MonoBehaviour
 
     /// <summary>
     /// Method is create background for level.
+    /// Create big background ( 2 x 2 backgrounds in front of the main camera ).
+    /// set the backgrounds position something like this:
+    /// -------------------------
+    /// |           |           |
+    /// |    bg1    |    bg2    |
+    /// |      -----------      |
+    /// |      |    |    |      |
+    /// |------|-- cam --|------|
+    /// |      |    |    |      |
+    /// |      -----------      |
+    /// |    bg3    |    bg4    |
+    /// |           |           |
+    /// -------------------------
     /// </summary>
-    /// <param name="bg_dict"> background dictionary </param>
-    /// <param name="bg_sign"> background symbol </param>
-    /// <param name="map_blocks_size"> map size in number of blocks </param>
+    /// <param name="bg_dict"> background dictionary for levels </param>
+    /// <param name="bg_sign"> background symbol for level </param>
     private void CreateLevelBackground(Dictionary<char, string> bg_dict, char bg_sign)
     {
-        levelBgSprites = findLevelBgSprites(bg_dict, bg_sign);                                          // get list background sprites on this level
+        levelBgSprites = findLevelBgSprites(bg_dict, bg_sign);                                          // get list background sprites on level
         if (levelBgSprites.Count == 0)
             Debug.LogError("Empty list with level background sprites!!!", this);
 
@@ -141,18 +153,24 @@ public class GameSceneHandler : MonoBehaviour
             // Create 2 backgrounds in a line
             for (int j = -1; j < 1; j++)
             {
+                // change bg position in front of the camera
                 Transform bg_trnsfm = bgField.transform.GetChild(ind_bg_obj);
-                bg_trnsfm.position = new Vector3(Camera.main.transform.position.x + j * bgSmplSize.x + bgSmplSize.x / 2,            // set right position background game object
+                bg_trnsfm.position = new Vector3(Camera.main.transform.position.x + j * bgSmplSize.x + bgSmplSize.x / 2,
                                                  mapCenterPos.y + (cbg_from_center + i) * bgSmplSize.y, 0);
                 ind_bg_obj++;
             }
         }
 
-        bg_sorted_byx = getSortedBgList(t => t.position.x);
-        bg_sorted_byy = getSortedBgList(t => t.position.y);
-        UpdateLevelBgSpritesInBgObjs(true);
+        bg_sorted_byx = getSortedBgList(t => t.position.x);             // get sorted linked list backgrounds objects on X-axis
+        bg_sorted_byy = getSortedBgList(t => t.position.y);             // get sorted linked list backgrounds objects on Y-axis
+        UpdateLevelBgSpritesInBgObjs();                                 // update sprites in background objects
     }
 
+    /// <summary>
+    /// Method for getting sorted background objects list on specified condition.
+    /// </summary>
+    /// <param name="order_func"> specified condition </param>
+    /// <returns> sorted background objects linked list </returns>
     private LinkedList<Transform> getSortedBgList(System.Func<Transform, float> order_func)
     {
         LinkedList<Transform> bg_list = new LinkedList<Transform>();
@@ -167,6 +185,9 @@ public class GameSceneHandler : MonoBehaviour
         return bg_list;
     }
 
+    /// <summary>
+    /// Method scroll background objects depending on main camera position.
+    /// </summary>
     private void ScrollLevelBackground()
     {
         if (bg_sorted_byx.Count == 0 || bg_sorted_byy.Count == 0) return;
@@ -185,38 +206,39 @@ public class GameSceneHandler : MonoBehaviour
 
         if (firstRndr.isVisible == false && Camera.main.transform.position.x > lastBg.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right);
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right);                                       // scroll backgrounds left
         }
         else if (lastRndr.isVisible == false && Camera.main.transform.position.x < firstBg.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left);
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left);                                        // scroll backgrounds right
         }
 
-        firstBg = bg_sorted_byy.FirstOrDefault();
+        firstBg = bg_sorted_byy.FirstOrDefault();                                                           // first up background object
         firstRndr = firstBg.GetComponent<Renderer>();
 
-        lastBg = bg_sorted_byy.LastOrDefault();
+        lastBg = bg_sorted_byy.LastOrDefault();                                                             // last down background object
         lastRndr = lastBg.GetComponent<Renderer>();
 
         bool scrolled_y = false;
         if (firstRndr.isVisible == false && Camera.main.transform.position.y > lastBg.position.y)
         {
-            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Up);
+            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Up);                                           // scroll backgrounds up
             scrolled_y = true;
         }
         else if (lastRndr.isVisible == false && Camera.main.transform.position.y < firstBg.position.y)
         {
-            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Down);
+            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Down);                                         // scroll backgrounds down
             scrolled_y = true;
         }
 
-        UpdateLevelBgSpritesInBgObjs(scrolled_y);
+        if (scrolled_y)
+            UpdateLevelBgSpritesInBgObjs();                                                                  // update sprites of background objects
     }
 
     /// <summary>
-    /// 
+    /// Method is scroll background objects depending on specified direction.
     /// </summary>
-    /// <param name="bg_sorted_list"></param>
+    /// <param name="bg_sorted_list"> sorted backgrounds list to scroll </param>
     /// <param name="direct"> scrolling direction </param>
     private void ScrollLevelBackground(LinkedList<Transform> bg_sorted_list, ScrollDirect direct)
     {
@@ -230,11 +252,11 @@ public class GameSceneHandler : MonoBehaviour
         for (int i = 0; i < 2; i++)
         {
             Transform bg;
-            if (direct > 0)
+            if (direct > 0)                                                                                      // values of Up and Right more zero
             {
                 bg = bg_sorted_list.FirstOrDefault();
                 bg.position = direct == ScrollDirect.Right ? 
-                              new Vector3(lastBg.position.x + lastBgSize.x, bg.position.y, bg.position.z): 
+                              new Vector3(lastBg.position.x + lastBgSize.x, bg.position.y, bg.position.z) :      // set position current after the last background on X-axis
                               new Vector3(bg.position.x, lastBg.position.y + lastBgSize.y, bg.position.z);
             }
             else
@@ -242,58 +264,69 @@ public class GameSceneHandler : MonoBehaviour
                 bg = bg_sorted_list.LastOrDefault();
                 bg.position = direct == ScrollDirect.Left ? 
                               new Vector3(firstBg.position.x - firstBgSize.x, bg.position.y, bg.position.z):
-                              new Vector3(bg.position.x, firstBg.position.y - firstBgSize.y, bg.position.z);
+                              new Vector3(bg.position.x, firstBg.position.y - firstBgSize.y, bg.position.z);     // set position current before the first background on Y-axis
             }
             listBgs.Add(bg);
-            bg_sorted_list.Remove(bg);
+            bg_sorted_list.Remove(bg);                                                                           // 1. change background position in sorted backgrounds objects list
         }
 
         for (int i = 0; i < 2; i++)
         {
             if (direct > 0)
-                bg_sorted_list.AddLast(listBgs[i]);
+                bg_sorted_list.AddLast(listBgs[i]);                                                             // 2. change background position in sorted backgrounds objects list
             else
                 bg_sorted_list.AddFirst(listBgs[i]);
         }
     }
 
-    private void UpdateLevelBgSpritesInBgObjs(bool scrolled_y)
+    /// <summary>
+    /// Method is update sprites of background objects depending on map center position.
+    /// </summary>
+    private void UpdateLevelBgSpritesInBgObjs()
     {
-        if (scrolled_y)
+        Vector2 bgSmplSize = sizeObjByBoxCollider2D(bgSample);
+
+        Transform firstBg = bg_sorted_byy.FirstOrDefault();
+
+        // calculate number of backgrounds between main camera and map center
+        int cbg_from_center = countLinesFitOnBetween(bgSmplSize.y, firstBg.position.y, mapCenterPos.y);
+
+        // central background sprite displayed in map center position
+        int ind_bg = midLevelBgSpriteIndex() + cbg_from_center;                                         // get first background sprite index (which background stage to display)
+
+        int i = 0;
+        foreach (Transform bg_trnsfm in bg_sorted_byy)
         {
-            Vector2 bgSmplSize = sizeObjByBoxCollider2D(bgSample);
-
-            Transform firstBg = bg_sorted_byy.FirstOrDefault();
-
-            // calculate number of backgrounds between main camera and map center
-            int cbg_from_center = countLinesFitOnBetween(bgSmplSize.y, firstBg.position.y, mapCenterPos.y);
-
-            // central background sprite displayed in map center position
-            int ind_bg = midLevelBgSpriteIndex() + cbg_from_center;                                         // get first background sprite index (which background stage to display)
-
-            int i = 0;
-            foreach (Transform bg_trnsfm in bg_sorted_byy)
-            {
-                SpriteRenderer bg_srndr = bg_trnsfm.gameObject.GetComponent<SpriteRenderer>();
-                bg_srndr.sprite = getLevelBgSprite(ind_bg + i / 2);                                       // set right background sprite
-                i++;
-            }
+            SpriteRenderer bg_srndr = bg_trnsfm.gameObject.GetComponent<SpriteRenderer>();
+            bg_srndr.sprite = getLevelBgSprite(ind_bg + i / 2);                                       // set right background sprite
+            i++;
         }
     }
 
+    /// <summary>
+    /// Method is find all background sprites for level by background dictionary and background symbol
+    /// </summary>
+    /// <param name="bg_dict"> background dictionary with backround sprite names </param>
+    /// <param name="bg_sign"> backround symbol for level</param>
+    /// <returns> list of background sprites for level </returns>
     private List<Sprite> findLevelBgSprites(Dictionary<char, string> bg_dict, char bg_sign)
     {
         string bgName;
-        if (!bg_dict.TryGetValue(bg_sign, out bgName))                                                  // get background prefab name from background dictionary
+        if (!bg_dict.TryGetValue(bg_sign, out bgName))                                                  // get background sprite name from background dictionary
             Debug.LogError("Uncorrect level background symbol!!!", this);
 
-        List<Sprite> level_bgs = new List<Sprite>();                                                    // get list background sprites on this level
+        List<Sprite> level_bgs = new List<Sprite>();                                                    // get list background sprites for level
         foreach (Sprite bg in bgSprites)
             if (bg.name.Contains(bgName))
                 level_bgs.Add(bg);
         return level_bgs;
     }
 
+    /// <summary>
+    /// Method is return background sprite from levelBgSprites by index.
+    /// </summary>
+    /// <param name="sprt_ind"> background sprite index </param>
+    /// <returns> background sprite </returns>
     private Sprite getLevelBgSprite(int sprt_ind)
     {
         Sprite bg_sprite;
