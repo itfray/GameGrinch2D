@@ -918,6 +918,7 @@ MonoBehaviour:
   levelDictPath: Assets/Resources/level_dict.txt
   bgDictPath: Assets/Resources/bg_dict.txt
   levelsPath: Assets/Resources/levels
+  fileParser: {fileID: 1455934991}
   emptyBlockName: empty
 --- !u!114 &1455934991
 MonoBehaviour:
