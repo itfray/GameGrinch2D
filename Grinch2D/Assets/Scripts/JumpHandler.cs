@@ -2,43 +2,31 @@
 
 public class JumpHandler : MoveHandler
 {
-    public float ddirect = 0.1f;
-    public int max_count_step = 1;
+    public float ddirect = 0.00025f;
+    public float max_ddirect = 0.03f;
 
-    private bool flag_jump = false;
     private int count_step;
+    private bool jumping = false;
 
     protected override void UpdateDirection()
     {
-        if (!flag_jump) return;
+        if (!jumping) return;
 
-        if (count_step == -(max_count_step - 1))
+        if (count_step <= 0)
         {
-            flag_jump = false;
+            jumping = false;
             direction.y = 0;
-            Debug.Log("flag_jump: " + flag_jump.ToString());
-            Debug.Log("count_step: " + count_step.ToString());
             return;
         }
 
+        direction.y = count_step * count_step * ddirect;
         count_step--;
-        int sign = count_step > 0 ? 1 : -1;
-        direction.y = sign * count_step * count_step * ddirect;
-
-        Debug.Log("flag_jump: " + flag_jump.ToString());
-        Debug.Log("count_step: " + count_step.ToString());
-        Debug.Log("direction.y: " + direction.y.ToString());
     }
 
     public void Jump()
     {
-        flag_jump = true;
-        count_step = max_count_step;
+        jumping = true;
+        count_step = Mathf.RoundToInt(max_ddirect / ddirect);
         direction.y = 0;
-    }
-
-    public bool Jumping()
-    {
-        return flag_jump;
     }
 }
