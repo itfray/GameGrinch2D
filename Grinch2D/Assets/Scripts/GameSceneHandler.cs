@@ -16,6 +16,7 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject bgSample;                                                     // background sample with box colider2d for getting size background game object
     public Sprite[] bgSprites;                                                      // all background sprites
 
+    public GameObject playerField;                                                  // field for created palyer
     public GameObject blocksField;                                                  // field for created blocks
     public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
     public GameObject[] blockPrefabs;                                               // all block prefabs
@@ -99,8 +100,18 @@ public class GameSceneHandler : MonoBehaviour
                 GameObject blockObject =
                     Instantiate(block, new Vector3(x, y, block.transform.position.z), Quaternion.identity) as GameObject;
 
+                Transform field = blocksField.transform;
+
+                if (prefabName == "player")
+                {
+                    field = playerField.transform;
+/*                  MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();              // get script for moving main camera
+                    if (hmove_cam)
+                        hmove_cam.following = blockObject.transform;                                                    // set player object as following object for main camera  */                      
+                }
+
                 // add block in blocks field
-                blockObject.transform.parent = blocksField.transform;
+                blockObject.transform.parent = field;
             }
         }
 
