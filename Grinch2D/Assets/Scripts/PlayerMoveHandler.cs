@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerMoveHandler : JumpHandler
 {
-    private bool in_air = false;                                    // player in air?
+    private bool down_collision = false;                           // player have down collision?
 
     /// <summary>
     /// Method contains code for updating current move direction
@@ -17,10 +17,9 @@ public class PlayerMoveHandler : JumpHandler
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
-        if (Input.GetKeyDown(KeyCode.Space) && !in_air)
+        if (Input.GetKeyDown(KeyCode.Space) && down_collision)
         {
             Jump();                                                 // peform jump
-            in_air = true;
         }
 
         base.UpdateDirection();
@@ -41,13 +40,13 @@ public class PlayerMoveHandler : JumpHandler
         {
             if (transform.position.y > collisions.contacts[i].point.y)                  // if there are objects under player
             {
-                in_air = false;             
+                down_collision = true;
             }
         }
     }
 
     void OnCollisionExit2D(Collision2D collisions)
     {
-        in_air = true;                                                                  // set flag in air
+        down_collision = false;
     }
 }
