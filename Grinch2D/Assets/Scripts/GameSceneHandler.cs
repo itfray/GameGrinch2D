@@ -105,9 +105,9 @@ public class GameSceneHandler : MonoBehaviour
                 if (prefabName == "player")
                 {
                     field = playerField.transform;
-/*                  MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();              // get script for moving main camera
+                    MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();              // get script for moving main camera
                     if (hmove_cam)
-                        hmove_cam.following = blockObject.transform;                                                    // set player object as following object for main camera  */                      
+                        hmove_cam.following = blockObject.transform;                                                    // set player object as following object for main camera                        
                 }
 
                 // add block in blocks field

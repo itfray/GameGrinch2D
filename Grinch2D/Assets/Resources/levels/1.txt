@@ -1,46 +1,10 @@
 0
-       p
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-aaaaaaaaaaaaaaaaaaa
-a                 a
-a                 a
-a     b           a
-a    bab          a
-a           bbb   a
-a                 a
-a                 a
-abbbbbbbbbbbbbbbbba
+aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+a                                  a
+a                                  a
+a     b                            a
+a    ba                            a
+a           bbb  b  b  b  bbb      a
+a        b                         a
+a p   b                            a
+abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbba

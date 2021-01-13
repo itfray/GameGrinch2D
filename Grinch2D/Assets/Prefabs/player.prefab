@@ -143,7 +143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a174ce47ed46948bf06a91251b1858, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  max_speed: {x: 10, y: 10}
+  max_speed: {x: 20, y: 10}
   direction: {x: 0, y: 0}
   ddirect: 0.00025
-  max_ddirect: 0.03
+  max_ddirect: 0.032

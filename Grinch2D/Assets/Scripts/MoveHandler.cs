@@ -1,27 +1,29 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// class MoveHandler is handler to control move game object.
+/// </summary>
 public class MoveHandler : MonoBehaviour
 {
-    public Vector2 max_speed = new Vector2(10, 10);
+    public Vector2 max_speed = new Vector2(10, 10);                     // max speed value
+    public Vector2 direction = new Vector2(0, 0);                       // current move direction
 
-    public Vector2 direction = new Vector2(0, 0);
-
-    protected Vector2 speed;
+    protected Vector2 speed;                                            // current speed value
 
     void Update()
     {
-        UpdateDirection();
-        speed = new Vector2(max_speed.x * direction.x, max_speed.y * direction.y);
+        UpdateDirection();                                                                      // update current move direction
+        speed = new Vector2(max_speed.x * direction.x, max_speed.y * direction.y);              // update current speed value
     }
 
     void FixedUpdate()
     {
-        UpdatePosition();
+        UpdatePosition();                                                                       // update game object position                                              
     }
 
     protected virtual void UpdateDirection()
     {
-        // code updating direction
+        // code updating current move direction
     }
 
     protected virtual void UpdatePosition()
