@@ -26,25 +26,24 @@ public class PlayerMoveHandler : JumpHandler
                 }*/
 
         is_capture = false;
-        if (Input.GetKey(KeyCode.Space))
+
+        if (down_collision)
         {
-            if (down_collision)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 Jump();
                 down_collision = false;
             }
-            else
+        }
+        else
+        {
+            if (Input.GetKey(KeyCode.Space))
             {
                 bool left_key = (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow));
                 bool right_key = (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow));
                 bool is_capture_left = left_key && !right_key && left_collision;
                 bool is_capture_right = right_key && !left_key && right_collision;
                 is_capture = is_capture_left || is_capture_right;
-
-                Debug.Log("is_capture_left" + is_capture_left.ToString());
-                Debug.Log("is_capture_right" + is_capture_right.ToString());
-                Debug.Log("is_capture: " + is_capture.ToString());
-                Debug.Log("\n");
             }
         }
 
