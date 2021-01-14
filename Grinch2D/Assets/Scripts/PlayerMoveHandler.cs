@@ -113,7 +113,8 @@ public class PlayerMoveHandler : JumpHandler
             {
                 left_collision = true;
             }
-            else if (collisions.contacts[i].normal.x < 0)
+            
+            if (collisions.contacts[i].normal.x < 0)
             {
                 right_collision = true;
             }
