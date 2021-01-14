@@ -8,48 +8,47 @@ using UnityEngine;
 public class PlayerMoveHandler : JumpHandler
 {
     enum CollisionDirect { Left = 0, Right = 1, Down = 2 , Up = 3};
-    bool[] flags_collisions = new bool[4];                         // player have down, left, up, right collisions?
     int[] counts_collisions = new int[4];                          // count collisions down, left, up, right that have player
     private bool is_capturing = false;                             // the player captures near the block
 
     /// <summary>
     /// Method contains code for updating current move direction
     /// </summary>
+    /// 
     protected override void UpdateDirection()
     {
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
+        List<CollisionDirect> collision_maxcs = getCollisionMaxDirects();
+
         if (IsCapturing())
         {
             // if the player presses the button in the opposite direction from the direction of movement
-            if ((flags_collisions[(int)CollisionDirect.Left] && inputx > 0))
+            if ((collision_maxcs.Contains(CollisionDirect.Left) && inputx > 0))
             {
                 Jump();
-                flags_collisions[(int)CollisionDirect.Down] = false;
             }
-            else if (flags_collisions[(int)CollisionDirect.Right] && inputx < 0)
+            else if (collision_maxcs.Contains(CollisionDirect.Right) && inputx < 0)
             {
                 Jump();
-                flags_collisions[(int)CollisionDirect.Down] = false;
             }
         }
 
         bool capturing = false;
-        if (flags_collisions[(int)CollisionDirect.Down])
+        if (counts_collisions[(int)CollisionDirect.Down] > 0 && Input.GetKeyDown(KeyCode.Space))
         {
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                Jump();                                                             // pefrom jump
-                flags_collisions[(int)CollisionDirect.Down] = false;
-            }
+            Jump();                                                             // pefrom jump
         }
         else
         {
             if (Input.GetKey(KeyCode.Space))
-            {                    
-                capturing = flags_collisions[(int)CollisionDirect.Left] ||          // condition for capturing
-                            flags_collisions[(int)CollisionDirect.Right];
+            {
+                // condition for capturing
+                capturing = (collision_maxcs.Contains(CollisionDirect.Left) 
+                          || collision_maxcs.Contains(CollisionDirect.Right))
+                               && !collision_maxcs.Contains(CollisionDirect.Up)
+                               && !collision_maxcs.Contains(CollisionDirect.Down);
             }
         }
 
@@ -65,6 +64,35 @@ public class PlayerMoveHandler : JumpHandler
         Debug.Log("count_up_collisions: " + counts_collisions[(int)CollisionDirect.Up].ToString());
         Debug.Log("===================================================================================");
         base.UpdateDirection();
+    }
+
+    List<CollisionDirect> getCollisionMaxDirects()
+    {
+        List<CollisionDirect> directs = new List<CollisionDirect>();
+
+        int maxc_ind = (int)CollisionDirect.Up;
+        int maxc = counts_collisions[maxc_ind];
+
+        for (int i = 0; i < counts_collisions.Length; i++)
+        {
+            if (maxc < counts_collisions[i])
+            {
+                maxc = counts_collisions[i];
+                maxc_ind = i;
+            }
+        }
+
+        directs.Add((CollisionDirect)maxc_ind);
+
+        for (int i = 0; i < counts_collisions.Length; i++)
+        {
+            if (i != maxc_ind && maxc == counts_collisions[i])
+            {
+                directs.Add((CollisionDirect)i);
+            }
+        }
+
+        return directs;
     }
 
     /// <summary>
@@ -116,39 +144,9 @@ public class PlayerMoveHandler : JumpHandler
         }
     }
 
-    void unsetFlagsCollisions()
-    {
-        for (int i = 0; i < flags_collisions.Length; i++)
-        {
-            flags_collisions[i] = false;
-        }
-    }
-
     void OnCollisionStay2D(Collision2D collisions)
     {
         unsetCountsCollisions();
-        unsetFlagsCollisions();
-
-        for (int i = 0; i < collisions.contactCount; i++)
-        {
-            if (collisions.GetContact(i).normal.y > 0)
-            {
-                flags_collisions[(int)CollisionDirect.Down] = true;
-            }
-            else if (collisions.GetContact(i).normal.y < 0)
-            {
-                flags_collisions[(int)CollisionDirect.Up] = true;
-            }
-
-            if (collisions.GetContact(i).normal.x > 0)
-            {
-                flags_collisions[(int)CollisionDirect.Left] = true;
-            }
-            else if (collisions.GetContact(i).normal.x < 0)
-            {
-                flags_collisions[(int)CollisionDirect.Right] = true;
-            }
-        }
 
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         Vector2 size2 = collider.size / 2 * transform.localScale;
@@ -185,7 +183,6 @@ public class PlayerMoveHandler : JumpHandler
     void OnCollisionExit2D(Collision2D collisions)
     {
         unsetCountsCollisions();
-        unsetFlagsCollisions();
     }
 
     static Vector2 CollisionDirectToVector2(CollisionDirect direct)
