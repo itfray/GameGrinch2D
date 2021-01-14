@@ -7,6 +7,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerMoveHandler : JumpHandler
 {
+    private bool up_collision = false;
     private bool down_collision = false;
     private bool left_collision = false;
     private bool right_collision = false;
@@ -20,13 +21,19 @@ public class PlayerMoveHandler : JumpHandler
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
-        /*        if (Input.GetKeyDown(KeyCode.Space) && down_collision)
-                {
-                    Jump();                                                 // peform jump
-                }*/
+        if (is_capture)
+        {
+            if ((left_collision && inputx > 0))
+            {
+                Jump();
+            }
+            else if (right_collision && inputx < 0)
+            {
+                Jump();
+            }
+        }
 
         is_capture = false;
-
         if (down_collision)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -39,19 +46,26 @@ public class PlayerMoveHandler : JumpHandler
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                bool left_key = (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow));
-                bool right_key = (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow));
-                bool is_capture_left = left_key && !right_key && left_collision;
-                bool is_capture_right = right_key && !left_key && right_collision;
-                is_capture = is_capture_left || is_capture_right;
+                is_capture = left_collision || right_collision;
+                Debug.Log("left_collision: " + left_collision.ToString());
+                Debug.Log("right_collision: " + right_collision.ToString());
+                Debug.Log("up_collision: " + up_collision.ToString());
+                Debug.Log("down_collision: " + down_collision.ToString());
             }
         }
 
+        Debug.Log("is_capture: " + is_capture.ToString());
+        Debug.Log("===================================================");
+
         Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        if (is_capture) 
+        if (is_capture)
+        {
             rgbody.constraints = RigidbodyConstraints2D.FreezeAll;
+        }
         else
+        {
             rgbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+        }
 
         base.UpdateDirection();
     }
@@ -74,22 +88,29 @@ public class PlayerMoveHandler : JumpHandler
                 down_collision = true;
             }
 
-            if (collisions.contacts[i].normal.x < 0)
+            if (collisions.contacts[i].normal.y < 0)                  // if there are objects under player
             {
-                right_collision = true;
+                up_collision = true;
             }
 
             if (collisions.contacts[i].normal.x > 0)
             {
                 left_collision = true;
             }
+
+            if (collisions.contacts[i].normal.x < 0)
+            {
+                right_collision = true;
+            }
         }
     }
 
     void OnCollisionExit2D(Collision2D collisions)
     {
+        up_collision = false;
         down_collision = false;
         left_collision = false;
         right_collision = false;
+        is_capture = false;
     }
 }
