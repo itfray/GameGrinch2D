@@ -7,10 +7,10 @@ using UnityEngine;
 /// </summary>
 public class PlayerMoveHandler : JumpHandler
 {
-    private bool down_collision = false;
-    private bool left_collision = false;
+    private bool down_collision = false;                           // player have down collisions?
+    private bool left_collision = false;                           // player have left collisions?
     private bool right_collision = false;
-    private bool is_capturing = false;
+    private bool is_capturing = false;                             // the player captures near the block
 
     /// <summary>
     /// Method contains code for updating current move direction
@@ -22,6 +22,7 @@ public class PlayerMoveHandler : JumpHandler
 
         if (IsCapturing())
         {
+            // if the player presses the button in the opposite direction from the direction of movement
             if ((left_collision && inputx > 0))
             {
                 Jump();
@@ -37,7 +38,7 @@ public class PlayerMoveHandler : JumpHandler
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                Jump();
+                Jump();                                                             // pefrom jump
                 down_collision = false;
             }
         }
@@ -45,10 +46,11 @@ public class PlayerMoveHandler : JumpHandler
         {
             if (Input.GetKey(KeyCode.Space))
             {
-                capturing = left_collision || right_collision;
+                capturing = left_collision || right_collision;                      // condition for capturing
             }
         }
 
+        // if condition for capturing true
         if (capturing)
             Capture();
         else
@@ -66,6 +68,9 @@ public class PlayerMoveHandler : JumpHandler
         rgbody.MovePosition(rgbody.position + speed * Time.deltaTime);
     }
 
+    /// <summary>
+    /// Method for capture peforming
+    /// </summary>
     private void Capture()
     {
         Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
@@ -73,6 +78,9 @@ public class PlayerMoveHandler : JumpHandler
         is_capturing = true;
     }
 
+    /// <summary>
+    /// Method for uncapture peforming
+    /// </summary>
     private void Uncapture()
     {
         if (is_capturing)
@@ -83,7 +91,11 @@ public class PlayerMoveHandler : JumpHandler
         }
     }
 
-    private bool IsCapturing()
+    /// <summary>
+    /// Method check the player capturing near block
+    /// </summary>
+    /// <returns></returns>
+    public bool IsCapturing()
     {
         return is_capturing;
     }
@@ -110,7 +122,7 @@ public class PlayerMoveHandler : JumpHandler
 
     void OnCollisionExit2D(Collision2D collisions)
     {
-        down_collision = false;
+        down_collision = false;                                     // unset all collisions flags
         left_collision = false;
         right_collision = false;
     }
