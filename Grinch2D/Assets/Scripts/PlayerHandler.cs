@@ -3,13 +3,24 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// class PlayerMoveHandler is handler to control move player.
+/// class PlayerHandler is handler to control move player.
 /// </summary>
-public class PlayerMoveHandler : JumpHandler
+public class PlayerHandler : JumpHandler
 {
+    private Animator animator;
+
     enum CollisionDirect { Left = 0, Right = 1, Down = 2 , Up = 3};     // type for checking collisions information
     int[] counts_collisions = new int[4];                               // count collisions down, left, up, right that have player
-    private bool is_capturing = false;                                  // the player captures near the block
+
+    private bool capturing = false;                                     // the player captures near the block
+
+    public bool Capturing { get { return capturing; } }                                      // Method check the player capturing near block
+
+    void Start()
+    {
+        animator = GetComponent<Animator>();
+    }
+
 
     /// <summary>
     /// Method contains code for updating current move direction
@@ -17,13 +28,22 @@ public class PlayerMoveHandler : JumpHandler
     /// 
     protected override void UpdateDirection()
     {
+        bool is_running, is_falling, is_jumping, is_capturing;
+        is_running = is_falling = is_jumping = is_capturing = false;
+
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
+
+        if (inputx != 0)
+        {
+            int sign = inputx > 0 ? 1 : -1;
+            transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
 
         // get list of directions, that have maximum count collisions 
         List<CollisionDirect> collision_maxcs = getDirectsMaxCollisions();
 
-        if (IsCapturing())
+        if (Capturing)
         {
             // if the player presses the button in the opposite direction from the direction of movement
             if ((collision_maxcs.Contains(CollisionDirect.Left) && inputx > 0))
@@ -36,7 +56,7 @@ public class PlayerMoveHandler : JumpHandler
             }
         }
 
-        bool capturing = false;
+        /*bool is_capturing = false;*/
         if (counts_collisions[(int)CollisionDirect.Down] > 0 && Input.GetKeyDown(KeyCode.Space))
         {
             Jump();                                                             // pefrom jump
@@ -46,17 +66,25 @@ public class PlayerMoveHandler : JumpHandler
             if (Input.GetKey(KeyCode.Space))
             {
                 // condition for capturing
-                capturing = (collision_maxcs.Contains(CollisionDirect.Left) 
+                is_capturing = (collision_maxcs.Contains(CollisionDirect.Left) 
                           || collision_maxcs.Contains(CollisionDirect.Right))
                                && !collision_maxcs.Contains(CollisionDirect.Up)
                                && !collision_maxcs.Contains(CollisionDirect.Down);
             }
         }
 
-        if (capturing)
+        if (is_capturing)
             Capture();
         else
             Uncapture();
+
+        Debug.Log("running: " + is_running.ToString());
+        Debug.Log("falling: " + is_falling.ToString());
+        Debug.Log("capturing: " + is_capturing.ToString());
+        Debug.Log("jumping: " + is_jumping.ToString());
+        Debug.Log("==========================================");
+/*        animator.SetBool("Jumping", Jumping);
+        animator.SetBool("Running", Running);*/
 
         base.UpdateDirection();
     }
@@ -110,7 +138,7 @@ public class PlayerMoveHandler : JumpHandler
     {
         Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
         rgbody.constraints = RigidbodyConstraints2D.FreezeAll;
-        is_capturing = true;
+        capturing = true;
     }
 
     /// <summary>
@@ -118,21 +146,12 @@ public class PlayerMoveHandler : JumpHandler
     /// </summary>
     private void Uncapture()
     {
-        if (is_capturing)
+        if (capturing)
         {
             Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
             rgbody.constraints = RigidbodyConstraints2D.FreezeRotation;
-            is_capturing = false;
+            capturing = false;
         }
-    }
-
-    /// <summary>
-    /// Method check the player capturing near block
-    /// </summary>
-    /// <returns></returns>
-    public bool IsCapturing()
-    {
-        return is_capturing;
     }
 
     /// <summary>
@@ -149,7 +168,7 @@ public class PlayerMoveHandler : JumpHandler
         unsetCountsCollisions();
 
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
-        Vector2 size2 = collider.size / 2 * transform.localScale;
+        Vector2 size2 = collider.size / 2 * new Vector2(Mathf.Abs(transform.localScale.x), Mathf.Abs(transform.localScale.y));
         Vector2 position = new Vector2(transform.position.x, transform.position.y);
         Vector2[] direct_pos = new Vector2[counts_collisions.Length];                       // array of extreme boundary points of the player game object
 
