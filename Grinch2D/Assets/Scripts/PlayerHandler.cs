@@ -28,17 +28,9 @@ public class PlayerHandler : JumpHandler
     /// 
     protected override void UpdateDirection()
     {
-        bool is_running, is_falling, is_jumping, is_capturing;
-        is_running = is_falling = is_jumping = is_capturing = false;
 
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
-
-        if (inputx != 0)
-        {
-            int sign = inputx > 0 ? 1 : -1;
-            transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        }
 
         // get list of directions, that have maximum count collisions 
         List<CollisionDirect> collision_maxcs = getDirectsMaxCollisions();
@@ -56,10 +48,10 @@ public class PlayerHandler : JumpHandler
             }
         }
 
-        /*bool is_capturing = false;*/
+        bool is_capturing = false;
         if (counts_collisions[(int)CollisionDirect.Down] > 0 && Input.GetKeyDown(KeyCode.Space))
         {
-            Jump();                                                             // pefrom jump
+            Jump();
         }
         else
         {
@@ -74,17 +66,25 @@ public class PlayerHandler : JumpHandler
         }
 
         if (is_capturing)
+        {
             Capture();
+            // animator.SetBool("Capturing", true);
+        }
         else
+        {
             Uncapture();
+            // animator.SetBool("Capturing", false);
+        }
 
-        Debug.Log("running: " + is_running.ToString());
-        Debug.Log("falling: " + is_falling.ToString());
-        Debug.Log("capturing: " + is_capturing.ToString());
-        Debug.Log("jumping: " + is_jumping.ToString());
-        Debug.Log("==========================================");
-/*        animator.SetBool("Jumping", Jumping);
-        animator.SetBool("Running", Running);*/
+        /*animator.SetBool("Jumping", is_jumping);*/
+        //animator.SetBool("Falling", counts_collisions[(int)CollisionDirect.Down] == 0);
+/*        animator.SetBool("Running", inputx != 0);*/
+
+        if (inputx != 0 && !is_capturing)
+        {
+            int sign = inputx > 0 ? 1 : -1;
+            transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+        }
 
         base.UpdateDirection();
     }
@@ -136,9 +136,12 @@ public class PlayerHandler : JumpHandler
     /// </summary>
     private void Capture()
     {
-        Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        rgbody.constraints = RigidbodyConstraints2D.FreezeAll;
-        capturing = true;
+        if (!capturing)
+        {
+            Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
+            rgbody.constraints = RigidbodyConstraints2D.FreezeAll;
+            capturing = true;
+        }
     }
 
     /// <summary>

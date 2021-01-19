@@ -1,7 +1,7 @@
 0
 aaaaaaa
 a     a
-a     a
+a  p  a
 a    ba
 a     a
 a     a
@@ -27,5 +27,5 @@ a     a
 a     a
 a     a
 a     a
-a p   a
+a     a
 abbbbba
