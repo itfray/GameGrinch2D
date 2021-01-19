@@ -27,7 +27,7 @@ public class GameSceneHandler : MonoBehaviour
     private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
     private LinkedList<Transform> bg_sorted_byy;                                    // sorted on Y-axis background objects list for current level
 
-    private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }         // type direction for background scrolling functions
+    private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }           // type direction for background scrolling functions
 
     public int currentLevel
     {
@@ -37,8 +37,8 @@ public class GameSceneHandler : MonoBehaviour
 
     void Start()
     {
-        fileParser.parseLevelDict();                                                                        // parse data of level dictionary file
-        fileParser.parseBgLevelDict();                                                                      // parse data of background dictionary file
+        fileParser.parseLevelDict();                                                // parse data of level dictionary file
+        fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
 
         currentLevel = 4;
     }
@@ -114,6 +114,7 @@ public class GameSceneHandler : MonoBehaviour
             }
         }
 
+        // calculate map center
         mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,
                                    blockSmplSize.y * (map_size.y - 1) / 2);
     }
@@ -385,6 +386,9 @@ public class GameSceneHandler : MonoBehaviour
 
     /// <summary>
     /// Function is calculate how many lines with specified length can fit between two positions.
+    /// Example: 
+    /// pos1 = -7.5, pos2 = 0, len = 4, result = -2
+    /// pos1 = 7.5, pos2 = 0, len = 4, result = 2
     /// </summary>
     /// <param name="line_len"> Checked line length </param>
     /// <param name="pos1"> Position 1 </param>

@@ -7,9 +7,9 @@ using UnityEngine;
 /// </summary>
 public class PlayerMoveHandler : JumpHandler
 {
-    enum CollisionDirect { Left = 0, Right = 1, Down = 2 , Up = 3};
-    int[] counts_collisions = new int[4];                          // count collisions down, left, up, right that have player
-    private bool is_capturing = false;                             // the player captures near the block
+    enum CollisionDirect { Left = 0, Right = 1, Down = 2 , Up = 3};     // type for checking collisions information
+    int[] counts_collisions = new int[4];                               // count collisions down, left, up, right that have player
+    private bool is_capturing = false;                                  // the player captures near the block
 
     /// <summary>
     /// Method contains code for updating current move direction
@@ -20,7 +20,8 @@ public class PlayerMoveHandler : JumpHandler
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
-        List<CollisionDirect> collision_maxcs = getCollisionMaxDirects();
+        // get list of directions, that have maximum count collisions 
+        List<CollisionDirect> collision_maxcs = getDirectsMaxCollisions();
 
         if (IsCapturing())
         {
@@ -52,28 +53,26 @@ public class PlayerMoveHandler : JumpHandler
             }
         }
 
-        // if condition for capturing true
         if (capturing)
             Capture();
         else
             Uncapture();
 
-        Debug.Log("count_left_collisions: " + counts_collisions[(int)CollisionDirect.Left].ToString());
-        Debug.Log("count_right_collisions: " + counts_collisions[(int)CollisionDirect.Right].ToString());
-        Debug.Log("count_down_collisions: " + counts_collisions[(int)CollisionDirect.Down].ToString());
-        Debug.Log("count_up_collisions: " + counts_collisions[(int)CollisionDirect.Up].ToString());
-        Debug.Log("===================================================================================");
         base.UpdateDirection();
     }
 
-    List<CollisionDirect> getCollisionMaxDirects()
+    /// <summary>
+    /// Method for getting list of directions, that have maximum count collisions 
+    /// </summary>
+    /// <returns> list of directions </returns>
+    List<CollisionDirect> getDirectsMaxCollisions()
     {
         List<CollisionDirect> directs = new List<CollisionDirect>();
 
-        int maxc_ind = (int)CollisionDirect.Up;
+        int maxc_ind = (int)CollisionDirect.Up;                             // assume that the index of maximum element
         int maxc = counts_collisions[maxc_ind];
 
-        for (int i = 0; i < counts_collisions.Length; i++)
+        for (int i = 0; i < counts_collisions.Length; i++)                  // find maximum element
         {
             if (maxc < counts_collisions[i])
             {
@@ -84,7 +83,7 @@ public class PlayerMoveHandler : JumpHandler
 
         directs.Add((CollisionDirect)maxc_ind);
 
-        for (int i = 0; i < counts_collisions.Length; i++)
+        for (int i = 0; i < counts_collisions.Length; i++)                  // find all elements, that equal maximum 
         {
             if (i != maxc_ind && maxc == counts_collisions[i])
             {
@@ -136,12 +135,13 @@ public class PlayerMoveHandler : JumpHandler
         return is_capturing;
     }
 
+    /// <summary>
+    /// Method for resetting all collision count values
+    /// </summary>
     void unsetCountsCollisions()
     {
         for (int i = 0; i < counts_collisions.Length; i++)
-        {
             counts_collisions[i] = 0;
-        }
     }
 
     void OnCollisionStay2D(Collision2D collisions)
@@ -151,29 +151,27 @@ public class PlayerMoveHandler : JumpHandler
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
         Vector2 size2 = collider.size / 2 * transform.localScale;
         Vector2 position = new Vector2(transform.position.x, transform.position.y);
-        Vector2[] direct_pos = new Vector2[counts_collisions.Length];
+        Vector2[] direct_pos = new Vector2[counts_collisions.Length];                       // array of extreme boundary points of the player game object
+
         for (int i = 0; i < direct_pos.Length; i++)
         {
-            direct_pos[i] = position + size2 * CollisionDirectToVector2((CollisionDirect)i);
+            direct_pos[i] = position + size2 * DirectToVector2((CollisionDirect)i);         // fill extreme boundary points (left, right, up, down)
         }
 
         for (int ic = 0; ic < collisions.contactCount; ic++)
         {
-            Vector2[] diffs = new Vector2[counts_collisions.Length];
-
-            for (int i = 0; i < diffs.Length; i++)
+            for (int i = 0; i < counts_collisions.Length; i++)
             {
-                diffs[i] = direct_pos[i] - collisions.GetContact(ic).point;
-                
+                Vector2 diffs = direct_pos[i] - collisions.GetContact(ic).point;            // calculate difference extreme boundary point with collision point
+
                 if (i == (int)CollisionDirect.Up || i == (int)CollisionDirect.Down)
                 {
-                    if (Mathf.Abs(diffs[i].y) < Mathf.Abs(diffs[i].x))
+                    if (Mathf.Abs(diffs.y) < Mathf.Abs(diffs.x))                            // all up and down points must be less on Y-Axis relative to the collision point, than on X-Axis
                         counts_collisions[i]++;
                 }
-
-                if (i == (int)CollisionDirect.Left || i == (int)CollisionDirect.Right)
+                else if (i == (int)CollisionDirect.Left || i == (int)CollisionDirect.Right)
                 {
-                    if (Mathf.Abs(diffs[i].y) > Mathf.Abs(diffs[i].x))
+                    if (Mathf.Abs(diffs.y) > Mathf.Abs(diffs.x))
                         counts_collisions[i]++;
                 }
             }
@@ -185,7 +183,12 @@ public class PlayerMoveHandler : JumpHandler
         unsetCountsCollisions();
     }
 
-    static Vector2 CollisionDirectToVector2(CollisionDirect direct)
+    /// <summary>
+    /// Function for transform CollisionDirect to Vector2
+    /// </summary>
+    /// <param name="direct"> collison direct </param>
+    /// <returns> vector value </returns>
+    static Vector2 DirectToVector2(CollisionDirect direct)
     {
         switch (direct)
         {
