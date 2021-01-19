@@ -21,8 +21,7 @@ public abstract class JumpHandler : MoveHandler
 
         if (count_step <= 0)
         {
-            jumping = false;
-            direction.y = 0;
+            StopJump();
             return;
         }
 
@@ -37,6 +36,12 @@ public abstract class JumpHandler : MoveHandler
     {
         jumping = true;
         count_step = Mathf.RoundToInt(max_ddirect / ddirect);
+        direction.y = 0;
+    }
+
+    public void StopJump()
+    {
+        jumping = false;
         direction.y = 0;
     }
 }

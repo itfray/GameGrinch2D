@@ -13,8 +13,7 @@ public class PlayerHandler : JumpHandler
     int[] counts_collisions = new int[4];                               // count collisions down, left, up, right that have player
 
     private bool capturing = false;                                     // the player captures near the block
-
-    public bool Capturing { get { return capturing; } }                                      // Method check the player capturing near block
+    public bool Capturing { get { return capturing; } }                 // Method check the player capturing near block
 
     void Start()
     {
@@ -41,10 +40,12 @@ public class PlayerHandler : JumpHandler
             if ((collision_maxcs.Contains(CollisionDirect.Left) && inputx > 0))
             {
                 Jump();
+                animator.SetTrigger("Jumping");
             }
             else if (collision_maxcs.Contains(CollisionDirect.Right) && inputx < 0)
             {
                 Jump();
+                animator.SetTrigger("Jumping");
             }
         }
 
@@ -52,14 +53,16 @@ public class PlayerHandler : JumpHandler
         if (counts_collisions[(int)CollisionDirect.Down] > 0 && Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
+            animator.SetTrigger("Jumping");
         }
         else
         {
             if (Input.GetKey(KeyCode.Space))
             {
                 // condition for capturing
-                is_capturing = (collision_maxcs.Contains(CollisionDirect.Left) 
-                          || collision_maxcs.Contains(CollisionDirect.Right))
+                bool left_chk = collision_maxcs.Contains(CollisionDirect.Left);
+                bool right_chk = collision_maxcs.Contains(CollisionDirect.Right);
+                is_capturing = ((left_chk && !right_chk) || (!left_chk && right_chk))
                                && !collision_maxcs.Contains(CollisionDirect.Up)
                                && !collision_maxcs.Contains(CollisionDirect.Down);
             }
@@ -68,17 +71,17 @@ public class PlayerHandler : JumpHandler
         if (is_capturing)
         {
             Capture();
-            // animator.SetBool("Capturing", true);
+            animator.SetBool("Capturing", true);
         }
         else
         {
             Uncapture();
-            // animator.SetBool("Capturing", false);
+            animator.SetBool("Capturing", false);
         }
-
-        /*animator.SetBool("Jumping", is_jumping);*/
-        //animator.SetBool("Falling", counts_collisions[(int)CollisionDirect.Down] == 0);
-/*        animator.SetBool("Running", inputx != 0);*/
+        
+        animator.SetBool("Falling", !collision_maxcs.Contains(CollisionDirect.Down) 
+                                    || counts_collisions[(int)CollisionDirect.Down] == 0);
+        animator.SetBool("Running", inputx != 0);
 
         if (inputx != 0 && !is_capturing)
         {
