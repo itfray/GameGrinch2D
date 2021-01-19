@@ -4,7 +4,7 @@
 /// <summary>
 /// class JumpHandler is handler to control jump game object.
 /// </summary>
-public class JumpHandler : MoveHandler
+public abstract class JumpHandler : MoveHandler
 {
     public float ddirect = 0.00025f;                        // direction derivative (direction change step)
     public float max_ddirect = 0.032f;                      // max value ddirect

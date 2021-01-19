@@ -3,7 +3,7 @@
 /// <summary>
 /// class MoveHandler is handler to control move game object.
 /// </summary>
-public class MoveHandler : MonoBehaviour
+public abstract class MoveHandler : MonoBehaviour
 {
     public Vector2 max_speed = new Vector2(10, 10);                     // max speed value
     public Vector2 direction = new Vector2(0, 0);                       // current move direction
@@ -21,13 +21,13 @@ public class MoveHandler : MonoBehaviour
         UpdatePosition();                                                                       // update game object position                                              
     }
 
-    protected virtual void UpdateDirection()
-    {
-        // code updating current move direction
-    }
+    /// <summary>
+    /// Method for updating current move direction
+    /// </summary>
+    protected abstract void UpdateDirection();
 
-    protected virtual void UpdatePosition()
-    {
-        // code updating game object position
-    }
+    /// <summary>
+    /// Method for updating game object position
+    /// </summary>
+    protected abstract void UpdatePosition();
 }
