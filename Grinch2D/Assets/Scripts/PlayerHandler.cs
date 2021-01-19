@@ -89,6 +89,11 @@ public class PlayerHandler : JumpHandler
             transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
 
+        if (Input.GetKeyDown(KeyCode.G))
+        {
+            animator.SetTrigger("Hitting");
+        }
+
         base.UpdateDirection();
     }
 
