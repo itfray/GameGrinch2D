@@ -96,11 +96,11 @@ public class PlayerHandler : JumpHandler
         animator.SetBool("Falling", counts_collisions[(int)CollisionDirect.Down] == 0 || min_collds_wthout[CollisionDirect.Down]);
         animator.SetBool("Running", direction.x != 0);
 
-        Debug.Log("up: " + counts_collisions[(int)CollisionDirect.Up]);
+/*        Debug.Log("up: " + counts_collisions[(int)CollisionDirect.Up]);
         Debug.Log("down: " + counts_collisions[(int)CollisionDirect.Down]);
         Debug.Log("left: " + counts_collisions[(int)CollisionDirect.Left]);
         Debug.Log("right: " + counts_collisions[(int)CollisionDirect.Right]);
-        Debug.Log("=============================================================");
+        Debug.Log("=============================================================");*/
 
         base.UpdateDirection();
     }
