@@ -31,23 +31,37 @@ public class PlayerHandler : JumpHandler
         direction.x = inputx;
 
         // get list of directions, that have maximum count collisions 
-        List<CollisionDirect> collision_maxcs = getDirectsMaxCollisions();
+        Dictionary<CollisionDirect, bool> max_colls_dirs = 
+            getDirectsMaxCollisions(CollisionDirect.Up, CollisionDirect.Down, CollisionDirect.Left, CollisionDirect.Right);
 
-        if (collision_maxcs.Count == 0 && collision_maxcs.Contains(CollisionDirect.Up))
+        if (max_colls_dirs[CollisionDirect.Up])
         {
-            StopJump();
-            animator.ResetTrigger("Jumping");
+            bool flag_stop_jump = true;
+            foreach (KeyValuePair<CollisionDirect, bool> pair in max_colls_dirs)
+            {
+                if (pair.Key != CollisionDirect.Up && pair.Value)
+                {
+                    flag_stop_jump = false;
+                    break;
+                }
+            }
+
+            if (flag_stop_jump)
+            {
+                StopJump();
+                animator.ResetTrigger("Jumping");
+            }
         }
 
         if (Capturing)
         {
             // if the player presses the button in the opposite direction from the direction of movement
-            if ((collision_maxcs.Contains(CollisionDirect.Left) && inputx > 0))
+            if ((max_colls_dirs[CollisionDirect.Left] && inputx > 0))
             {
                 Jump();
                 animator.SetTrigger("Jumping");
             }
-            else if (collision_maxcs.Contains(CollisionDirect.Right) && inputx < 0)
+            else if (max_colls_dirs[CollisionDirect.Right] && inputx < 0)
             {
                 Jump();
                 animator.SetTrigger("Jumping");
@@ -65,11 +79,11 @@ public class PlayerHandler : JumpHandler
             if (Input.GetKey(KeyCode.Space))
             {
                 // condition for capturing
-                bool left_chk = collision_maxcs.Contains(CollisionDirect.Left);
-                bool right_chk = collision_maxcs.Contains(CollisionDirect.Right);
+                bool left_chk = max_colls_dirs[CollisionDirect.Left];
+                bool right_chk = max_colls_dirs[CollisionDirect.Right];
                 is_capturing = ((left_chk && !right_chk) || (!left_chk && right_chk))
-                               && !collision_maxcs.Contains(CollisionDirect.Up)
-                               && !collision_maxcs.Contains(CollisionDirect.Down);
+                               && !max_colls_dirs[CollisionDirect.Up]
+                               && !max_colls_dirs[CollisionDirect.Down];
             }
         }
 
@@ -78,7 +92,7 @@ public class PlayerHandler : JumpHandler
             Capture();
             animator.SetBool("Capturing", true);
 
-            int sign = collision_maxcs.Contains(CollisionDirect.Left) ? -1 : 1;
+            int sign = max_colls_dirs[CollisionDirect.Left] ? -1 : 1;
             transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
         else
@@ -93,74 +107,84 @@ public class PlayerHandler : JumpHandler
                 transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
             }
         }
-        
-        animator.SetBool("Falling", !collision_maxcs.Contains(CollisionDirect.Down) 
-                                    || counts_collisions[(int)CollisionDirect.Down] == 0);
+
+
+        Dictionary<CollisionDirect, bool> min_colls_dicts;
+        if (max_colls_dirs[CollisionDirect.Left])
+            min_colls_dicts = getDirectsMinCollisions(CollisionDirect.Left, CollisionDirect.Down, CollisionDirect.Up);
+        else
+            min_colls_dicts = getDirectsMinCollisions(CollisionDirect.Right, CollisionDirect.Down, CollisionDirect.Up);
+
+        animator.SetBool("Falling", counts_collisions[(int)CollisionDirect.Down] == 0 || min_colls_dicts[CollisionDirect.Down]);
         animator.SetBool("Running", direction.x != 0);
 
-/*        Debug.Log("up: " + counts_collisions[(int)CollisionDirect.Up]);
+        Debug.Log("up: " + counts_collisions[(int)CollisionDirect.Up]);
         Debug.Log("down: " + counts_collisions[(int)CollisionDirect.Down]);
         Debug.Log("left: " + counts_collisions[(int)CollisionDirect.Left]);
         Debug.Log("right: " + counts_collisions[(int)CollisionDirect.Right]);
-        Debug.Log("=============================================================");*/
-
+        Debug.Log("=============================================================");
         base.UpdateDirection();
     }
 
     /// <summary>
-    /// Method for getting list of directions, that have maximum count collisions 
+    /// Method for getting inforamtion of specified directions, 
+    /// where true value have direction that have maximum count collisions
     /// </summary>
-    /// <returns> list of directions </returns>
-    List<CollisionDirect> getDirectsMaxCollisions()
+    /// <returns> dictionary of directions </returns>
+    Dictionary<CollisionDirect, bool> getDirectsMaxCollisions(params CollisionDirect[] req_directs)
     {
-        return getDirectsMCollisions(true);
+        return getDirectsMCollisions(true, req_directs);
     }
 
     /// <summary>
-    /// Method for getting list of directions, that have minimum count collisions 
+    /// Method for getting inforamtion of specified directions, 
+    /// where true value have direction that have minimum count collisions
     /// </summary>
-    /// <returns> list of directions </returns>
-    List<CollisionDirect> getDirectsMinCollisions()
+    /// <returns> dictionary of directions </returns>
+    Dictionary<CollisionDirect, bool> getDirectsMinCollisions(params CollisionDirect[] req_directs)
     {
-        return getDirectsMCollisions(false);
+        return getDirectsMCollisions(false, req_directs);
     }
 
     /// <summary>
-    /// Method for getting list of directions, that have maximum/minimum count collisions 
+    /// Method for getting inforamtion of specified directions, 
+    /// where true value have direction that have maximum / minimum count collisions
     /// </summary>
-    /// <returns> list of directions </returns>
-    List<CollisionDirect> getDirectsMCollisions(bool maximum)
+    /// <returns> dictionary of directions </returns>
+    Dictionary<CollisionDirect, bool> getDirectsMCollisions(bool maximum, params CollisionDirect[] req_directs)
     {
-        List<CollisionDirect> directs = new List<CollisionDirect>();
-
-        int m_ind = (int)CollisionDirect.Up;                                // assume that the index of maximum/minimum element
+        int m_ind = (int)req_directs[0];                                    // assume that the index of maximum/minimum element
         int m = counts_collisions[m_ind];
-        System.Func<int, int, bool> com_op;
+        System.Func<int, int, bool> com_op;                                 // select comparison operation
         if (maximum) 
             com_op = (max, val) => max < val;
         else 
             com_op = (min, val) => min > val;
 
-        for (int i = 0; i < counts_collisions.Length; i++)                  // find maximum/minimum element
+        for (int i = 0; i < req_directs.Length; i++)                        // find element with maximum / minimum count collisions
         {
-            if (com_op(m, counts_collisions[i]))
+            if (com_op(m, counts_collisions[(int)req_directs[i]]))
             {
-                m = counts_collisions[i];
-                m_ind = i;
+                m = counts_collisions[(int)req_directs[i]];
+                m_ind = (int)req_directs[i];
             }
         }
 
-        directs.Add((CollisionDirect)m_ind);
-
-        for (int i = 0; i < counts_collisions.Length; i++)                  // find all elements, that equal maximum/minimum 
+        Dictionary<CollisionDirect, bool> dict_directs = new Dictionary<CollisionDirect, bool>();
+        for (int i = 0; i < req_directs.Length; i++)
         {
-            if (i != m_ind && m == counts_collisions[i])
+            dict_directs.Add(req_directs[i], false);
+        }
+        dict_directs[(CollisionDirect)m_ind] = true;
+
+        for (int i = 0; i < req_directs.Length; i++)
+        {
+            if ((int)req_directs[i] != m_ind && m == counts_collisions[(int)req_directs[i]])        // find all elements, that equal maximum/minimum count collisions 
             {
-                directs.Add((CollisionDirect)i);
+                dict_directs[req_directs[i]] = true;
             }
         }
-
-        return directs;
+        return dict_directs;
     }
 
     /// <summary>

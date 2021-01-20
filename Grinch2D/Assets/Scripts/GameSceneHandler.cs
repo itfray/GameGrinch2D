@@ -40,7 +40,7 @@ public class GameSceneHandler : MonoBehaviour
         fileParser.parseLevelDict();                                                // parse data of level dictionary file
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
 
-        currentLevel = 4;
+        currentLevel = 5;
     }
 
     void Update()
