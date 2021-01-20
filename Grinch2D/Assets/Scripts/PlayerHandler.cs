@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+
 /// <summary>
 /// class PlayerHandler is handler to control move player.
 /// </summary>
@@ -9,11 +11,10 @@ public class PlayerHandler : JumpHandler
 {
     private Animator animator;
 
-    enum CollisionDirect { Left = 0, Right = 1, Down = 2 , Up = 3};     // type for checking collisions information
-    int[] counts_collisions = new int[4];                               // count collisions down, left, up, right that have player
-
-    private bool capturing = false;                                     // the player captures near the block
-    public bool Capturing { get { return capturing; } }                 // Method check the player capturing near block
+    public enum CollisionDirect { Left = 0, Right = 1, Down = 2 , Up = 3};      // type for checking collisions information
+    private int[] counts_collisions = new int[4];                               // count collisions down, left, up, right that have player
+    private bool capturing = false;                                             // the player captures near the block
+    public bool Capturing { get { return capturing; } }                         // Method check the player capturing near block
 
     void Start()
     {
@@ -30,27 +31,16 @@ public class PlayerHandler : JumpHandler
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
-        // get list of directions, that have maximum count collisions 
+        // get directions information, true value that have maximum count collisions 
         Dictionary<CollisionDirect, bool> max_colls_dirs = 
             getDirectsMaxCollisions(CollisionDirect.Up, CollisionDirect.Down, CollisionDirect.Left, CollisionDirect.Right);
 
-        if (max_colls_dirs[CollisionDirect.Up])
-        {
-            bool flag_stop_jump = true;
-            foreach (KeyValuePair<CollisionDirect, bool> pair in max_colls_dirs)
-            {
-                if (pair.Key != CollisionDirect.Up && pair.Value)
-                {
-                    flag_stop_jump = false;
-                    break;
-                }
-            }
 
-            if (flag_stop_jump)
-            {
-                StopJump();
-                animator.ResetTrigger("Jumping");
-            }
+        // if max count collisions only up collisions
+        if (max_colls_dirs[CollisionDirect.Up] && onlyOneTrue(max_colls_dirs, el => el.Value))
+        {
+            StopJump();                                                                                 // reset jump
+            animator.ResetTrigger("Jumping");
         }
 
         if (Capturing)
@@ -69,9 +59,9 @@ public class PlayerHandler : JumpHandler
         }
 
         bool is_capturing = false;
-        if (counts_collisions[(int)CollisionDirect.Down] > 0 && Input.GetKeyDown(KeyCode.Space))
+        if (counts_collisions[(int)CollisionDirect.Down] > 0 && Input.GetKeyDown(KeyCode.Space))            // if player have down collsions
         {
-            Jump();
+            Jump();                                                                                         // peform jump
             animator.SetTrigger("Jumping");
         }
         else
@@ -79,43 +69,31 @@ public class PlayerHandler : JumpHandler
             if (Input.GetKey(KeyCode.Space))
             {
                 // condition for capturing
-                bool left_chk = max_colls_dirs[CollisionDirect.Left];
-                bool right_chk = max_colls_dirs[CollisionDirect.Right];
-                is_capturing = ((left_chk && !right_chk) || (!left_chk && right_chk))
-                               && !max_colls_dirs[CollisionDirect.Up]
-                               && !max_colls_dirs[CollisionDirect.Down];
+                is_capturing = ((max_colls_dirs[CollisionDirect.Left] && !max_colls_dirs[CollisionDirect.Right]) ||
+                                (!max_colls_dirs[CollisionDirect.Left] && max_colls_dirs[CollisionDirect.Right]))
+                               && !max_colls_dirs[CollisionDirect.Up] && !max_colls_dirs[CollisionDirect.Down];
             }
         }
 
         if (is_capturing)
         {
-            Capture();
+            Capture();                                                                      // peform capture, fix player position
             animator.SetBool("Capturing", true);
-
-            int sign = max_colls_dirs[CollisionDirect.Left] ? -1 : 1;
-            transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            rotatePlayer(!max_colls_dirs[CollisionDirect.Left]);                            // rotate player in side
         }
         else
         {
             Uncapture();
             animator.SetBool("Capturing", false);
-
-
-            if (inputx != 0)
-            {
-                int sign = inputx > 0 ? 1 : -1;
-                transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-            }
+            if (inputx != 0) rotatePlayer(inputx > 0);                                      // rotate player in side
         }
 
 
-        Dictionary<CollisionDirect, bool> min_colls_dicts;
-        if (max_colls_dirs[CollisionDirect.Left])
-            min_colls_dicts = getDirectsMinCollisions(CollisionDirect.Left, CollisionDirect.Down, CollisionDirect.Up);
-        else
-            min_colls_dicts = getDirectsMinCollisions(CollisionDirect.Right, CollisionDirect.Down, CollisionDirect.Up);
-
-        animator.SetBool("Falling", counts_collisions[(int)CollisionDirect.Down] == 0 || min_colls_dicts[CollisionDirect.Down]);
+        // get directions information, true value that have minimum count collisions 
+        Dictionary<CollisionDirect, bool> min_collds_wthout = max_colls_dirs[CollisionDirect.Left] ?
+                                                              getDirectsMinCollisions(CollisionDirect.Left, CollisionDirect.Down, CollisionDirect.Up):
+                                                              getDirectsMinCollisions(CollisionDirect.Right, CollisionDirect.Down, CollisionDirect.Up);
+        animator.SetBool("Falling", counts_collisions[(int)CollisionDirect.Down] == 0 || min_collds_wthout[CollisionDirect.Down]);
         animator.SetBool("Running", direction.x != 0);
 
         Debug.Log("up: " + counts_collisions[(int)CollisionDirect.Up]);
@@ -123,7 +101,18 @@ public class PlayerHandler : JumpHandler
         Debug.Log("left: " + counts_collisions[(int)CollisionDirect.Left]);
         Debug.Log("right: " + counts_collisions[(int)CollisionDirect.Right]);
         Debug.Log("=============================================================");
+
         base.UpdateDirection();
+    }
+
+    /// <summary>
+    /// Method rotate player in side. 
+    /// </summary>
+    /// <param name="side"> side value {true: right side, false: left side} </param>
+    void rotatePlayer(bool side)
+    {
+        int sign = side ? 1 : -1;
+        transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
     }
 
     /// <summary>
@@ -290,5 +279,27 @@ public class PlayerHandler : JumpHandler
             default:
                 return Vector2.up;
         }
+    }
+
+    /// <summary>
+    /// Function to check that only one element of dictionary pass check
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="U"></typeparam>
+    /// <param name="dict"> dictionary </param>
+    /// <param name="check"> predicate </param>
+    /// <returns></returns>
+    static bool onlyOneTrue<T, U>(Dictionary<T, U> dict, System.Func<KeyValuePair<T, U>, bool> check)
+    {
+        int count = 0;
+        foreach (KeyValuePair<T, U> pair in dict)
+        {
+            if (check(pair))
+                count++;
+
+            if (count > 1)
+                return false;
+        }
+        return true;
     }
 }
