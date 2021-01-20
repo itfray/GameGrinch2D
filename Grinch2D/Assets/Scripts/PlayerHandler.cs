@@ -27,12 +27,17 @@ public class PlayerHandler : JumpHandler
     /// 
     protected override void UpdateDirection()
     {
-
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
         // get list of directions, that have maximum count collisions 
         List<CollisionDirect> collision_maxcs = getDirectsMaxCollisions();
+
+        if (collision_maxcs.Count == 0 && collision_maxcs.Contains(CollisionDirect.Up))
+        {
+            StopJump();
+            animator.ResetTrigger("Jumping");
+        }
 
         if (Capturing)
         {
@@ -72,22 +77,32 @@ public class PlayerHandler : JumpHandler
         {
             Capture();
             animator.SetBool("Capturing", true);
+
+            int sign = collision_maxcs.Contains(CollisionDirect.Left) ? -1 : 1;
+            transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
         }
         else
         {
             Uncapture();
             animator.SetBool("Capturing", false);
+
+
+            if (inputx != 0)
+            {
+                int sign = inputx > 0 ? 1 : -1;
+                transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+            }
         }
         
         animator.SetBool("Falling", !collision_maxcs.Contains(CollisionDirect.Down) 
                                     || counts_collisions[(int)CollisionDirect.Down] == 0);
-        animator.SetBool("Running", inputx != 0);
+        animator.SetBool("Running", direction.x != 0);
 
-        if (inputx != 0 && !is_capturing)
-        {
-            int sign = inputx > 0 ? 1 : -1;
-            transform.localScale = new Vector3(sign * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
-        }
+/*        Debug.Log("up: " + counts_collisions[(int)CollisionDirect.Up]);
+        Debug.Log("down: " + counts_collisions[(int)CollisionDirect.Down]);
+        Debug.Log("left: " + counts_collisions[(int)CollisionDirect.Left]);
+        Debug.Log("right: " + counts_collisions[(int)CollisionDirect.Right]);
+        Debug.Log("=============================================================");*/
 
         base.UpdateDirection();
     }
@@ -98,25 +113,48 @@ public class PlayerHandler : JumpHandler
     /// <returns> list of directions </returns>
     List<CollisionDirect> getDirectsMaxCollisions()
     {
+        return getDirectsMCollisions(true);
+    }
+
+    /// <summary>
+    /// Method for getting list of directions, that have minimum count collisions 
+    /// </summary>
+    /// <returns> list of directions </returns>
+    List<CollisionDirect> getDirectsMinCollisions()
+    {
+        return getDirectsMCollisions(false);
+    }
+
+    /// <summary>
+    /// Method for getting list of directions, that have maximum/minimum count collisions 
+    /// </summary>
+    /// <returns> list of directions </returns>
+    List<CollisionDirect> getDirectsMCollisions(bool maximum)
+    {
         List<CollisionDirect> directs = new List<CollisionDirect>();
 
-        int maxc_ind = (int)CollisionDirect.Up;                             // assume that the index of maximum element
-        int maxc = counts_collisions[maxc_ind];
+        int m_ind = (int)CollisionDirect.Up;                                // assume that the index of maximum/minimum element
+        int m = counts_collisions[m_ind];
+        System.Func<int, int, bool> com_op;
+        if (maximum) 
+            com_op = (max, val) => max < val;
+        else 
+            com_op = (min, val) => min > val;
 
-        for (int i = 0; i < counts_collisions.Length; i++)                  // find maximum element
+        for (int i = 0; i < counts_collisions.Length; i++)                  // find maximum/minimum element
         {
-            if (maxc < counts_collisions[i])
+            if (com_op(m, counts_collisions[i]))
             {
-                maxc = counts_collisions[i];
-                maxc_ind = i;
+                m = counts_collisions[i];
+                m_ind = i;
             }
         }
 
-        directs.Add((CollisionDirect)maxc_ind);
+        directs.Add((CollisionDirect)m_ind);
 
-        for (int i = 0; i < counts_collisions.Length; i++)                  // find all elements, that equal maximum 
+        for (int i = 0; i < counts_collisions.Length; i++)                  // find all elements, that equal maximum/minimum 
         {
-            if (i != maxc_ind && maxc == counts_collisions[i])
+            if (i != m_ind && m == counts_collisions[i])
             {
                 directs.Add((CollisionDirect)i);
             }
