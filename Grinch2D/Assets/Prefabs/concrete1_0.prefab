@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 308226852408147017}
   - component: {fileID: 308226852408147023}
   m_Layer: 0
-  m_Name: stone1_0
+  m_Name: concrete1_0
   m_TagString: Block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -71,7 +71,7 @@ SpriteRenderer:
   m_SortingLayerID: -449530997
   m_SortingLayer: -3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 4619248598060133510, guid: 90578c6290056f24c8598bf2678967a2,
+  m_Sprite: {fileID: 3054181488620544127, guid: 721e5b7f21415814ba4af24939a0648b,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
