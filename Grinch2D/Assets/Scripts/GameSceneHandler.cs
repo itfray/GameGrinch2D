@@ -3,6 +3,126 @@ using System.Collections.Generic;
 using System.Linq;
 
 
+/*public abstract class GenObjStrategy
+{
+    protected GameObject obj_prefab;
+    protected GameObject spwnr_prefab;
+
+    protected int row_spwnr_pos;
+    protected int col_spwnr_pos;
+    protected Vector2 spwnr_pos;
+    protected Vector2 spwnr_size;
+
+    protected Dictionary<char, string> level_dict;
+    protected char[,] level_map;
+    protected Vector2 map_size;
+
+    public GenObjStrategy(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size, Vector2 spwnr_size)
+    {
+        setMapParams(level_dict, level_map, map_size);
+        setSpwnrSize(spwnr_size);
+    }
+
+    public abstract void generate();
+
+    public void setMapParams(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size)
+    {
+        this.level_dict = level_dict;
+        this.level_map = level_map;
+        this.map_size = map_size;
+    }
+
+    public void setSpwnrSize(Vector2 size)
+    {
+        spwnr_size = size;
+    }
+
+    public void setSpwnrPosInMap(int row_pos, int col_pos)
+    {
+        row_spwnr_pos = row_pos;
+        col_spwnr_pos = col_pos;
+        spwnr_pos = new Vector2(col_pos * spwnr_size.x, ((int)map_size.y - 1 - row_pos) * spwnr_size.y);            // calculate position for instantiate prefab object
+    }
+
+    public void setPrefab(GameObject prefab)
+    {
+        obj_prefab = prefab;
+    }
+
+    public void setSpwnrPrefab(GameObject prefab)
+    {
+        spwnr_prefab = prefab;
+    }
+}
+
+
+public class GenPlayerStrategy: GenObjStrategy
+{
+    public GenPlayerStrategy(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size, Vector2 spwnr_size)
+        :base(level_dict, level_map, map_size, spwnr_size)
+    {
+    }
+
+    public override void generate()
+    {
+        if (spwnr_prefab == null || level_dict == null || level_map == null) return;
+
+        GameObject spwn_obj = Instantiate(spwnr_prefab,                                                                          // create spawner object
+                                          new Vector3(spwnr_pos.x, spwnr_pos.y, spwnr_prefab.transform.position.z),
+                                          Quaternion.identity) as GameObject;
+        spwn_obj.transform.parent = playerField.transform;
+
+        Vector2 spawn_pos = Vector2.zero;                                                                                       // spawn position of player
+        Vector2 player_size = sizeObjByBoxCollider2D(prefab);
+
+        *//* checks nearby blocks in the following way:
+         * xxx
+         * x x
+         * xxx
+         * x - checked block
+         *//*
+        bool find_spwn_pos = false;                                                                         // spawn position was finded?
+        for (int cofst = 0; cofst < 3 && !find_spwn_pos; cofst++)
+        {
+            for (int rofst = -1; rofst < 2; rofst += 2)
+            {
+                string next_prefname;
+                int rpos = row_pos;
+                int cpos = col_pos;
+                int col_ofst = (cofst < 2 ? cofst : -1);
+
+                cpos += col_ofst;
+                if (cpos < 0 || cpos >= map_size.x) continue;
+
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                    // check name central block (middle center, right center, left center)
+                    next_prefname = emptyPrefabName;
+
+                if (next_prefname != emptyPrefabName && cpos != col_pos) continue;                        // if central block is empty
+
+                rpos += rofst;
+                if (rpos < 0 || rpos >= map_size.y) continue;
+
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                    // check top/bottom block (middle top/bottom, right top/bottom, left top/bottom)
+                    next_prefname = emptyPrefabName;
+
+                if (next_prefname != emptyPrefabName) continue;
+
+                spawn_pos.x = spwnr_pos.x + col_ofst * spwnr_size.x;                                      // calculate spawn position
+                spawn_pos.y = spwnr_pos.y + rofst * spwnr_size.y / 2 - rofst * player_size.y / 2;
+                find_spwn_pos = true;
+                break;
+            }
+        }
+        if (!find_spwn_pos) return;
+
+        PlayerSpawner player_spwnr = spwn_obj.GetComponent<PlayerSpawner>();
+        if (player_spwnr == null) return;
+        player_spwnr.InitSpawner(prefab, playerField, spawn_pos);                                                   // init player spawner
+        player_spwnr.Spawn();                                                                                       // spawn player
+    }
+}*/
+
+
 /// <summary>
 /// class GameSceneHandler
 /// is init all action on game scene (generate level on game scene, etc.)
