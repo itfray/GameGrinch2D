@@ -3,126 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-/*public abstract class GenObjStrategy
-{
-    protected GameObject obj_prefab;
-    protected GameObject spwnr_prefab;
-
-    protected int row_spwnr_pos;
-    protected int col_spwnr_pos;
-    protected Vector2 spwnr_pos;
-    protected Vector2 spwnr_size;
-
-    protected Dictionary<char, string> level_dict;
-    protected char[,] level_map;
-    protected Vector2 map_size;
-
-    public GenObjStrategy(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size, Vector2 spwnr_size)
-    {
-        setMapParams(level_dict, level_map, map_size);
-        setSpwnrSize(spwnr_size);
-    }
-
-    public abstract void generate();
-
-    public void setMapParams(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size)
-    {
-        this.level_dict = level_dict;
-        this.level_map = level_map;
-        this.map_size = map_size;
-    }
-
-    public void setSpwnrSize(Vector2 size)
-    {
-        spwnr_size = size;
-    }
-
-    public void setSpwnrPosInMap(int row_pos, int col_pos)
-    {
-        row_spwnr_pos = row_pos;
-        col_spwnr_pos = col_pos;
-        spwnr_pos = new Vector2(col_pos * spwnr_size.x, ((int)map_size.y - 1 - row_pos) * spwnr_size.y);            // calculate position for instantiate prefab object
-    }
-
-    public void setPrefab(GameObject prefab)
-    {
-        obj_prefab = prefab;
-    }
-
-    public void setSpwnrPrefab(GameObject prefab)
-    {
-        spwnr_prefab = prefab;
-    }
-}
-
-
-public class GenPlayerStrategy: GenObjStrategy
-{
-    public GenPlayerStrategy(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size, Vector2 spwnr_size)
-        :base(level_dict, level_map, map_size, spwnr_size)
-    {
-    }
-
-    public override void generate()
-    {
-        if (spwnr_prefab == null || level_dict == null || level_map == null) return;
-
-        GameObject spwn_obj = Instantiate(spwnr_prefab,                                                                          // create spawner object
-                                          new Vector3(spwnr_pos.x, spwnr_pos.y, spwnr_prefab.transform.position.z),
-                                          Quaternion.identity) as GameObject;
-        spwn_obj.transform.parent = playerField.transform;
-
-        Vector2 spawn_pos = Vector2.zero;                                                                                       // spawn position of player
-        Vector2 player_size = sizeObjByBoxCollider2D(prefab);
-
-        *//* checks nearby blocks in the following way:
-         * xxx
-         * x x
-         * xxx
-         * x - checked block
-         *//*
-        bool find_spwn_pos = false;                                                                         // spawn position was finded?
-        for (int cofst = 0; cofst < 3 && !find_spwn_pos; cofst++)
-        {
-            for (int rofst = -1; rofst < 2; rofst += 2)
-            {
-                string next_prefname;
-                int rpos = row_pos;
-                int cpos = col_pos;
-                int col_ofst = (cofst < 2 ? cofst : -1);
-
-                cpos += col_ofst;
-                if (cpos < 0 || cpos >= map_size.x) continue;
-
-                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                    // check name central block (middle center, right center, left center)
-                    next_prefname = emptyPrefabName;
-
-                if (next_prefname != emptyPrefabName && cpos != col_pos) continue;                        // if central block is empty
-
-                rpos += rofst;
-                if (rpos < 0 || rpos >= map_size.y) continue;
-
-                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                    // check top/bottom block (middle top/bottom, right top/bottom, left top/bottom)
-                    next_prefname = emptyPrefabName;
-
-                if (next_prefname != emptyPrefabName) continue;
-
-                spawn_pos.x = spwnr_pos.x + col_ofst * spwnr_size.x;                                      // calculate spawn position
-                spawn_pos.y = spwnr_pos.y + rofst * spwnr_size.y / 2 - rofst * player_size.y / 2;
-                find_spwn_pos = true;
-                break;
-            }
-        }
-        if (!find_spwn_pos) return;
-
-        PlayerSpawner player_spwnr = spwn_obj.GetComponent<PlayerSpawner>();
-        if (player_spwnr == null) return;
-        player_spwnr.InitSpawner(prefab, playerField, spawn_pos);                                                   // init player spawner
-        player_spwnr.Spawn();                                                                                       // spawn player
-    }
-}*/
-
-
 /// <summary>
 /// class GameSceneHandler
 /// is init all action on game scene (generate level on game scene, etc.)
@@ -195,7 +75,7 @@ public class GameSceneHandler : MonoBehaviour
     void CalcMapCenterPos()
     {
         Vector2 map_size = fileParser.mapSize;
-        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);
+        Vector2 blockSmplSize = SizeScripts.sizeObjByBoxCollider2D(blockSample);
         // calculate map center
         mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,
                                    blockSmplSize.y * (map_size.y - 1) / 2);
@@ -212,7 +92,7 @@ public class GameSceneHandler : MonoBehaviour
         char[,] level_map = fileParser.levelMap;
         Vector2 map_size = fileParser.mapSize;
 
-        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                                                        // get block sample size
+        Vector2 blockSmplSize = SizeScripts.sizeObjByBoxCollider2D(blockSample);                                            // get block sample size
 
         for (int i = (int)map_size.y - 1; i >= 0; i--)                                                                      // reverse step, because file with map was readed top down
         {
@@ -470,7 +350,7 @@ public class GameSceneHandler : MonoBehaviour
         spwn_obj.transform.parent = playerField.transform;
 
         Vector2 spawn_pos = Vector2.zero;                                                                                       // spawn position of player
-        Vector2 player_size = sizeObjByBoxCollider2D(prefab);
+        Vector2 player_size = SizeScripts.sizeObjByBoxCollider2D(prefab);
 
         /* checks nearby blocks in the following way:
          * xxx
@@ -543,7 +423,7 @@ public class GameSceneHandler : MonoBehaviour
         if (levelBgSprites.Count == 0)
             Debug.LogError("Empty list with level background sprites!!!", this);
 
-        Vector2 bgSmplSize = sizeObjByBoxCollider2D(bgSample);
+        Vector2 bgSmplSize = SizeScripts.sizeObjByBoxCollider2D(bgSample);
 
         // calculate number of backgrounds between main camera and map center
         int cbg_from_center = countLinesFitOnBetween(bgSmplSize.y, Camera.main.transform.position.y, mapCenterPos.y);
@@ -654,10 +534,10 @@ public class GameSceneHandler : MonoBehaviour
     private void ScrollLevelBackground(LinkedList<Transform> bg_sorted_list, ScrollDirect direct)
     {
         Transform firstBg = bg_sorted_list.FirstOrDefault();
-        Vector3 firstBgSize = sizeObjByRenderer(firstBg.gameObject);
+        Vector3 firstBgSize = SizeScripts.sizeObjByRenderer(firstBg.gameObject);
         
         Transform lastBg = bg_sorted_list.LastOrDefault();
-        Vector3 lastBgSize = sizeObjByRenderer(lastBg.gameObject);
+        Vector3 lastBgSize = SizeScripts.sizeObjByRenderer(lastBg.gameObject);
 
         List<Transform> listBgs = new List<Transform>();
         for (int i = 0; i < 2; i++)
@@ -695,7 +575,7 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     private void UpdateLevelBgSpritesInBgObjs()
     {
-        Vector2 bgSmplSize = sizeObjByBoxCollider2D(bgSample);
+        Vector2 bgSmplSize = SizeScripts.sizeObjByBoxCollider2D(bgSample);
 
         Transform firstBg = bg_sorted_byy.FirstOrDefault();
 
@@ -759,43 +639,6 @@ public class GameSceneHandler : MonoBehaviour
         int ind_mid_bg = levelBgSprites.Count / 2;
         if (levelBgSprites.Count % 2 == 0) ind_mid_bg -= 1;
         return ind_mid_bg;
-    }
-
-    /// <summary>
-    /// Function is calculate size game object by BoxCollider2D component
-    /// </summary>
-    /// <param name="obj"> any game object </param>
-    /// <returns> size game object </returns>
-    private static Vector2 sizeObjByBoxCollider2D(GameObject obj)
-    {
-        BoxCollider2D objBox = obj.GetComponent<BoxCollider2D>();
-        if (objBox == null) return Vector2.zero;
-        return new Vector2(Mathf.Abs(objBox.size.x * obj.transform.localScale.x),
-                           Mathf.Abs(objBox.size.y * obj.transform.localScale.y));
-    }
-
-    /// <summary>
-    /// Function is calculate size game object by CapsuleCollider2D component
-    /// </summary>
-    /// <param name="obj"> any game object </param>
-    /// <returns> size game object </returns>
-    private static Vector2 sizeObjByCapsuleCollider2D(GameObject obj)
-    {
-        CapsuleCollider2D objBox = obj.GetComponent<CapsuleCollider2D>();
-        if (objBox == null) return Vector2.zero;
-        return new Vector2(Mathf.Abs(objBox.size.x * obj.transform.localScale.x),
-                           Mathf.Abs(objBox.size.y * obj.transform.localScale.y));
-    }
-
-    /// <summary>
-    /// Function is calculate size game object by Renderer component
-    /// </summary>
-    /// <param name="obj"> any game object </param>
-    /// <returns> size game object </returns>
-    private static Vector2 sizeObjByRenderer(GameObject obj)
-    {
-        Renderer rndr = obj.GetComponent<Renderer>();
-        return rndr.bounds.max - rndr.bounds.min;
     }
 
     /// <summary>
