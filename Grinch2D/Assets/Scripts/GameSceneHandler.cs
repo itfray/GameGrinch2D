@@ -17,25 +17,22 @@ public class GameSceneHandler : MonoBehaviour
 
     public GameObject playerField;                                                  // field for created palyer
     public GameObject blocksField;                                                  // field for created blocks
+
     public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
-    public GameObject[] blockPrefabs;                                               // all block prefabs
-    public string emptyBlockName = "empty";                                         // empty block prefab name
+    public GameObject[] gamePrefabs;                                                // all game prefabs
+    public GameObject[] spawnPrefabs;                                               // all prefabs for spawning game objects
+
+    public string emptyPrefabName = "empty";                                         // empty block prefab name
 
     private int current_level;                                                      // number current running level
+
     private List<Sprite> levelBgSprites;                                            // background sprites for current level
-    
-    private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
-    private LinkedList<Transform> bg_sorted_byy;                                    // sorted on Y-axis background objects list for current level
 
-/*    private Dictionary<char, string> levelDict;
-    private Dictionary<char, string> backgroundDict;
-
-    private char[,] levelMap;
-    private Vector2 mapSize;*/
     private Vector2 mapCenterPos;                                                   // central map position for current level
-/*    private char levelBackground;*/
 
     private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }           // type direction for background scrolling functions
+    private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
+    private LinkedList<Transform> bg_sorted_byy;                                    // sorted on Y-axis background objects list for current level
 
     public int currentLevel
     {
@@ -64,19 +61,20 @@ public class GameSceneHandler : MonoBehaviour
     {
         current_level = level;
         fileParser.parseLevelFile(level);                                                                   // parse data of level map file
-        CreateLevelObjsByMap(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize);                // generate level game objects by level file data about map    
-        CreateLevelBackground(fileParser.backgroundDict, fileParser.levelBackground);                       // generate level backgrounds by level file data about background
+        CreateLevelObjsByMap();                                                                             // generate level game objects by level file data about map    
+        CreateLevelBackground();                                                                            // generate level backgrounds by level file data about background
     }
 
     /// <summary>
     /// Method create level objects by level dictionary and level map
     /// </summary>
-    /// <param name="level_dict"> level dictionary </param>
-    /// <param name="level_map"> level map </param>
-    /// <param name="map_size"> level map size </param>
-    private void CreateLevelObjsByMap(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size)
+    private void CreateLevelObjsByMap()
     {
-        if (blockPrefabs.Length <= 0) return;
+        if (gamePrefabs.Length <= 0) return;
+
+        Dictionary<char, string> level_dict = fileParser.levelDict;
+        char[,] level_map = fileParser.levelMap;
+        Vector2 map_size = fileParser.mapSize;
 
         Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                        // get block sample size
 
@@ -87,28 +85,12 @@ public class GameSceneHandler : MonoBehaviour
                 string prefabName;
                 if (!level_dict.TryGetValue(level_map[i, j], out prefabName)) continue;     // get prefab name of level dictionary
 
-                GameObject block = getBlockPrefabByName(prefabName);
-                if (block == null) continue;
+                if (prefabName == emptyPrefabName) continue;                                 // check empty prefab
 
-                float x = j * blockSmplSize.x;                                              // calculate position for instantiate prefab object
-                float y = ((int)map_size.y - 1 - i) * blockSmplSize.y;
+                GameObject prefab = findGameObjByName(prefabName, gamePrefabs, (key_n, val_n) => key_n == val_n);
+                if (prefab == null) continue;
 
-                // create block game object
-                GameObject blockObject =
-                    Instantiate(block, new Vector3(x, y, block.transform.position.z), Quaternion.identity) as GameObject;
-
-                Transform field = blocksField.transform;
-
-                if (prefabName == "player")
-                {
-                    field = playerField.transform;
-                    MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();              // get script for moving main camera
-                    if (hmove_cam)
-                        hmove_cam.following = blockObject.transform;                                                    // set player object as following object for main camera                        
-                }
-
-                // add block in blocks field
-                blockObject.transform.parent = field;
+                generateGameObj(i, j, blockSmplSize, prefab);
             }
         }
 
@@ -117,48 +99,41 @@ public class GameSceneHandler : MonoBehaviour
                                    blockSmplSize.y * (map_size.y - 1) / 2);
     }
 
-    
-/*    private void generateGameObj(int row_pos, int col_pos, Vector2 size, GameObject prefab, char[,] level_map, Vector2 map_size)
+
+    private void generateGameObj(int row_pos, int col_pos, Vector2 block_size, GameObject prefab)
     {
-        // calculate position for instantiate prefab object
-        Vector2 position = new Vector2(col_pos * size.x, row_pos * ((int)map_size.y - 1 - row_pos));
-
-        // create block game object
-        GameObject gameObj =
-            Instantiate(prefab, new Vector3(position.x, position.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
-
-        Transform parentField = transform;
+        Vector2 map_size = fileParser.mapSize;
+        Vector2 block_pos = new Vector2(col_pos * block_size.x, ((int)map_size.y - 1 - row_pos) * block_size.y);        // calculate position for instantiate prefab object
 
         switch (prefab.tag)
         {
             case "Player":
-                MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();
-                if (hmove_cam)
-                    hmove_cam.following = gameObj.transform;
-                parentField = playerField.transform;
+                generatePlayer(block_pos, prefab);
                 break;
             case "Block":
-                parentField = blocksField.transform;
+                generateBlock(block_pos, prefab);
                 break;
         }
+    }
 
-        gameObj.transform.parent = parentField;
-    }*/
-
-    private GameObject getBlockPrefabByName(string prefab_name)
+    private void generateBlock(Vector2 position, GameObject prefab)
     {
-        if (prefab_name == emptyBlockName) return null;                                 // check empty block
+        // create block game object
+        GameObject gameObj =
+            Instantiate(prefab, new Vector3(position.x, position.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
+        gameObj.transform.parent = blocksField.transform;
+    }
 
-        GameObject block = null;                                                        // search prefab object by prefab name
-        foreach (GameObject block_prefab in blockPrefabs)
-        {
-            if (prefab_name == block_prefab.name)
-            {
-                block = block_prefab;
-                break;
-            }
-        }
-        return block;
+    private void generatePlayer(GameObject prefab, int row_pos, int col_pos, Vector2 block_size)
+    {
+        char[,] level_map = fileParser.levelMap; 
+        Vector2 map_size = fileParser.mapSize;
+        Vector2 block_pos = new Vector2(col_pos * block_size.x, ((int)map_size.y - 1 - row_pos) * block_size.y);
+
+        // create block game object
+        GameObject gameObj =
+            Instantiate(prefab, new Vector3(position.x, position.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
+        gameObj.transform.parent = playerField.transform;
     }
 
     /// <summary>
@@ -177,10 +152,11 @@ public class GameSceneHandler : MonoBehaviour
     /// |           |           |
     /// -------------------------
     /// </summary>
-    /// <param name="bg_dict"> background dictionary for levels </param>
-    /// <param name="bg_sign"> background symbol for level </param>
-    private void CreateLevelBackground(Dictionary<char, string> bg_dict, char bg_sign)
+    private void CreateLevelBackground()
     {
+        Dictionary<char, string> bg_dict = fileParser.backgroundDict;
+        char bg_sign = fileParser.levelBackground;
+
         levelBgSprites = findLevelBgSprites(bg_dict, bg_sign);                                          // get list background sprites on level
         if (levelBgSprites.Count == 0)
             Debug.LogError("Empty list with level background sprites!!!", this);
@@ -442,5 +418,26 @@ public class GameSceneHandler : MonoBehaviour
         int fcsign = fc > 0 ? 1 : -1;
         int c = fcsign * Mathf.RoundToInt(Mathf.Abs(fc));
         return c;
+    }
+
+    /// <summary>
+    /// Function for searching object in objects list by name
+    /// </summary>
+    /// <param name="obj_name"> name object of search </param>
+    /// <param name="objs"> list objects </param>
+    /// <param name="cond"> condition for check object names </param>
+    /// <returns> game object </returns>
+    private static GameObject findGameObjByName(string obj_name, GameObject[] objs, System.Func<string, string, bool> cond)
+    {
+        GameObject find_obj = null;                                                           // search prefab object by prefab name
+        foreach (GameObject obj in objs)
+        {
+            if (cond(obj_name, obj.name))
+            {
+                find_obj = obj;
+                break;
+            }
+        }
+        return find_obj;
     }
 }
