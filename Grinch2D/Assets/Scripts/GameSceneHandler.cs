@@ -23,15 +23,23 @@ public class GameSceneHandler : MonoBehaviour
 
     private int current_level;                                                      // number current running level
     private List<Sprite> levelBgSprites;                                            // background sprites for current level
-    private Vector2 mapCenterPos;                                                   // central map position for current level
+    
     private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
     private LinkedList<Transform> bg_sorted_byy;                                    // sorted on Y-axis background objects list for current level
+
+/*    private Dictionary<char, string> levelDict;
+    private Dictionary<char, string> backgroundDict;
+
+    private char[,] levelMap;
+    private Vector2 mapSize;*/
+    private Vector2 mapCenterPos;                                                   // central map position for current level
+/*    private char levelBackground;*/
 
     private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }           // type direction for background scrolling functions
 
     public int currentLevel
     {
-        get { return currentLevel; }
+        get { return current_level; }
         set { ConstructLevel(value); }
     }
 
@@ -79,17 +87,7 @@ public class GameSceneHandler : MonoBehaviour
                 string prefabName;
                 if (!level_dict.TryGetValue(level_map[i, j], out prefabName)) continue;     // get prefab name of level dictionary
 
-                if (prefabName == emptyBlockName) continue;                                 // check empty block
-
-                GameObject block = null;                                                    // search prefab object by prefab name
-                foreach (GameObject blockPrefab in blockPrefabs)
-                {
-                    if (prefabName == blockPrefab.name)
-                    {
-                        block = blockPrefab;
-                        break;
-                    }
-                }
+                GameObject block = getBlockPrefabByName(prefabName);
                 if (block == null) continue;
 
                 float x = j * blockSmplSize.x;                                              // calculate position for instantiate prefab object
@@ -117,6 +115,50 @@ public class GameSceneHandler : MonoBehaviour
         // calculate map center
         mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,
                                    blockSmplSize.y * (map_size.y - 1) / 2);
+    }
+
+    
+/*    private void generateGameObj(int row_pos, int col_pos, Vector2 size, GameObject prefab, char[,] level_map, Vector2 map_size)
+    {
+        // calculate position for instantiate prefab object
+        Vector2 position = new Vector2(col_pos * size.x, row_pos * ((int)map_size.y - 1 - row_pos));
+
+        // create block game object
+        GameObject gameObj =
+            Instantiate(prefab, new Vector3(position.x, position.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
+
+        Transform parentField = transform;
+
+        switch (prefab.tag)
+        {
+            case "Player":
+                MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();
+                if (hmove_cam)
+                    hmove_cam.following = gameObj.transform;
+                parentField = playerField.transform;
+                break;
+            case "Block":
+                parentField = blocksField.transform;
+                break;
+        }
+
+        gameObj.transform.parent = parentField;
+    }*/
+
+    private GameObject getBlockPrefabByName(string prefab_name)
+    {
+        if (prefab_name == emptyBlockName) return null;                                 // check empty block
+
+        GameObject block = null;                                                        // search prefab object by prefab name
+        foreach (GameObject block_prefab in blockPrefabs)
+        {
+            if (prefab_name == block_prefab.name)
+            {
+                block = block_prefab;
+                break;
+            }
+        }
+        return block;
     }
 
     /// <summary>
