@@ -19,7 +19,7 @@ public abstract class GenObjStrategy : MonoBehaviour
     protected Vector2 map_spwnr_pos;
     protected Vector2 spwnr_pos;
 
-    public void Init(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size, string empty_pref_name, Vector2 spwnr_size)
+    public void setParams(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size, string empty_pref_name, Vector2 spwnr_size)
     {
         setMapParams(level_dict, level_map, map_size, empty_pref_name);
         spwnrSize = spwnr_size;
