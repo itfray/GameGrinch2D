@@ -138,8 +138,14 @@ public class GameSceneHandler : MonoBehaviour
             case "BigSaw":
                 generateBigSaw(prefab, row_pos, col_pos, block_pos, block_size);
                 break;
-
+            case "Spike":
+                //generateSpike(prefab, row_pos, col_pos, block_pos, block_size);
+                break;
         }
+    }
+
+    private void generateSpike(GameObject prefab, int row_pos, int col_pos, Vector2 spwnr_pos, Vector2 spwnr_size)
+    {
     }
 
     private void generateBigSaw(GameObject prefab, int row_pos, int col_pos, Vector2 spwnr_pos, Vector2 spwnr_size)
@@ -269,52 +275,43 @@ public class GameSceneHandler : MonoBehaviour
         char[,] level_map = fileParser.levelMap;
         Vector2 map_size = fileParser.mapSize;
 
-        List<Vector2> spawn_poss = new List<Vector2>();
-
-        Debug.Log("saw");
-
         /* checks nearby blocks in the following way:
          *  x 
          * x x
          *  x 
          * x - checked block
          */
-        for (int rofst = -1; rofst < 2; rofst += 2)
+
+        for (int cofst = -1; cofst < 2; cofst++)
         {
-            string next_prefname;
-            int rpos = row_pos;
-            rpos += rofst;
-            if (rpos < 0 || rpos >= map_size.y) continue;
+            int rofst_start = 0;
+            int rofst_end = 1;
 
-            if (!level_dict.TryGetValue(level_map[rpos, col_pos], out next_prefname))                    // check top/bottom block (middle top/bottom, right top/bottom, left top/bottom)
-                next_prefname = emptyPrefabName;
+            if (cofst == 0)
+            {
+                rofst_start = -1;
+                rofst_end = 2;
+            }
 
-            if (next_prefname == emptyPrefabName) continue;
+            for (int rofst = rofst_start; rofst < rofst_end; rofst += rofst_end)
+            {
+                string next_prefname;
+                int rpos = row_pos + rofst;
+                int cpos = col_pos + cofst;
 
-            spawn_poss.Add(new Vector2(spwnr_pos.x, spwnr_pos.y - rofst * spwnr_size.y));
-        }
+                if (rpos < 0 || rpos >= map_size.y || cpos < 0 || cpos >= map_size.x) continue;
 
-        for (int cofst = -1; cofst < 2; cofst += 2)
-        {
-            string next_prefname;
-            int cpos = col_pos;
-            cpos += cofst;
-            if (cpos < 0 || cpos >= map_size.x) continue;
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                                      // check name central block (middle center, right center, left center)
+                    next_prefname = emptyPrefabName;
 
-            if (!level_dict.TryGetValue(level_map[row_pos, cpos], out next_prefname))                    // check top/bottom block (middle top/bottom, right top/bottom, left top/bottom)
-                next_prefname = emptyPrefabName;
+                if (next_prefname == emptyPrefabName || next_prefname == prefab.name) continue;
 
-            if (next_prefname == emptyPrefabName) continue;
-
-            spawn_poss.Add(new Vector2(spwnr_pos.x + cofst * spwnr_size.x, spwnr_pos.y));
-        }
-
-        foreach (Vector2 spawn_pos in spawn_poss)
-        {
-            GameObject saw = Instantiate(prefab,                                                                  // create block game object
+                Vector2 spawn_pos = new Vector2(spwnr_pos.x + cofst * spwnr_size.x, spwnr_pos.y - rofst * spwnr_size.y);
+                GameObject saw = Instantiate(prefab,                                                                        // create block game object
                                          new Vector3(spawn_pos.x, spawn_pos.y, prefab.transform.position.z),
                                          Quaternion.identity) as GameObject;
-            saw.transform.parent = sawsField.transform;
+                saw.transform.parent = sawsField.transform;
+            }
         }
     }
 

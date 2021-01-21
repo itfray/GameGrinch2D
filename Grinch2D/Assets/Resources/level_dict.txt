@@ -8,3 +8,5 @@ e : concrete1_0
 f : concrete1_1
 * : saw
 @ : big_saw
+^ : metal_spike
+~ : ice_spike
