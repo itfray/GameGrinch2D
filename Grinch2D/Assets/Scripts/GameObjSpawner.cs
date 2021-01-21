@@ -30,5 +30,10 @@ public abstract class GameObjSpawner : MonoBehaviour
         Spawn();
     }
 
+    public virtual bool isSpawned()
+    {
+        return spawned_obj != null;
+    }
+
     protected abstract void SpawnAddition();
 }

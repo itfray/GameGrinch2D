@@ -225,6 +225,8 @@ public class PlayerHandler : JumpHandler
         unsetCountsCollisions();
 
         BoxCollider2D collider = GetComponent<BoxCollider2D>();
+        if (collider == null) return;
+
         Vector2 size2 = collider.size / 2 * new Vector2(Mathf.Abs(transform.localScale.x), Mathf.Abs(transform.localScale.y));
         Vector2 position = new Vector2(transform.position.x, transform.position.y);
         Vector2[] direct_pos = new Vector2[counts_collisions.Length];                       // array of extreme boundary points of the player game object

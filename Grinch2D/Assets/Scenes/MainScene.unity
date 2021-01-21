@@ -698,8 +698,39 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 311718988}
+  - {fileID: 840537821}
   m_Father: {fileID: 1455934989}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &840537820
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 840537821}
+  m_Layer: 0
+  m_Name: saws
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &840537821
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 840537820}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 756761931}
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &953922317
 GameObject:
@@ -987,12 +1018,19 @@ MonoBehaviour:
   - {fileID: 21300000, guid: d2974e8d80263a94188c2b749b13f977, type: 3}
   playerField: {fileID: 756761930}
   blocksField: {fileID: 311718987}
+  sawsField: {fileID: 840537820}
   blockSample: {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec,
     type: 3}
   gamePrefabs:
   - {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
   - {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec, type: 3}
   - {fileID: 308226852408147019, guid: 9cf00b70b9213ac479a77c8749b57da6, type: 3}
+  - {fileID: 308226852408147019, guid: 152c55978a1b41c41bcfeeaf89e67637, type: 3}
+  - {fileID: 308226852408147019, guid: 2e91d20dac1757944856e4c27cd297ab, type: 3}
+  - {fileID: 308226852408147019, guid: d9fb4b0efe796ca41966553c80b0300f, type: 3}
+  - {fileID: 308226852408147019, guid: e39541e374d9ff945a339a524488dfc7, type: 3}
+  - {fileID: 5818134098678246762, guid: 3ba483859558c7f4084ff8024c976861, type: 3}
+  - {fileID: 5818134098678246762, guid: 6a6fca99a6743a94fa03380dfbb69b3f, type: 3}
   spawnPrefabs:
   - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty

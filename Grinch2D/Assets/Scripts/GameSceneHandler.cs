@@ -17,6 +17,7 @@ public class GameSceneHandler : MonoBehaviour
 
     public GameObject playerField;                                                  // field for created palyer
     public GameObject blocksField;                                                  // field for created blocks
+    public GameObject sawsField;                                                    // field for created saws
 
     public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
     public GameObject[] gamePrefabs;                                                // all game prefabs
@@ -61,8 +62,23 @@ public class GameSceneHandler : MonoBehaviour
     {
         current_level = level;
         fileParser.parseLevelFile(level);                                                                   // parse data of level map file
+
+        CalcMapCenterPos();
         CreateLevelObjsByMap();                                                                             // generate level game objects by level file data about map    
         CreateLevelBackground();                                                                            // generate level backgrounds by level file data about background
+    }
+
+
+    /// <summary>
+    /// Method for calculating position of map center in current level
+    /// </summary>
+    void CalcMapCenterPos()
+    {
+        Vector2 map_size = fileParser.mapSize;
+        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);
+        // calculate map center
+        mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,
+                                   blockSmplSize.y * (map_size.y - 1) / 2);
     }
 
     /// <summary>
@@ -76,30 +92,33 @@ public class GameSceneHandler : MonoBehaviour
         char[,] level_map = fileParser.levelMap;
         Vector2 map_size = fileParser.mapSize;
 
-        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                        // get block sample size
+        Vector2 blockSmplSize = sizeObjByBoxCollider2D(blockSample);                                                        // get block sample size
 
-        for (int i = (int)map_size.y - 1; i >= 0; i--)                                      // reverse step, because file with map was readed top down
+        for (int i = (int)map_size.y - 1; i >= 0; i--)                                                                      // reverse step, because file with map was readed top down
         {
             for (int j = 0; j < (int)map_size.x; j++)
             {
                 string prefabName;
-                if (!level_dict.TryGetValue(level_map[i, j], out prefabName)) continue;     // get prefab name of level dictionary
+                if (!level_dict.TryGetValue(level_map[i, j], out prefabName)) continue;                                     // get prefab name of level dictionary
 
-                if (prefabName == emptyPrefabName) continue;                                 // check empty prefab
+                if (prefabName == emptyPrefabName) continue;                                                                // check empty prefab name
 
-                GameObject prefab = findGameObjByName(prefabName, gamePrefabs, (key_n, val_n) => key_n == val_n);
+                GameObject prefab = findGameObjByName(prefabName, gamePrefabs, (key_n, val_n) => key_n == val_n);           // get game prefab by name
                 if (prefab == null) continue;
 
-                generateGameObj(prefab, i, j, blockSmplSize);
+                generateGameObj(prefab, i, j, blockSmplSize);                                                               // generate game object
             }
         }
-
-        // calculate map center
-        mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,
-                                   blockSmplSize.y * (map_size.y - 1) / 2);
     }
 
 
+    /// <summary>
+    /// Method generates game object by prefab
+    /// </summary>
+    /// <param name="prefab"> game object prefab </param>
+    /// <param name="row_pos"> row position in level map </param>
+    /// <param name="col_pos"> col position in level map </param>
+    /// <param name="block_size"> size of one block </param>
     private void generateGameObj(GameObject prefab, int row_pos, int col_pos, Vector2 block_size)
     {
         Vector2 map_size = fileParser.mapSize;
@@ -113,33 +132,236 @@ public class GameSceneHandler : MonoBehaviour
             case "Block":
                 generateBlock(prefab, block_pos);
                 break;
+            case "Saw":
+                generateSaw(prefab, row_pos, col_pos, block_pos, block_size);
+                break;
+            case "BigSaw":
+                generateBigSaw(prefab, row_pos, col_pos, block_pos, block_size);
+                break;
+
         }
     }
 
-    private void generateBlock(GameObject prefab, Vector2 block_pos)
+    private void generateBigSaw(GameObject prefab, int row_pos, int col_pos, Vector2 spwnr_pos, Vector2 spwnr_size)
     {
-        // create block game object
-        GameObject block =
-            Instantiate(prefab, new Vector3(block_pos.x, block_pos.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
-        block.transform.parent = blocksField.transform;
+        Dictionary<char, string> level_dict = fileParser.levelDict;
+        char[,] level_map = fileParser.levelMap;
+        Vector2 map_size = fileParser.mapSize;
+
+        List<Vector2> busy_poss = new List<Vector2>();
+
+        /* checks nearby blocks in the following way:
+         *  x
+         * x x
+         *  x 
+         * x - checked block
+         */
+        for (int cofst = -1; cofst < 2; cofst++)
+        {
+            int rofst_start = 0;
+            int rofst_end = 1;
+
+            if (cofst == 0)
+            {
+                rofst_start = -1;
+                rofst_end = 2;
+            }
+
+            for (int rofst = rofst_start; rofst < rofst_end; rofst += rofst_end)
+            {
+                string next_prefname;
+                int rpos = row_pos + rofst;
+                int cpos = col_pos + cofst;
+
+                if (rpos < 0 || rpos >= map_size.y || cpos < 0 || cpos >= map_size.x) continue;
+
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                    // check name central block (middle center, right center, left center)
+                    next_prefname = emptyPrefabName;
+
+                if (next_prefname == emptyPrefabName) continue;
+
+                busy_poss.Add(new Vector2(cpos, rpos));
+            }
+        }
+
+        Vector2 spawn_pos = Vector2.zero;
+
+        switch (busy_poss.Count)
+        {
+            case 0:
+                return;
+            case 1:
+                spawn_pos = busy_poss[0];
+                break;
+            case 2:
+                List<Vector2> check_poss = new List<Vector2>();
+                check_poss.Add(new Vector2(busy_poss[0].x, busy_poss[1].y));
+                check_poss.Add(new Vector2(busy_poss[1].x, busy_poss[0].y));
+
+                /* checks nearby blocks in the following way:
+                 * xb   b    bx    b
+                 * b   bx     b    xb 
+                 *
+                 * x - checked block
+                 * b - block
+                 */
+                foreach (Vector2 check_pos in check_poss)
+                {
+                    string next_prefname;
+                    if (!level_dict.TryGetValue(level_map[(int)check_pos.y, (int)check_pos.x], out next_prefname))                    // check name central block (middle center, right center, left center)
+                        next_prefname = emptyPrefabName;
+                    if (next_prefname == emptyPrefabName || next_prefname == prefab.name) continue;
+
+                    spawn_pos = check_pos;
+                }
+                break;
+
+            case 3:
+
+                /* checks nearby blocks in the following way:
+                 *   x    x       x        
+                 *  x      x     x x   x x 
+                 *   x    x             x
+                 * x - checked block
+                 */
+                if (busy_poss[0].x == busy_poss[1].x)
+                {
+                    spawn_pos = busy_poss[2];
+                    break;
+                }
+                else if (busy_poss[1].x == busy_poss[2].x)
+                {
+                    spawn_pos = busy_poss[0];
+                    break;
+                }
+
+                busy_poss = busy_poss.OrderBy(v => v.y).ToList();
+
+                if (busy_poss[0].y == busy_poss[1].y)
+                {
+                    spawn_pos = busy_poss[2];
+                }
+                else if (busy_poss[1].y == busy_poss[2].y)
+                {
+                    spawn_pos = busy_poss[0];
+                }
+                break;
+
+            case 4:
+                spawn_pos = new Vector2(col_pos, row_pos);
+                break;
+
+            default:
+                return;
+        }
+
+        spawn_pos = new Vector2(spawn_pos.x * spwnr_size.x, ((int)map_size.y - 1 - spawn_pos.y) * spwnr_size.y);
+
+        GameObject saw = Instantiate(prefab,                                                                  // create block game object
+                                     new Vector3(spawn_pos.x, spawn_pos.y, prefab.transform.position.z),
+                                     Quaternion.identity) as GameObject;
+        saw.transform.parent = sawsField.transform;
     }
 
-    private void generatePlayer(GameObject prefab, int row_pos, int col_pos, Vector2 block_pos, Vector2 block_size)
+    private void generateSaw(GameObject prefab, int row_pos, int col_pos, Vector2 spwnr_pos, Vector2 spwnr_size)
+    {
+        Dictionary<char, string> level_dict = fileParser.levelDict;
+        char[,] level_map = fileParser.levelMap;
+        Vector2 map_size = fileParser.mapSize;
+
+        List<Vector2> spawn_poss = new List<Vector2>();
+
+        Debug.Log("saw");
+
+        /* checks nearby blocks in the following way:
+         *  x 
+         * x x
+         *  x 
+         * x - checked block
+         */
+        for (int rofst = -1; rofst < 2; rofst += 2)
+        {
+            string next_prefname;
+            int rpos = row_pos;
+            rpos += rofst;
+            if (rpos < 0 || rpos >= map_size.y) continue;
+
+            if (!level_dict.TryGetValue(level_map[rpos, col_pos], out next_prefname))                    // check top/bottom block (middle top/bottom, right top/bottom, left top/bottom)
+                next_prefname = emptyPrefabName;
+
+            if (next_prefname == emptyPrefabName) continue;
+
+            spawn_poss.Add(new Vector2(spwnr_pos.x, spwnr_pos.y - rofst * spwnr_size.y));
+        }
+
+        for (int cofst = -1; cofst < 2; cofst += 2)
+        {
+            string next_prefname;
+            int cpos = col_pos;
+            cpos += cofst;
+            if (cpos < 0 || cpos >= map_size.x) continue;
+
+            if (!level_dict.TryGetValue(level_map[row_pos, cpos], out next_prefname))                    // check top/bottom block (middle top/bottom, right top/bottom, left top/bottom)
+                next_prefname = emptyPrefabName;
+
+            if (next_prefname == emptyPrefabName) continue;
+
+            spawn_poss.Add(new Vector2(spwnr_pos.x + cofst * spwnr_size.x, spwnr_pos.y));
+        }
+
+        foreach (Vector2 spawn_pos in spawn_poss)
+        {
+            GameObject saw = Instantiate(prefab,                                                                  // create block game object
+                                         new Vector3(spawn_pos.x, spawn_pos.y, prefab.transform.position.z),
+                                         Quaternion.identity) as GameObject;
+            saw.transform.parent = sawsField.transform;
+        }
+    }
+
+    /// <summary>
+    /// Method generates block object by prefab of block
+    /// </summary>
+    /// <param name="prefab"> block prefab </param>
+    /// <param name="block_pos"> block position </param>
+    private void generateBlock(GameObject prefab, Vector2 block_pos)
+    {
+        GameObject block = Instantiate(prefab,                                                                  // create block game object
+                                       new Vector3(block_pos.x, block_pos.y, prefab.transform.position.z),
+                                       Quaternion.identity) as GameObject;
+        block.transform.parent = blocksField.transform;                                                         // places block in blocks field
+    }
+
+    /// <summary>
+    /// Method generates player spawner block by prefab of player and initiates player creation.
+    /// </summary>
+    /// <param name="prefab"> prefab of player </param>
+    /// <param name="row_pos"> row position in level map </param>
+    /// <param name="col_pos"> col position in level map </param>
+    /// <param name="spwnr_pos"> position of spawner block </param>
+    /// <param name="spwnr_size"> size of spawner block </param>
+    private void generatePlayer(GameObject prefab, int row_pos, int col_pos, Vector2 spwnr_pos, Vector2 spwnr_size)
     {
         Dictionary<char, string> level_dict = fileParser.levelDict;
         char[,] level_map = fileParser.levelMap; 
         Vector2 map_size = fileParser.mapSize;
 
-        GameObject spawn_prefab = findGameObjByName(prefab.name, spawnPrefabs, (key_n, val_n) => val_n.Contains(key_n));
-        if (spawn_prefab == null) return;
-        GameObject spawn_obj =
-            Instantiate(spawn_prefab, new Vector3(block_pos.x, block_pos.y, spawn_prefab.transform.position.z), Quaternion.identity) as GameObject;
-        spawn_obj.transform.parent = playerField.transform;
+        GameObject spwn_prefab = findGameObjByName(prefab.name, spawnPrefabs, (key_n, val_n) => val_n.Contains(key_n));         // search of spawner prefab by player prefab name
+        if (spwn_prefab == null) return;
+        GameObject spwn_obj = Instantiate(spwn_prefab,                                                                          // create spawner object
+                                          new Vector3(spwnr_pos.x, spwnr_pos.y, spwn_prefab.transform.position.z),
+                                          Quaternion.identity) as GameObject;
+        spwn_obj.transform.parent = playerField.transform;
 
-        Vector2 spawn_pos = Vector2.zero;
+        Vector2 spawn_pos = Vector2.zero;                                                                                       // spawn position of player
         Vector2 player_size = sizeObjByBoxCollider2D(prefab);
 
-        bool find_spwn_pos = false;
+        /* checks nearby blocks in the following way:
+         * xxx
+         * x x
+         * xxx
+         * x - checked block
+         */
+        bool find_spwn_pos = false;                                                                         // spawn position was finded?
         for (int cofst = 0; cofst < 3 && !find_spwn_pos; cofst++)
         {
             for (int rofst = -1; rofst < 2; rofst += 2)
@@ -152,34 +374,31 @@ public class GameSceneHandler : MonoBehaviour
                 cpos += col_ofst;
                 if (cpos < 0 || cpos >= map_size.x) continue;
 
-                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                    // check name central block (middle center, right center, left center)
                     next_prefname = emptyPrefabName;
 
-                if (next_prefname != emptyPrefabName && cpos != col_pos) continue;
+                if (next_prefname != emptyPrefabName && cpos != col_pos) continue;                        // if central block is empty
 
                 rpos += rofst;
                 if (rpos < 0 || rpos >= map_size.y) continue;
 
-                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))                    // check top/bottom block (middle top/bottom, right top/bottom, left top/bottom)
                     next_prefname = emptyPrefabName;
 
                 if (next_prefname != emptyPrefabName) continue;
 
-                spawn_pos.x = block_pos.x + col_ofst * block_size.x;
-                spawn_pos.y = block_pos.y + rofst * block_size.y / 2 - rofst * player_size.y / 2;
+                spawn_pos.x = spwnr_pos.x + col_ofst * spwnr_size.x;                                      // calculate spawn position
+                spawn_pos.y = spwnr_pos.y + rofst * spwnr_size.y / 2 - rofst * player_size.y / 2;
                 find_spwn_pos = true;
                 break;
             }
         }
-        Debug.Log("find_spwn_pos: " + find_spwn_pos);
-        Debug.Log("spawned_pos: " + spawn_pos);
-        Debug.Log("block_pos: " + block_pos);
         if (!find_spwn_pos) return;
 
-        PlayerSpawner player_spwnr = spawn_obj.GetComponent<PlayerSpawner>();
+        PlayerSpawner player_spwnr = spwn_obj.GetComponent<PlayerSpawner>();
         if (player_spwnr == null) return;
-        player_spwnr.InitSpawner(prefab, playerField, spawn_pos);
-        player_spwnr.Spawn();
+        player_spwnr.InitSpawner(prefab, playerField, spawn_pos);                                                   // init player spawner
+        player_spwnr.Spawn();                                                                                       // spawn player
     }
 
     /// <summary>
@@ -433,6 +652,20 @@ public class GameSceneHandler : MonoBehaviour
     private static Vector2 sizeObjByBoxCollider2D(GameObject obj)
     {
         BoxCollider2D objBox = obj.GetComponent<BoxCollider2D>();
+        if (objBox == null) return Vector2.zero;
+        return new Vector2(Mathf.Abs(objBox.size.x * obj.transform.localScale.x),
+                           Mathf.Abs(objBox.size.y * obj.transform.localScale.y));
+    }
+
+    /// <summary>
+    /// Function is calculate size game object by CapsuleCollider2D component
+    /// </summary>
+    /// <param name="obj"> any game object </param>
+    /// <returns> size game object </returns>
+    private static Vector2 sizeObjByCapsuleCollider2D(GameObject obj)
+    {
+        CapsuleCollider2D objBox = obj.GetComponent<CapsuleCollider2D>();
+        if (objBox == null) return Vector2.zero;
         return new Vector2(Mathf.Abs(objBox.size.x * obj.transform.localScale.x),
                            Mathf.Abs(objBox.size.y * obj.transform.localScale.y));
     }

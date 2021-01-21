@@ -2,3 +2,9 @@
 p : player
 a : stone1_0
 b : stone1_1
+c : stone2_0
+d : stone2_1
+e : concrete1_0
+f : concrete1_1
+* : saw
+@ : big_saw
