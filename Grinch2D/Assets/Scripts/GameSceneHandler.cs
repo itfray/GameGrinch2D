@@ -90,7 +90,7 @@ public class GameSceneHandler : MonoBehaviour
                 GameObject prefab = findGameObjByName(prefabName, gamePrefabs, (key_n, val_n) => key_n == val_n);
                 if (prefab == null) continue;
 
-                generateGameObj(i, j, blockSmplSize, prefab);
+                generateGameObj(prefab, i, j, blockSmplSize);
             }
         }
 
@@ -100,7 +100,7 @@ public class GameSceneHandler : MonoBehaviour
     }
 
 
-    private void generateGameObj(int row_pos, int col_pos, Vector2 block_size, GameObject prefab)
+    private void generateGameObj(GameObject prefab, int row_pos, int col_pos, Vector2 block_size)
     {
         Vector2 map_size = fileParser.mapSize;
         Vector2 block_pos = new Vector2(col_pos * block_size.x, ((int)map_size.y - 1 - row_pos) * block_size.y);        // calculate position for instantiate prefab object
@@ -108,32 +108,78 @@ public class GameSceneHandler : MonoBehaviour
         switch (prefab.tag)
         {
             case "Player":
-                generatePlayer(block_pos, prefab);
+                generatePlayer(prefab, row_pos, col_pos, block_pos, block_size);
                 break;
             case "Block":
-                generateBlock(block_pos, prefab);
+                generateBlock(prefab, block_pos);
                 break;
         }
     }
 
-    private void generateBlock(Vector2 position, GameObject prefab)
+    private void generateBlock(GameObject prefab, Vector2 block_pos)
     {
         // create block game object
-        GameObject gameObj =
-            Instantiate(prefab, new Vector3(position.x, position.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
-        gameObj.transform.parent = blocksField.transform;
+        GameObject block =
+            Instantiate(prefab, new Vector3(block_pos.x, block_pos.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
+        block.transform.parent = blocksField.transform;
     }
 
-    private void generatePlayer(GameObject prefab, int row_pos, int col_pos, Vector2 block_size)
+    private void generatePlayer(GameObject prefab, int row_pos, int col_pos, Vector2 block_pos, Vector2 block_size)
     {
+        Dictionary<char, string> level_dict = fileParser.levelDict;
         char[,] level_map = fileParser.levelMap; 
         Vector2 map_size = fileParser.mapSize;
-        Vector2 block_pos = new Vector2(col_pos * block_size.x, ((int)map_size.y - 1 - row_pos) * block_size.y);
 
-        // create block game object
-        GameObject gameObj =
-            Instantiate(prefab, new Vector3(position.x, position.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
-        gameObj.transform.parent = playerField.transform;
+        GameObject spawn_prefab = findGameObjByName(prefab.name, spawnPrefabs, (key_n, val_n) => val_n.Contains(key_n));
+        if (spawn_prefab == null) return;
+        GameObject spawn_obj =
+            Instantiate(spawn_prefab, new Vector3(block_pos.x, block_pos.y, spawn_prefab.transform.position.z), Quaternion.identity) as GameObject;
+        spawn_obj.transform.parent = playerField.transform;
+
+        Vector2 spawn_pos = Vector2.zero;
+        Vector2 player_size = sizeObjByBoxCollider2D(prefab);
+
+        bool find_spwn_pos = false;
+        for (int cofst = 0; cofst < 3 && !find_spwn_pos; cofst++)
+        {
+            for (int rofst = -1; rofst < 2; rofst += 2)
+            {
+                string next_prefname;
+                int rpos = row_pos;
+                int cpos = col_pos;
+                int col_ofst = (cofst < 2 ? cofst : -1);
+
+                cpos += col_ofst;
+                if (cpos < 0 || cpos >= map_size.x) continue;
+
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))
+                    next_prefname = emptyPrefabName;
+
+                if (next_prefname != emptyPrefabName && cpos != col_pos) continue;
+
+                rpos += rofst;
+                if (rpos < 0 || rpos >= map_size.y) continue;
+
+                if (!level_dict.TryGetValue(level_map[rpos, cpos], out next_prefname))
+                    next_prefname = emptyPrefabName;
+
+                if (next_prefname != emptyPrefabName) continue;
+
+                spawn_pos.x = block_pos.x + col_ofst * block_size.x;
+                spawn_pos.y = block_pos.y + rofst * block_size.y / 2 - rofst * player_size.y / 2;
+                find_spwn_pos = true;
+                break;
+            }
+        }
+        Debug.Log("find_spwn_pos: " + find_spwn_pos);
+        Debug.Log("spawned_pos: " + spawn_pos);
+        Debug.Log("block_pos: " + block_pos);
+        if (!find_spwn_pos) return;
+
+        PlayerSpawner player_spwnr = spawn_obj.GetComponent<PlayerSpawner>();
+        if (player_spwnr == null) return;
+        player_spwnr.InitSpawner(prefab, playerField, spawn_pos);
+        player_spwnr.Spawn();
     }
 
     /// <summary>
@@ -387,8 +433,8 @@ public class GameSceneHandler : MonoBehaviour
     private static Vector2 sizeObjByBoxCollider2D(GameObject obj)
     {
         BoxCollider2D objBox = obj.GetComponent<BoxCollider2D>();
-        return new Vector2(objBox.size.x * obj.transform.localScale.x,
-                           objBox.size.y * obj.transform.localScale.y);
+        return new Vector2(Mathf.Abs(objBox.size.x * obj.transform.localScale.x),
+                           Mathf.Abs(objBox.size.y * obj.transform.localScale.y));
     }
 
     /// <summary>

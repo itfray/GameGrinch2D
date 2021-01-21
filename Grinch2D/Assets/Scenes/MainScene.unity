@@ -993,6 +993,8 @@ MonoBehaviour:
   - {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
   - {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec, type: 3}
   - {fileID: 308226852408147019, guid: 9cf00b70b9213ac479a77c8749b57da6, type: 3}
+  spawnPrefabs:
+  - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty
 --- !u!114 &1455934991
 MonoBehaviour:
