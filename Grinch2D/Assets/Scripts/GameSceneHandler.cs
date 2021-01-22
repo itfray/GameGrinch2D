@@ -76,8 +76,7 @@ public class GameSceneHandler : MonoBehaviour
     {
         Vector2 map_size = fileParser.mapSize;
         Vector2 blockSmplSize = SizeScripts.sizeObjByBoxCollider2D(blockSample);
-        // calculate map center
-        mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,
+        mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,                                  // calculate map center
                                    blockSmplSize.y * (map_size.y - 1) / 2);
     }
 
@@ -121,14 +120,14 @@ public class GameSceneHandler : MonoBehaviour
     /// <param name="block_size"> size of one block </param>
     private void generateGameObj(GameObject prefab, int row_pos, int col_pos, Vector2 block_size)
     {
-        GenObjStrategy genObj;
+        GenObjStrategy genObj;                                                                                                      // strategy of generation game object
 
         switch (prefab.tag)
         {
             case "Player":
-                genObj = GetComponent<GenPlayerStrategy>();
+                genObj = GetComponent<GenPlayerStrategy>();                                                                         // select strategy of generation player
                 genObj.spwnrPrefab = findGameObjByName(prefab.name, spawnPrefabs, (key_n, val_n) => val_n.Contains(key_n));         // search of spawner prefab by player prefab name
-                genObj.spwnrParentField = playerField;
+                genObj.spwnrParentField = playerField;                                                                              // select parent fields for generation
                 genObj.objParentField = playerField;
                 break;
             case "Block":
@@ -147,10 +146,10 @@ public class GameSceneHandler : MonoBehaviour
                 return;
         }
 
-        genObj.objPrefab = prefab;
+        genObj.objPrefab = prefab;                                                                                                  // set main params for strategy of generation
         genObj.setParams(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize, emptyPrefabName, block_size);
         genObj.setSpwnrPosInMap(row_pos, col_pos);
-        genObj.Generate();
+        genObj.Generate();                                                                                                          // create game object
     }
 
     /// <summary>

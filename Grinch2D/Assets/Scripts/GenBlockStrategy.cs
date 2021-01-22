@@ -1,10 +1,17 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// GenBlockStrategy is strategy of generation block
+/// </summary>
 public class GenBlockStrategy : GenObjStrategy
 {
+    /// <summary>
+    /// Method generates block by prefab.
+    /// </summary>
     public override void Generate()
     {
-        if (objPrefab == null || objParentField == null) return;
+        if (objPrefab == null || objParentField == null)                                                           // checks needed params
+            throw new System.ArgumentNullException("objPrefab || objParentField");
 
         GameObject block = Instantiate(objPrefab,                                                                  // create block game object
                                new Vector3(spwnr_pos.x, spwnr_pos.y, objPrefab.transform.position.z),

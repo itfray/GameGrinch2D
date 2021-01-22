@@ -1,24 +1,8 @@
 0
 aaaaaaa
 a@ p @a
-a     a
 a    ba
 a     a
-a@   @a
-a     a
-a     a
-a     a
-aa    a
-a@    a
-aa    a
-a     a
-a    aa
-a   a@a
-a    aa
-a     a
-a     a
-a     a
-a*   *a
 a     a
 a     a
 a     a
@@ -26,8 +10,24 @@ a     a
 a     a
 a     a
 a     a
-a*   *a
-a** **a
+a    *a
+a    @a
+a    *a
+a     a
+a     a
+a     a
+a     a
+a    *a
+a     a
+a    @a
+a     a
+a    *a
+a     a
+a     a
+a     a
+a     a
+a     a
+a     a
 abb bba
 aaa aaa
 aaa aaa
@@ -59,16 +59,16 @@ a     a
 a     a
 a     a
 a     a
-a    @a
+a     a
 a     a
 a bbbba
 a     a
 a     a
 a     a
 a     a
-a    aa
-a    *a
-a    aa
-aa    a
-a*a   a
+a     a
+a     a
+a     a
+a     a
+a     a
 abbbbba

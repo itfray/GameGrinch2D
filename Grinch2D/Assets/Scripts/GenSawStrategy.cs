@@ -1,12 +1,19 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// GenSawStrategy is strategy of generation saw
+/// </summary>
 public class GenSawStrategy : GenObjStrategy
 {
+    /// <summary>
+    /// Method generates saw by prefab.
+    /// </summary>
     public override void Generate()
     {
         if (levelDict == null || levelMap == null ||
             objPrefab == null || objParentField == null)
-            return;
+            throw new System.ArgumentNullException("levelDict || levelMap || " +
+                                                   "objPrefab || objParentField");
 
         int row_pos = (int)map_spwnr_pos.y;
         int col_pos = (int)map_spwnr_pos.x;
@@ -17,10 +24,9 @@ public class GenSawStrategy : GenObjStrategy
          *  x 
          * x - checked block
          */
-
         for (int cofst = -1; cofst < 2; cofst++)
         {
-            int rofst_start = 0;
+            int rofst_start = 0;                                                                                               // interval boundaries
             int rofst_end = 1;
 
             if (cofst == 0)
@@ -35,17 +41,17 @@ public class GenSawStrategy : GenObjStrategy
                 int rpos = row_pos + rofst;
                 int cpos = col_pos + cofst;
 
-                if (rpos < 0 || rpos >= mapSize.y || cpos < 0 || cpos >= mapSize.x) continue;
+                if (rpos < 0 || rpos >= mapSize.y || cpos < 0 || cpos >= mapSize.x) continue;                                   // checks validity of coords
 
-                if (!levelDict.TryGetValue(levelMap[rpos, cpos], out next_prefname))                                      // check name central block (middle center, right center, left center)
+                if (!levelDict.TryGetValue(levelMap[rpos, cpos], out next_prefname))                                            // check name central block (middle center, right center, left center)
                     next_prefname = emptyPrefabName;
 
-                if (next_prefname == emptyPrefabName || next_prefname == objPrefab.name) continue;
+                if (next_prefname == emptyPrefabName || next_prefname == objPrefab.name) continue;                              // checks busy block
 
                 Vector2 spawn_pos = new Vector2(spwnr_pos.x + cofst * spwnrSize.x, spwnr_pos.y - rofst * spwnrSize.y);
-                GameObject saw = Instantiate(objPrefab,                                                                        // create block game object
-                                         new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),
-                                         Quaternion.identity) as GameObject;
+                GameObject saw = Instantiate(objPrefab,                                                                         // creates saw game object
+                                             new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),
+                                             Quaternion.identity) as GameObject;
                 saw.transform.parent = objParentField.transform;
             }
         }

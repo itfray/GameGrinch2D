@@ -2,13 +2,21 @@
 using System.Linq;
 using UnityEngine;
 
+
+/// <summary>
+/// GenSawStrategy is strategy of generation big saw
+/// </summary>
 public class GenBigSawStrategy : GenObjStrategy
 {
+    /// <summary>
+    /// Method generates big saw by prefab.
+    /// </summary>
     public override void Generate()
     {
         if (levelDict == null || levelMap == null ||
             objPrefab == null || objParentField == null)
-            return;
+            throw new System.ArgumentNullException("levelDict || levelMap || " +
+                                                   "objPrefab || objParentField");
 
         int row_pos = (int)map_spwnr_pos.y;
         int col_pos = (int)map_spwnr_pos.x;
@@ -45,7 +53,7 @@ public class GenBigSawStrategy : GenObjStrategy
 
                 if (next_prefname == emptyPrefabName) continue;
 
-                busy_poss.Add(new Vector2(cpos, rpos));
+                busy_poss.Add(new Vector2(cpos, rpos));                                                 // add in busy list
             }
         }
 
