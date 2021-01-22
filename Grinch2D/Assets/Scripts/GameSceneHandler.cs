@@ -18,6 +18,7 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject playerField;                                                  // field for created palyer
     public GameObject blocksField;                                                  // field for created blocks
     public GameObject sawsField;                                                    // field for created saws
+    public GameObject spikesField;                                                  // field for created spikes
 
     public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
     public GameObject[] gamePrefabs;                                                // all game prefabs
@@ -141,6 +142,10 @@ public class GameSceneHandler : MonoBehaviour
             case "BigSaw":
                 genObj = GetComponent<GenBigSawStrategy>();
                 genObj.objParentField = sawsField;
+                break;
+            case "Spike":
+                genObj = GetComponent<GenSpikeStrategy>();
+                genObj.objParentField = spikesField;
                 break;
             default:
                 return;
