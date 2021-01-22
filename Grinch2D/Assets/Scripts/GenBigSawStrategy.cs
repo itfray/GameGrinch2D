@@ -6,7 +6,7 @@ using UnityEngine;
 /// <summary>
 /// GenSawStrategy is strategy of generation big saw
 /// </summary>
-public class GenBigSawStrategy : GenObjStrategy
+public class GenBigSawStrategy : GenBy4Strategy
 {
     /// <summary>
     /// Method generates big saw by prefab.
@@ -18,45 +18,13 @@ public class GenBigSawStrategy : GenObjStrategy
             throw new System.ArgumentNullException("levelDict || levelMap || " +
                                                    "objPrefab || objParentField");
 
-        int row_pos = (int)map_spwnr_pos.y;
-        int col_pos = (int)map_spwnr_pos.x;
-
-        List<Vector2> busy_poss = new List<Vector2>();
-
         /* checks nearby blocks in the following way:
          *  x
          * x x
          *  x 
          * x - checked block
          */
-        for (int cofst = -1; cofst < 2; cofst++)
-        {
-            int rofst_start = 0;
-            int rofst_end = 1;
-
-            if (cofst == 0)
-            {
-                rofst_start = -1;
-                rofst_end = 2;
-            }
-
-            for (int rofst = rofst_start; rofst < rofst_end; rofst += rofst_end)
-            {
-                string next_prefname;
-                int rpos = row_pos + rofst;
-                int cpos = col_pos + cofst;
-
-                if (rpos < 0 || rpos >= mapSize.y || cpos < 0 || cpos >= mapSize.x) continue;
-
-                if (!levelDict.TryGetValue(levelMap[rpos, cpos], out next_prefname))                    // check name central block (middle center, right center, left center)
-                    next_prefname = emptyPrefabName;
-
-                if (next_prefname == emptyPrefabName) continue;
-
-                busy_poss.Add(new Vector2(cpos, rpos));                                                 // add in busy list
-            }
-        }
-
+        List<Vector2> busy_poss = getBusyPositions(objPrefab.name);
         Vector2 spawn_pos = Vector2.zero;
 
         switch (busy_poss.Count)
@@ -121,7 +89,7 @@ public class GenBigSawStrategy : GenObjStrategy
                 break;
 
             case 4:
-                spawn_pos = new Vector2(col_pos, row_pos);
+                spawn_pos = new Vector2((int)map_spwnr_pos.x, (int)map_spwnr_pos.y);
                 break;
 
             default:

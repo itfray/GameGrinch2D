@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// GenBlockStrategy is strategy of generation game object by 4 nearby blocks
+/// </summary>
 public abstract class GenBy4Strategy : GenObjStrategy
 {
     protected List<Vector2> getBusyPositions(params string[] excldPrefNames)
@@ -18,7 +22,7 @@ public abstract class GenBy4Strategy : GenObjStrategy
          */
         for (int cofst = -1; cofst < 2; cofst++)
         {
-            int rofst_start = 0;
+            int rofst_start = 0;                                                                        // interval boundaries
             int rofst_end = 1;
 
             if (cofst == 0)
@@ -33,14 +37,14 @@ public abstract class GenBy4Strategy : GenObjStrategy
                 int rpos = row_pos + rofst;
                 int cpos = col_pos + cofst;
 
-                if (rpos < 0 || rpos >= mapSize.y || cpos < 0 || cpos >= mapSize.x) continue;
+                if (rpos < 0 || rpos >= mapSize.y || cpos < 0 || cpos >= mapSize.x) continue;           // checks validity of coords
 
-                if (!levelDict.TryGetValue(levelMap[rpos, cpos], out next_prefname))                    // check name central block (middle center, right center, left center)
+                if (!levelDict.TryGetValue(levelMap[rpos, cpos], out next_prefname))                    // checks name central block (middle center, right center, left center)
                     next_prefname = emptyPrefabName;
 
-                if (next_prefname == emptyPrefabName) continue;
+                if (next_prefname == emptyPrefabName) continue;                                         // checks busy block
 
-                bool next_iter = false;
+                bool next_iter = false;                                                                 // exlude specified prefab names
                 foreach (string exld_prefname in excldPrefNames)
                 {
                     if (next_prefname == exld_prefname)
