@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// GenSawStrategy is strategy of generation saw
+/// GenSawStrategy is strategy of generation little saw
 /// </summary>
 public class GenSawStrategy : GenBy4Strategy
 {
@@ -29,6 +29,9 @@ public class GenSawStrategy : GenBy4Strategy
                                          new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),
                                          Quaternion.identity) as GameObject;
             saw.transform.parent = objParentField.transform;
+            SelfRotator selfRotator = saw.GetComponent<SelfRotator>();
+            if (selfRotator == null) return;
+            selfRotator.setRandDAngle();
         }
     }
 }

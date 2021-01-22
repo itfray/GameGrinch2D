@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 /// <summary>
-/// GenSawStrategy is strategy of generation big saw
+/// GenBigSawStrategy is strategy of generation big saw
 /// </summary>
 public class GenBigSawStrategy : GenBy4Strategy
 {
@@ -102,5 +102,8 @@ public class GenBigSawStrategy : GenBy4Strategy
                                      new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),
                                      Quaternion.identity) as GameObject;
         saw.transform.parent = objParentField.transform;
+        SelfRotator selfRotator = saw.GetComponent<SelfRotator>();
+        if (selfRotator == null) return;
+        selfRotator.setRandDAngle();                                                                             // set random rotation
     }
 }
