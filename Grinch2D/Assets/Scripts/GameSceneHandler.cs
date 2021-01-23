@@ -147,6 +147,10 @@ public class GameSceneHandler : MonoBehaviour
                 genObj = GetComponent<GenSpikeStrategy>();
                 genObj.objParentField = spikesField;
                 break;
+            case "MovingSaw":
+                genObj = GetComponent<GenMovingSawStrategy>();
+                genObj.objParentField = sawsField;
+                break;
             default:
                 return;
         }

@@ -46,18 +46,18 @@ aaa aaa
 aaa aaa
 a*   *a
 a*   *a
+a     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+a4    4                                       3aaaaaaaaa
+a                                                      a
+a                                                      a
+a     bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbba
+a    1a
 a     a
 a     a
 a     a
 a     a
 a     a
-a     a
-a     a
-a     a
-a     a
-a     a
-a     a
-a     a
+a3   2a
 a     a
 a     a
 a   @ a
@@ -68,7 +68,7 @@ a   a@a
 aa   aa
 a@    a
 aa   @a
-a     a
+a1   2a
 a     a
 a@   @a
 abbbbba

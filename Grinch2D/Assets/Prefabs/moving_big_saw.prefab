@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 857057327}
   m_Layer: 0
   m_Name: moving_big_saw
-  m_TagString: MoveBigSaw
+  m_TagString: MovingSaw
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

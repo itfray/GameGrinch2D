@@ -977,6 +977,7 @@ GameObject:
   - component: {fileID: 1455934993}
   - component: {fileID: 1455934992}
   - component: {fileID: 1455934996}
+  - component: {fileID: 1455934997}
   m_Layer: 0
   m_Name: gamescene
   m_TagString: Untagged
@@ -1040,6 +1041,8 @@ MonoBehaviour:
   - {fileID: 5818134098678246762, guid: 6a6fca99a6743a94fa03380dfbb69b3f, type: 3}
   - {fileID: 5244414347243242031, guid: 58562e8d26d614f4ca980d984c5b9820, type: 3}
   - {fileID: 5244414347243242031, guid: 6172daa666e62ab4e8dcdcc4d0a2a432, type: 3}
+  - {fileID: 1286023049779711281, guid: 3a141e822bc63ff42908afd465cf328d, type: 3}
+  - {fileID: 1286023049779711281, guid: 17e3085159d0cf848b045a5c9399bb74, type: 3}
   spawnPrefabs:
   - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty
@@ -1117,6 +1120,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 80e8b76e33b5ce64dbc805744ab65a97, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &1455934997
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1455934988}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 57588c50722993b4ea71572af6ccccde, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1705051703
