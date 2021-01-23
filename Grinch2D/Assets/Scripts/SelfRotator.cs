@@ -25,8 +25,10 @@ public class SelfRotator : MonoBehaviour
         transform.eulerAngles = Vector3.forward * curr_angle;       // roate object on angle
         curr_angle += dAngle;
 
-        if (Mathf.Abs(curr_angle) >= 360) 
-            curr_angle = 0;
+        if (curr_angle >= 360) 
+            curr_angle -= 360;
+        else if (curr_angle <= -360)
+            curr_angle += 360;
     }
 
     /// <summary>
