@@ -37,6 +37,5 @@ public class SelfRotator : MonoBehaviour
     public void setRandDAngle()
     {
         dAngle = (Random.Range(0, 2) == 0 ? -1 : 1) * Random.Range(dStartAngle, dEndAngle);     // change dAngle value
-        Debug.Log(dAngle);
     }
 }
