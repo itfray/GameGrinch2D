@@ -19,6 +19,7 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject blocksField;                                                  // field for created blocks
     public GameObject sawsField;                                                    // field for created saws
     public GameObject spikesField;                                                  // field for created spikes
+    public GameObject turretsField;                                                 // field for created turrets
 
     public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
     public GameObject[] gamePrefabs;                                                // all game prefabs
@@ -150,6 +151,10 @@ public class GameSceneHandler : MonoBehaviour
             case "MovingSaw":
                 genObj = GetComponent<GenMovingSawStrategy>();
                 genObj.objParentField = sawsField;
+                break;
+            case "Turret":
+                genObj = GetComponent<GenTurretStrategy>();
+                genObj.objParentField = turretsField;
                 break;
             default:
                 return;
