@@ -7,7 +7,7 @@
 public static class MathWay
 {
     /// <summary>
-    /// Method calculates angle between points.
+    /// Function calculates angle between points.
     /// p1
     /// |
     /// |
@@ -17,27 +17,48 @@ public static class MathWay
     /// </summary>
     /// <param name="main_point"> main point relative to which the angle is calculated</param>
     /// <param name="point"> point </param>
-    /// <returns> angle value </returns>
-    public static float angleBetween(Vector2 main_point, Vector2 point)
+    /// <returns> angle degrees </returns>
+    public static float calcAngle(Vector2 main_point, Vector2 point)
+    {
+        return calcAngle(calcDirect(main_point, point));
+    }
+
+    /// <summary>
+    /// Function calculates direction of point reltive main point
+    /// </summary>
+    /// <param name="main_point"> main point </param>
+    /// <param name="point"> point </param>
+    /// <returns> direction {cos(a), sin(a)} </returns>
+    public static Vector2 calcDirect(Vector2 main_point, Vector2 point)
     {
         float AB = point.x - main_point.x;
         float BC = point.y - main_point.y;
         float AC = Mathf.Sqrt(AB * AB + BC * BC);
 
-        float angle = 0;
+        Vector2 direct = Vector2.zero;
         if (AC != 0)
         {
-            float cos_angl = AB / AC;
-            float sin_angl = BC / AC;
-
-            if (sin_angl >= 0)
-                angle = Mathf.Acos(cos_angl);
-            else
-                if (cos_angl < 0)
-                angle = Mathf.PI - Mathf.Asin(sin_angl);
-            else
-                angle = 2 * Mathf.PI + Mathf.Asin(sin_angl);
+            direct.x = AB / AC;
+            direct.y = BC / AC;
         }
+        return direct;
+    }
+
+    /// <summary>
+    /// Function calculates angle by direction
+    /// </summary>
+    /// <param name="direct"> direction </param>
+    /// <returns> angle degrees </returns>
+    public static float calcAngle(Vector2 direct)
+    {
+        float angle = 0;
+        if (direct.y >= 0)
+            angle = Mathf.Acos(direct.x);
+        else
+            if (direct.x < 0)
+            angle = Mathf.PI - Mathf.Asin(direct.y);
+        else
+            angle = 2 * Mathf.PI + Mathf.Asin(direct.y);
         return angle * Mathf.Rad2Deg;
     }
 

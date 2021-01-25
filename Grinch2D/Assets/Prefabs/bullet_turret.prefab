@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1777145075478529911}
   - component: {fileID: 1777145075478529912}
   - component: {fileID: 1777145075478529910}
+  - component: {fileID: 1551633373}
   m_Layer: 0
   m_Name: bullet_turret
   m_TagString: Untagged
@@ -98,3 +99,21 @@ CapsuleCollider2D:
   m_Offset: {x: 0.24594712, y: -0.0010398399}
   m_Size: {x: 0.78969973, y: 0.18594207}
   m_Direction: 1
+--- !u!114 &1551633373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777145075478529913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a61cae616f2be3f4eba062c0d8bc30d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  max_speed: {x: 20, y: 20}
+  direction: {x: 1, y: 0}
+  damage: 1
+  owner: {fileID: 0}
+  ddirect: 0.01
+  target: {fileID: 0}

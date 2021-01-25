@@ -7,9 +7,21 @@ public class TurretHandler : MonoBehaviour
     public string targetTag = "Player";
     public GameObject target;
 
+    private GameObject gun;
+
     // Start is called before the first frame update
     void Start()
     {
+        gun = transform.GetChild(0).gameObject;
+        if (gun.name != "gun")
+        {
+            for (int i = 0; i < transform.childCount; i++)
+            {
+                Transform obj = transform.GetChild(i);
+                if (obj.gameObject.name == "gun")
+                    gun = obj.gameObject;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -35,9 +47,9 @@ public class TurretHandler : MonoBehaviour
     {
         if (target != null)
         {
-            float angle = MathWay.angleBetween(new Vector2(transform.position.x, transform.position.y),
+            float angle = MathWay.calcAngle(new Vector2(transform.position.x, transform.position.y),
                                                new Vector2(target.transform.position.x, target.transform.position.y));
-            transform.eulerAngles = Vector3.forward * angle;
+            gun.transform.eulerAngles = Vector3.forward * angle;
         }
     }
 }
