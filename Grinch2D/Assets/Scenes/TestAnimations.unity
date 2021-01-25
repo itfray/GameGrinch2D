@@ -523,6 +523,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
+--- !u!1 &715273385 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a,
+    type: 3}
+  m_PrefabInstance: {fileID: 715273384}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &844268485
 GameObject:
   m_ObjectHideFlags: 0
@@ -1954,6 +1960,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1551633373, guid: af46e7117c691364f9d18223ab95cf18, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 715273385}
+    - target: {fileID: 1551633373, guid: af46e7117c691364f9d18223ab95cf18, type: 3}
+      propertyPath: max_speed.x
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551633373, guid: af46e7117c691364f9d18223ab95cf18, type: 3}
+      propertyPath: max_speed.y
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 1551633373, guid: af46e7117c691364f9d18223ab95cf18, type: 3}
+      propertyPath: dangle
+      value: 0.01
+      objectReference: {fileID: 0}
     - target: {fileID: 1777145075478529911, guid: af46e7117c691364f9d18223ab95cf18,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2016,30 +2038,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: af46e7117c691364f9d18223ab95cf18, type: 3}
---- !u!1 &1551633372 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1777145075478529913, guid: af46e7117c691364f9d18223ab95cf18,
-    type: 3}
-  m_PrefabInstance: {fileID: 1551633371}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1551633373
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1551633372}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a61cae616f2be3f4eba062c0d8bc30d4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  max_speed: {x: 20, y: 20}
-  direction: {x: 1, y: 0}
-  damage: 1
-  owner: {fileID: 0}
-  ddirect: 0.01
-  target: {fileID: 0}
 --- !u!1 &2065351278
 GameObject:
   m_ObjectHideFlags: 0
