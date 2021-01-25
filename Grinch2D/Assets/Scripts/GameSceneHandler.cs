@@ -194,7 +194,7 @@ public class GameSceneHandler : MonoBehaviour
         Vector2 bgSmplSize = SizeScripts.sizeObjByBoxCollider2D(bgSample);
 
         // calculate number of backgrounds between main camera and map center
-        int cbg_from_center = countLinesFitOnBetween(bgSmplSize.y, Camera.main.transform.position.y, mapCenterPos.y);
+        int cbg_from_center = MathWay.countLinesFitOnBetween(bgSmplSize.y, Camera.main.transform.position.y, mapCenterPos.y);
 
         int istart = -1;                                                                                // offset bottom background from current background
         int iend = 1;                                                                                   // offset top background from current background
@@ -348,7 +348,7 @@ public class GameSceneHandler : MonoBehaviour
         Transform firstBg = bg_sorted_byy.FirstOrDefault();
 
         // calculate number of backgrounds between main camera and map center
-        int cbg_from_center = countLinesFitOnBetween(bgSmplSize.y, firstBg.position.y, mapCenterPos.y);
+        int cbg_from_center = MathWay.countLinesFitOnBetween(bgSmplSize.y, firstBg.position.y, mapCenterPos.y);
 
         // central background sprite displayed in map center position
         int ind_bg = midLevelBgSpriteIndex() + cbg_from_center;                                         // get first background sprite index (which background stage to display)
@@ -407,24 +407,6 @@ public class GameSceneHandler : MonoBehaviour
         int ind_mid_bg = levelBgSprites.Count / 2;
         if (levelBgSprites.Count % 2 == 0) ind_mid_bg -= 1;
         return ind_mid_bg;
-    }
-
-    /// <summary>
-    /// Function is calculate how many lines with specified length can fit between two positions.
-    /// Example: 
-    /// pos1 = -7.5, pos2 = 0, len = 4, result = -2
-    /// pos1 = 7.5, pos2 = 0, len = 4, result = 2
-    /// </summary>
-    /// <param name="line_len"> Checked line length </param>
-    /// <param name="pos1"> Position 1 </param>
-    /// <param name="pos2"> Position 2  </param>
-    /// <returns> Signed count </returns>
-    private static int countLinesFitOnBetween(float line_len, float pos1, float pos2)
-    {
-        float fc = (pos1 - pos2) / line_len;
-        int fcsign = fc > 0 ? 1 : -1;
-        int c = fcsign * Mathf.RoundToInt(Mathf.Abs(fc));
-        return c;
     }
 
     /// <summary>

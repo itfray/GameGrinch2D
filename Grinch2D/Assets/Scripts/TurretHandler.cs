@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class TurretHandler : MonoBehaviour
 {
-    public Vector2 main_point = new Vector2(0, 0);
-    public Vector2 point = new Vector2(4, 0);
+    public string targetTag = "Player";
+    public GameObject target;
 
     // Start is called before the first frame update
     void Start()
@@ -15,30 +15,29 @@ public class TurretHandler : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        float angle = calcAngle(main_point, point);
-        Debug.Log("main_point: " + main_point);
-        Debug.Log("point: " + point);
-        Debug.Log("angle: " + angle);
-        Debug.Log("===========================================");
+        if (target == null)
+            UpdateTarget();
+
+        UpdateGunAngle();
     }
 
-    public static float calcAngle(Vector2 main_point, Vector2 point)
+    void UpdateTarget()
     {
-        float AB = point.x - main_point.x;
-        float BC = point.y - main_point.y;
-        float AC = Mathf.Sqrt(AB * AB + BC * BC);
-        float cos_angl = AB / AC;
-        float sin_angl = BC / AC;
+        if (targetTag != null && targetTag.Length > 0)
+        {
+            GameObject[] objs = GameObject.FindGameObjectsWithTag(targetTag);
+            if (objs.Length > 0)
+                target = objs[0];
+        }
+    }
 
-        float angle = 0;
-        if (sin_angl >= 0)
-            angle = Mathf.Acos(cos_angl);
-        else
-            if (cos_angl < 0)
-                angle = Mathf.PI - Mathf.Asin(sin_angl);
-            else
-                angle = 2 * Mathf.PI + Mathf.Asin(sin_angl);
-
-        return angle * Mathf.Rad2Deg;
+    void UpdateGunAngle()
+    {
+        if (target != null)
+        {
+            float angle = MathWay.angleBetween(new Vector2(transform.position.x, transform.position.y),
+                                               new Vector2(target.transform.position.x, target.transform.position.y));
+            transform.eulerAngles = Vector3.forward * angle;
+        }
     }
 }
