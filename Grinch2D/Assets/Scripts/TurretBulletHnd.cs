@@ -2,22 +2,28 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// TurretBulletHnd is  is class for handle bullet of turret actions.
+/// </summary>
 public class TurretBulletHnd : BulletHandler
 {
-    public float ddirect = 0.1f;
-    public float dangle = 0.1f;
-    public GameObject target;
+    public float dDirect = 0.01f;                                    // derivative of direction for updating bullet direction
+    public float dAngle = 0.4f;                                      // derivative of angle for updating bullet angle
+
+    public GameObject target;                                       // target game object
 
     protected override void UpdateDirection()
     {
         if (target == null) return;
 
         Vector2 direct = MathWay.calcDirect(new Vector2(transform.position.x, transform.position.y),
-                                            new Vector2(target.transform.position.x, target.transform.position.y));
-        direction = Vector2.Lerp(direction, direct, ddirect);
-        float angle = MathWay.calcAngle(Vector2.Lerp(new Vector2(Mathf.Cos(transform.eulerAngles.z * Mathf.Deg2Rad),
+                                            new Vector2(target.transform.position.x, target.transform.position.y));         // calculate target direction
+        direction = Vector2.Lerp(direction, direct, dDirect);                                                               // update direction
+
+        float angle = MathWay.calcAngle(Vector2.Lerp(new Vector2(Mathf.Cos(transform.eulerAngles.z * Mathf.Deg2Rad),        // calculate angle
                                                                  Mathf.Sin(transform.eulerAngles.z * Mathf.Deg2Rad)),
-                                                     direct, dangle));
-        transform.eulerAngles = Vector3.forward * angle;
+                                                     direct, dAngle));
+        transform.eulerAngles = Vector3.forward * angle;                                                                    // update angle
     }
 }

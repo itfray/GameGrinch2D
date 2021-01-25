@@ -112,8 +112,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   max_speed: {x: 20, y: 20}
-  direction: {x: 1, y: 0}
+  direction: {x: 0, y: 0}
   damage: 1
   owner: {fileID: 0}
-  ddirect: 0.01
+  dDirect: 0.01
+  dAngle: 0.4
   target: {fileID: 0}

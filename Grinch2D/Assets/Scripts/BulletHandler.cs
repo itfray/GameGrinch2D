@@ -2,10 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/// <summary>
+/// BulletHandler is class for handle bullet actions.
+/// </summary>
 public class BulletHandler : MoveHandler
 {
-    public int damage = 1;
-    public GameObject owner;
+    public int damage = 1;                                              // bullet damage
+    public GameObject owner;                                            // reference of owner object
 
     protected override void UpdateDirection() {}
 
