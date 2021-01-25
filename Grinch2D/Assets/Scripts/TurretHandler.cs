@@ -66,7 +66,8 @@ public class TurretHandler : MonoBehaviour
     void Attack(Vector2 direct)
     {
         if (weapon_hnd == null) return;
-        GameObject bullet = weapon_hnd.Attack<TurretBulletHnd>(gun.transform.position, direct);                             // shoot in target
+        Vector2 size = SizeScripts.sizeObjByBoxCollider2D(gameObject);
+        GameObject bullet = weapon_hnd.Attack<TurretBulletHnd>(transform.position, direct);                                           // shoot in target
 
         if (bullet == null) return;
         TurretBulletHnd bulletHnd = bullet.GetComponent<TurretBulletHnd>();

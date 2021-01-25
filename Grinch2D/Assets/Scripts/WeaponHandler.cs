@@ -17,7 +17,7 @@ public class WeaponHandler : MonoBehaviour
 
     public int maxcBullets = 10;                                                  // max count bullets
 
-    private LinkedList<GameObject> bullets;                                      // list generated bullets
+    private LinkedList<GameObject> bullets;                                       // list generated bullets
 
     void Start()
     {
