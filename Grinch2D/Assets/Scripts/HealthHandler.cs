@@ -11,24 +11,14 @@ public class HealthHandler : MonoBehaviour
 
     void Start()
     {
-        Init();
-    }
+        if (blood_spltr_pref) 
+            blood_spltr = Instantiate(blood_spltr_pref, transform.position, Quaternion.identity, transform.parent);
 
-    void Update()
-    {
-        if (blood_spltr)
-        {
-            blood_spltr.transform.position = new Vector3(transform.position.x, transform.position.y,
-                                                         blood_spltr.transform.position.z);
-        }
+        Init();
     }
 
     protected virtual void Init()
     {
-        if (blood_spltr_pref)
-        {
-            blood_spltr = Instantiate(blood_spltr_pref, transform.position, Quaternion.identity, transform.parent);
-        }
     }
 
     public virtual void Damage(int damage)

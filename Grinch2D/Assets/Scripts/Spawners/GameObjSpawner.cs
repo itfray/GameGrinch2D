@@ -8,6 +8,8 @@ public abstract class GameObjSpawner : MonoBehaviour
 
     protected GameObject spawned_obj;
 
+    public GameObject spawnedObj { get { return spawned_obj; } }
+
     public void InitSpawner(GameObject obj_prefab, GameObject parent_field, Vector2 spawn_position)
     {
         prefab = obj_prefab;
@@ -17,22 +19,13 @@ public abstract class GameObjSpawner : MonoBehaviour
 
     public virtual void Spawn()
     {
-        spawned_obj = Instantiate(prefab, new Vector3(spawnPosition.x, spawnPosition.y, prefab.transform.position.z), Quaternion.identity) as GameObject;
-        spawned_obj.transform.parent = parentField.transform;
+        Vector3 spawn_pos = new Vector3(spawnPosition.x, spawnPosition.y, prefab.transform.position.z);
+        if (spawned_obj == null)
+            spawned_obj = Instantiate(prefab, spawn_pos, Quaternion.identity, parentField.transform) as GameObject;
+        else
+            spawned_obj.transform.position = spawn_pos;
 
         SpawnAddition();
-    }
-
-    public virtual void Respawn()
-    {
-        if (spawned_obj != null)
-            Destroy(spawned_obj);
-        Spawn();
-    }
-
-    public virtual bool isSpawned()
-    {
-        return spawned_obj != null;
     }
 
     protected abstract void SpawnAddition();

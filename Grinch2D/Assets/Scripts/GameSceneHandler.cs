@@ -33,6 +33,8 @@ public class GameSceneHandler : MonoBehaviour
 
     private Vector2 mapCenterPos;                                                   // central map position for current level
 
+    private GameObject playerSpawner;
+
     private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }           // type direction for background scrolling functions
     private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
     private LinkedList<Transform> bg_sorted_byy;                                    // sorted on Y-axis background objects list for current level
@@ -110,6 +112,20 @@ public class GameSceneHandler : MonoBehaviour
                 generateGameObj(prefab, i, j, blockSmplSize);                                                               // generate game object
             }
         }
+
+        setTurretsTarget();
+    }
+
+    private void setTurretsTarget()
+    {
+        for (int i = 0; i < turretsField.transform.childCount; i++)
+        {
+            Transform turret = turretsField.transform.GetChild(i);
+            TurretHandler turret_hnd = turret.GetComponent<TurretHandler>();
+            PlayerSpawner player_spwnr = playerSpawner.GetComponent<PlayerSpawner>();
+            if (turret_hnd != null && player_spwnr != null)
+                turret_hnd.target = player_spwnr.spawnedObj;
+        }
     }
 
 
@@ -164,6 +180,9 @@ public class GameSceneHandler : MonoBehaviour
         genObj.setParams(fileParser.levelDict, fileParser.levelMap, fileParser.mapSize, emptyPrefabName, block_size);
         genObj.setSpwnrPosInMap(row_pos, col_pos);
         genObj.Generate();                                                                                                          // create game object
+
+        if (prefab.tag == "Player") 
+            playerSpawner = genObj.spwnrObj;
     }
 
     /// <summary>

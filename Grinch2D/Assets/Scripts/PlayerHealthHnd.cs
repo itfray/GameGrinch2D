@@ -6,9 +6,19 @@ public class PlayerHealthHnd : HealthHandler
 {
     private Animator animator;
 
+    void Update()
+    {
+        if (blood_spltr)
+        {
+            blood_spltr.transform.position = new Vector3(transform.position.x, transform.position.y,
+                                                         blood_spltr.transform.position.z);
+        }
+    }
+
     protected override void Init()
     {
         base.Init();
+
         animator = GetComponent<Animator>();
     }
 

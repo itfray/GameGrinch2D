@@ -2,6 +2,12 @@
 
 public class PlayerSpawner : GameObjSpawner
 {
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.R)) 
+            Spawn();
+    }
+
     protected override void SpawnAddition()
     {
         MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();

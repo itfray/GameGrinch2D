@@ -25,6 +25,8 @@ public class GenPlayerStrategy : GenObjStrategy
                                           Quaternion.identity) as GameObject;
         spwnr_obj.transform.parent = spwnrParentField.transform;
 
+        spwnrObj = spwnr_obj;
+
         Vector2 spawn_pos = Vector2.zero;                                                                                        // spawn position of player
         Vector2 player_size = SizeScripts.sizeObjByBoxCollider2D(objPrefab);
 
