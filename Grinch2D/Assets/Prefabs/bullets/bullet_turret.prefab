@@ -267,8 +267,12 @@ MonoBehaviour:
   damage: 1
   owner: {fileID: 0}
   destroyerTags:
-  - Player
+  - Saw
   - Blocks
+  - BigSaw
+  - MovingSaw
+  - Spikes
+  - Player
   explod_obj: {fileID: 0}
   released_pos: {x: 0, y: 0}
   dDirect: 0.01
