@@ -8,8 +8,6 @@ using UnityEngine;
 /// </summary>
 public class TurretBulletHnd : BulletHandler
 {
-    public GameObject explod_prefab;                                 // prefab for explosion
-    public float explod_lifetime = 0.5f;                             // lifetime of explosion object
     public float dDirect = 0.01f;                                    // derivative of direction for updating bullet direction
     public float dAngle = 0.4f;                                      // derivative of angle for updating bullet angle
 
@@ -31,9 +29,9 @@ public class TurretBulletHnd : BulletHandler
 
     public override void BulletDestruction()
     {
-        GameObject explos = Instantiate(explod_prefab, transform.position, Quaternion.identity, transform.parent);
+        if (explod_obj == null) return;
 
-        if (explos)
-            Destroy(explos, explod_lifetime);
+        ExplosionHandler exp_hnd = explod_obj.GetComponent<ExplosionHandler>();
+        if (exp_hnd) exp_hnd.Explode(transform.position);
     }
 }

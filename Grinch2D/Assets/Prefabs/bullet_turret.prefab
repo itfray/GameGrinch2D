@@ -268,8 +268,9 @@ MonoBehaviour:
   owner: {fileID: 0}
   destroyerTags:
   - Player
-  explod_prefab: {fileID: 6500454035796025199, guid: 40efcda247c6fb54e8676cda4adccb01,
-    type: 3}
+  - Blocks
+  explod_obj: {fileID: 0}
+  released_pos: {x: 0, y: 0}
   dDirect: 0.01
   dAngle: 0.4
   target: {fileID: 0}

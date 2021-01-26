@@ -13,13 +13,14 @@ public class TurretHandler : MonoBehaviour
 
     private GameObject gun;                                                 // turret gun
 
-    private WeaponHandler weapon_hnd;                                       // turret weapon handler
+    private TurretWeaponHnd weapon_hnd;                                     // turret weapon handler
 
     // Start is called before the first frame update
     void Start()
     {
         gun = transform.GetChild(0).gameObject;                             // get gun reference
-        weapon_hnd = GetComponent<WeaponHandler>();                         // get weapon
+        weapon_hnd = GetComponent<TurretWeaponHnd>();                       // get weapon
+        weapon_hnd.CreateBullets(transform.position);
     }
 
     // Update is called once per frame
@@ -67,7 +68,7 @@ public class TurretHandler : MonoBehaviour
     {
         if (weapon_hnd == null) return;
         Vector2 size = SizeScripts.sizeObjByBoxCollider2D(gameObject);
-        GameObject bullet = weapon_hnd.Attack<TurretBulletHnd>(transform.position, direct);                                           // shoot in target
+        GameObject bullet = weapon_hnd.Attack(transform.position, direct);                                                            // shoot in target
 
         if (bullet == null) return;
         TurretBulletHnd bulletHnd = bullet.GetComponent<TurretBulletHnd>();
