@@ -31,7 +31,12 @@ public class TurretBulletHnd : BulletHandler
     {
         if (explod_obj == null) return;
 
-        ExplosionHandler exp_hnd = explod_obj.GetComponent<ExplosionHandler>();
-        if (exp_hnd) exp_hnd.Explode(transform.position);
+        explod_obj.transform.position =
+            new Vector3(transform.position.x, transform.position.y, explod_obj.transform.position.z);
+
+        Animator animator = explod_obj.GetComponent<Animator>();
+        if (animator)
+            if (animator.parameterCount > 0)
+                animator.SetTrigger(animator.parameters[0].name);
     }
 }

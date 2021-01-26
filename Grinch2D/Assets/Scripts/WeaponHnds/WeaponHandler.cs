@@ -30,9 +30,8 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
             bullets.AddLast(bullet);
 
             BulletHndT bulletHndlr = bullet.GetComponent<BulletHndT>();                                                         // get bullet handler
-            if (bulletHndlr != null)
+            if (bulletHndlr)
             {
-                bulletHndlr.owner = gameObject;                                                                                 // set owner info
                 bulletHndlr.released_pos = inst_bullet_pos;
                 if (explodPrefab)
                 {
@@ -40,6 +39,9 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
                     bulletHndlr.explod_obj = explod;
                 }
             }
+
+            DamageHandler dmg_hnd = bullet.GetComponent<DamageHandler>();
+            if (dmg_hnd) dmg_hnd.owner = gameObject;                                                                            // set owner info
         }
     }
 

@@ -8,9 +8,7 @@ using UnityEngine;
 /// </summary>
 public class BulletHandler : MoveHandler
 {
-    public int damage = 1;                                              // bullet damage
-    public GameObject owner;                                            // reference of owner object
-    public string[] destroyerTags;                                      // tags of objects that call destroy of bullet
+    public GameObject[] destroyerObjs;                                      // tags of objects that call destroy of bullet
 
     public GameObject explod_obj;                                       // prefab for explosion
 
@@ -52,9 +50,9 @@ public class BulletHandler : MoveHandler
     {
         for (int i = 0; i < collisions.contactCount && !is_released; i++)
         {
-            foreach (string destroyerTag in destroyerTags)
+            foreach (GameObject destroyerObj in destroyerObjs)
             {
-                if (destroyerTag == collisions.GetContact(i).collider.tag)
+                if (destroyerObj.tag == collisions.GetContact(i).collider.tag)
                 {
                     BulletDestruction();
                     Release();

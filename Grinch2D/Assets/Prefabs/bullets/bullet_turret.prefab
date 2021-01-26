@@ -141,6 +141,7 @@ GameObject:
   - component: {fileID: 846068119}
   - component: {fileID: 1777145075478529910}
   - component: {fileID: 1551633373}
+  - component: {fileID: -4415618493417963390}
   m_Layer: 0
   m_Name: bullet_turret
   m_TagString: Bullet
@@ -264,17 +265,29 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   max_speed: {x: 15, y: 15}
   direction: {x: 0, y: 0}
-  damage: 1
-  owner: {fileID: 0}
-  destroyerTags:
-  - Saw
-  - Blocks
-  - BigSaw
-  - MovingSaw
-  - Spikes
-  - Player
+  destroyerObjs:
+  - {fileID: 195400308143965150, guid: be9e4eb07cea249418a504d9a2cc21e9, type: 3}
+  - {fileID: 7860108709145032063, guid: ae8daee4ce528e140883a259d98b93c2, type: 3}
+  - {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
+  - {fileID: 5818134098678246762, guid: 6a6fca99a6743a94fa03380dfbb69b3f, type: 3}
+  - {fileID: 1286023049779711281, guid: 3a141e822bc63ff42908afd465cf328d, type: 3}
+  - {fileID: 5818134098678246762, guid: 3ba483859558c7f4084ff8024c976861, type: 3}
   explod_obj: {fileID: 0}
   released_pos: {x: 0, y: 0}
   dDirect: 0.01
   dAngle: 0.4
   target: {fileID: 0}
+--- !u!114 &-4415618493417963390
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777145075478529913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4f3128751df3d546801b1da987f3547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  damage: 1
+  owner: {fileID: 0}
