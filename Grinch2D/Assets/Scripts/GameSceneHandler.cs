@@ -33,7 +33,7 @@ public class GameSceneHandler : MonoBehaviour
 
     private Vector2 mapCenterPos;                                                   // central map position for current level
 
-    private GameObject playerSpawner;
+    private GameObject playerSpawner;                                               // spawner of player game object
 
     private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }           // type direction for background scrolling functions
     private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
@@ -113,9 +113,12 @@ public class GameSceneHandler : MonoBehaviour
             }
         }
 
-        setTurretsTarget();
+        setTurretsTarget();                                                                                                 // specifies target for all created turrets
     }
 
+    /// <summary>
+    /// Method specifies target(player) for all turrets
+    /// </summary>
     private void setTurretsTarget()
     {
         for (int i = 0; i < turretsField.transform.childCount; i++)
@@ -124,7 +127,7 @@ public class GameSceneHandler : MonoBehaviour
             TurretHandler turret_hnd = turret.GetComponent<TurretHandler>();
             PlayerSpawner player_spwnr = playerSpawner.GetComponent<PlayerSpawner>();
             if (turret_hnd != null && player_spwnr != null)
-                turret_hnd.target = player_spwnr.spawnedObj;
+                turret_hnd.target = player_spwnr.spawnedObj;                                                                // set player as target for turret
         }
     }
 
@@ -182,7 +185,7 @@ public class GameSceneHandler : MonoBehaviour
         genObj.Generate();                                                                                                          // create game object
 
         if (prefab.tag == "Player") 
-            playerSpawner = genObj.spwnrObj;
+            playerSpawner = genObj.spwnrObj;                                                                                        // set playerSpawner
     }
 
     /// <summary>
@@ -284,11 +287,11 @@ public class GameSceneHandler : MonoBehaviour
 
         if (firstRndr.isVisible == false && Camera.main.transform.position.x > lastBg.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right);                                       // scroll backgrounds left
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right);                                       // scroll backgrounds right
         }
         else if (lastRndr.isVisible == false && Camera.main.transform.position.x < firstBg.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left);                                        // scroll backgrounds right
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left);                                        // scroll backgrounds left
         }
 
         firstBg = bg_sorted_byy.FirstOrDefault();                                                           // first up background object
