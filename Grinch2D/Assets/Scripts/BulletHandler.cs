@@ -31,9 +31,15 @@ public class BulletHandler : MoveHandler
             {
                 if (destroyerTag == collisions.GetContact(i).collider.tag)
                 {
+                    BulletDestruction();
                     Destroy(gameObject);
+                    break;
                 }
             }
         }
+    }
+
+    public virtual void BulletDestruction()
+    {
     }
 }

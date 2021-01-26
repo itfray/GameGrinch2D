@@ -71,6 +71,6 @@ public class TurretHandler : MonoBehaviour
 
         if (bullet == null) return;
         TurretBulletHnd bulletHnd = bullet.GetComponent<TurretBulletHnd>();
-        if (bulletHnd) bulletHnd.target = target;                                                                           // set target for bullet
+        if (bulletHnd) bulletHnd.target = target;                                                                                     // set target for bullet
     }
 }
