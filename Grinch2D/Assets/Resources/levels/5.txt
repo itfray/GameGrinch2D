@@ -1,12 +1,8 @@
 0
-       
-     a
-     a
-    pa
-aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
+aaaaaaa
 a~~~~~a
 a     a
-a     a
+a  p  a
 a     a
 a     a
 a     a

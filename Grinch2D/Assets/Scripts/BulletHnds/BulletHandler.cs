@@ -45,13 +45,16 @@ public class BulletHandler : MoveHandler
     /// </summary>
     public virtual void Release()
     {
-        transform.position = released_pos;                                                          // set position in released position
-
         if (trailrndr) trailrndr.Clear();                                                           // clear trails of bullets
         if (collider2d) collider2d.enabled = false;                                                 // unenable collider
         if (rgbody2d) rgbody2d.constraints = RigidbodyConstraints2D.FreezeAll;                      // freeze rigidgidbody actions
 
         is_released = true;
+    }
+
+    public virtual void PlaceReleasedPos()
+    {
+        transform.position = released_pos;                                                          // set position in released position
     }
 
     /// <summary>
@@ -81,7 +84,8 @@ public class BulletHandler : MoveHandler
             {
                 if (destroyerObj.tag == collisions.GetContact(i).collider.tag)              // if object contains in list destroyerObjs
                 {
-                    BulletDestruction();                                                    // bullet destruction                             
+                    BulletDestruction();                                                    // bullet destruction
+                    PlaceReleasedPos();
                     Release();                                                              // release bullet
                     break;
                 }

@@ -72,6 +72,7 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
         {
             bulletHndlr.BulletDestruction();                                                                    // release bullet
             bulletHndlr.Release();
+            bulletHndlr.PlaceReleasedPos();
         }
 
         bulletHndlr.transform.position = shoot_pos;                                                              // set shoot positon
