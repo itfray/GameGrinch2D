@@ -5,6 +5,8 @@
 /// </summary>
 public class PlayerSpawner : GameObjSpawner
 {
+    private MoveCameraHandler move_cam_hnd;                             // handler of camera moving
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.R)) 
@@ -18,7 +20,8 @@ public class PlayerSpawner : GameObjSpawner
     {
         base.Spawn();
 
-        MoveCameraHandler hmove_cam = Camera.main.transform.GetComponent<MoveCameraHandler>();
-        if (hmove_cam) hmove_cam.following = spawned_obj.transform;                                         // do that main camera follow on the player
+        if (move_cam_hnd == null)
+            move_cam_hnd = Camera.main.transform.GetComponent<MoveCameraHandler>();
+        move_cam_hnd.following = spawned_obj.transform;                                 // do that main camera follow on the player
     }
 }

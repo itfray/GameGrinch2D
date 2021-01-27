@@ -33,11 +33,22 @@ public class GameSceneHandler : MonoBehaviour
 
     private Vector2 mapCenterPos;                                                   // central map position for current level
 
-    private GameObject playerSpawner;                                               // spawner of player game object
+    private GameObjSpawner playerSpawner;                                           // spawner of player game object
 
     private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }           // type direction for background scrolling functions
     private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
     private LinkedList<Transform> bg_sorted_byy;                                    // sorted on Y-axis background objects list for current level
+
+    private GenPlayerStrategy gen_player_strtg;                                     // strategy of generation player
+    private GenBlockStrategy gen_block_strtg;                                       // strategy of generation block
+    private GenSawStrategy gen_saw_strtg;                                           // strategy of generation saw
+    private GenBigSawStrategy gen_big_saw_strtg;                                    // strategy of generation big saw
+    private GenMovingSawStrategy gen_move_saw_strtg;                                // strategy of generation moving saw
+    private GenSpikeStrategy gen_spike_strtg;                                       // strategy of generation spike
+    private GenTurretStrategy gen_turret_strtg;                                     // strategy of generation turret
+
+    private BoxCollider2D blocksmpl_collider;
+    private BoxCollider2D bgsmpl_collider;
 
     public int currentLevel
     {
@@ -47,6 +58,18 @@ public class GameSceneHandler : MonoBehaviour
 
     void Start()
     {
+        // get all strategys of generation game object
+        gen_player_strtg = GetComponent<GenPlayerStrategy>();
+        gen_block_strtg = GetComponent<GenBlockStrategy>();
+        gen_saw_strtg = GetComponent<GenSawStrategy>();
+        gen_big_saw_strtg = GetComponent<GenBigSawStrategy>();
+        gen_move_saw_strtg = GetComponent<GenMovingSawStrategy>();
+        gen_spike_strtg = GetComponent<GenSpikeStrategy>();
+        gen_turret_strtg = GetComponent<GenTurretStrategy>();
+
+        blocksmpl_collider = blockSample.GetComponent<BoxCollider2D>();
+        bgsmpl_collider = bgSample.GetComponent<BoxCollider2D>();
+
         fileParser.parseLevelDict();                                                // parse data of level dictionary file
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
 
@@ -79,7 +102,7 @@ public class GameSceneHandler : MonoBehaviour
     void CalcMapCenterPos()
     {
         Vector2 map_size = fileParser.mapSize;
-        Vector2 blockSmplSize = SizeScripts.sizeObjByBoxCollider2D(blockSample);
+        Vector2 blockSmplSize = SizeScripts.sizeObjBy(blocksmpl_collider);
         mapCenterPos = new Vector2(blockSmplSize.x * (map_size.x - 1) / 2,                                  // calculate map center
                                    blockSmplSize.y * (map_size.y - 1) / 2);
     }
@@ -95,7 +118,7 @@ public class GameSceneHandler : MonoBehaviour
         char[,] level_map = fileParser.levelMap;
         Vector2 map_size = fileParser.mapSize;
 
-        Vector2 blockSmplSize = SizeScripts.sizeObjByBoxCollider2D(blockSample);                                            // get block sample size
+        Vector2 blockSmplSize = SizeScripts.sizeObjBy(blocksmpl_collider);                                                  // get block sample size
 
         for (int i = (int)map_size.y - 1; i >= 0; i--)                                                                      // reverse step, because file with map was readed top down
         {
@@ -121,13 +144,14 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     private void setTurretsTarget()
     {
-        for (int i = 0; i < turretsField.transform.childCount; i++)
+        if (playerSpawner)
         {
-            Transform turret = turretsField.transform.GetChild(i);
-            TurretHandler turret_hnd = turret.GetComponent<TurretHandler>();
-            PlayerSpawner player_spwnr = playerSpawner.GetComponent<PlayerSpawner>();
-            if (turret_hnd != null && player_spwnr != null)
-                turret_hnd.target = player_spwnr.spawnedObj;                                                                // set player as target for turret
+            for (int i = 0; i < turretsField.transform.childCount; i++)
+            {
+                Transform turret = turretsField.transform.GetChild(i);
+                TurretHandler turret_hnd = turret.GetComponent<TurretHandler>();
+                if (turret_hnd) turret_hnd.target = playerSpawner.spawnedObj;                                                                // set player as target for turret
+            }
         }
     }
 
@@ -146,33 +170,33 @@ public class GameSceneHandler : MonoBehaviour
         switch (prefab.tag)
         {
             case "Player":
-                genObj = GetComponent<GenPlayerStrategy>();                                                                         // select strategy of generation player
+                genObj = gen_player_strtg;                                                                                          // select strategy of generation player                                                                                                                                            
                 genObj.spwnrPrefab = findGameObjByName(prefab.name, spawnPrefabs, (key_n, val_n) => val_n.Contains(key_n));         // search of spawner prefab by player prefab name
                 genObj.spwnrParentField = playerField;                                                                              // select parent fields for generation
                 genObj.objParentField = playerField;
                 break;
             case "Block":
-                genObj = GetComponent<GenBlockStrategy>();
+                genObj = gen_block_strtg;
                 genObj.objParentField = blocksField;
                 break;
             case "Saw":
-                genObj = GetComponent<GenSawStrategy>();
+                genObj = gen_saw_strtg;
                 genObj.objParentField = sawsField;
                 break;
             case "BigSaw":
-                genObj = GetComponent<GenBigSawStrategy>();
+                genObj = gen_big_saw_strtg;
                 genObj.objParentField = sawsField;
                 break;
             case "Spike":
-                genObj = GetComponent<GenSpikeStrategy>();
+                genObj = gen_spike_strtg;
                 genObj.objParentField = spikesField;
                 break;
             case "MovingSaw":
-                genObj = GetComponent<GenMovingSawStrategy>();
+                genObj = gen_move_saw_strtg;
                 genObj.objParentField = sawsField;
                 break;
             case "Turret":
-                genObj = GetComponent<GenTurretStrategy>();
+                genObj = gen_turret_strtg;
                 genObj.objParentField = turretsField;
                 break;
             default:
@@ -184,8 +208,8 @@ public class GameSceneHandler : MonoBehaviour
         genObj.setSpwnrPosInMap(row_pos, col_pos);
         genObj.Generate();                                                                                                          // create game object
 
-        if (prefab.tag == "Player") 
-            playerSpawner = genObj.spwnrObj;                                                                                        // set playerSpawner
+        if (prefab.tag == "Player")
+            playerSpawner = genObj.spwnrHnd;                                                                                        // set playerSpawner  
     }
 
     /// <summary>
@@ -213,7 +237,7 @@ public class GameSceneHandler : MonoBehaviour
         if (levelBgSprites.Count == 0)
             Debug.LogError("Empty list with level background sprites!!!", this);
 
-        Vector2 bgSmplSize = SizeScripts.sizeObjByBoxCollider2D(bgSample);
+        Vector2 bgSmplSize = SizeScripts.sizeObjBy(bgsmpl_collider);
 
         // calculate number of backgrounds between main camera and map center
         int cbg_from_center = MathWay.countLinesFitOnBetween(bgSmplSize.y, Camera.main.transform.position.y, mapCenterPos.y);
@@ -324,10 +348,10 @@ public class GameSceneHandler : MonoBehaviour
     private void ScrollLevelBackground(LinkedList<Transform> bg_sorted_list, ScrollDirect direct)
     {
         Transform firstBg = bg_sorted_list.FirstOrDefault();
-        Vector3 firstBgSize = SizeScripts.sizeObjByRenderer(firstBg.gameObject);
+        Vector3 firstBgSize = SizeScripts.sizeObjBy(firstBg.GetComponent<Renderer>());
         
         Transform lastBg = bg_sorted_list.LastOrDefault();
-        Vector3 lastBgSize = SizeScripts.sizeObjByRenderer(lastBg.gameObject);
+        Vector3 lastBgSize = SizeScripts.sizeObjBy(lastBg.GetComponent<Renderer>());
 
         List<Transform> listBgs = new List<Transform>();
         for (int i = 0; i < 2; i++)
@@ -365,7 +389,7 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     private void UpdateLevelBgSpritesInBgObjs()
     {
-        Vector2 bgSmplSize = SizeScripts.sizeObjByBoxCollider2D(bgSample);
+        Vector2 bgSmplSize = SizeScripts.sizeObjBy(bgsmpl_collider);
 
         Transform firstBg = bg_sorted_byy.FirstOrDefault();
 

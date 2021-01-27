@@ -25,10 +25,8 @@ public class GenPlayerStrategy : GenObjStrategy
                                           Quaternion.identity) as GameObject;
         spwnr_obj.transform.parent = spwnrParentField.transform;
 
-        spwnrObj = spwnr_obj;
-
         Vector2 spawn_pos = Vector2.zero;                                                                                        // spawn position of player
-        Vector2 player_size = SizeScripts.sizeObjByBoxCollider2D(objPrefab);
+        Vector2 player_size = SizeScripts.sizeObjBy(objPrefab.GetComponent<BoxCollider2D>());
 
         /* checks nearby blocks in the following way:
          * xxx
@@ -71,8 +69,11 @@ public class GenPlayerStrategy : GenObjStrategy
         if (!found_spwn_pos) return;
 
         PlayerSpawner player_spwnr = spwnr_obj.GetComponent<PlayerSpawner>();
-        if (player_spwnr == null) return;
-        player_spwnr.InitSpawner(objPrefab, objParentField, spawn_pos);                                                   // init player spawner
-        player_spwnr.Spawn();                                                                                             // spawn player
+        if (player_spwnr)
+        {
+            spwnrHnd = player_spwnr;
+            player_spwnr.InitSpawner(objPrefab, objParentField, spawn_pos);                                                   // init player spawner
+            player_spwnr.Spawn();
+        }                                                                                                                     // spawn player object
     }
 }

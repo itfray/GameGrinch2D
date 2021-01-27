@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 /// <summary>
@@ -54,11 +52,7 @@ public class TurretHandler : MonoBehaviour
     {
         if (weapon_hnd == null) return;
 
-        GameObject bullet = weapon_hnd.Attack(transform.position, direct);                                                            // shoot in target
-        if (bullet)
-        {
-            TurretBulletHnd bulletHnd = bullet.GetComponent<TurretBulletHnd>();
-            if (bulletHnd) bulletHnd.target = target;                                                                                 // set target for bullet
-        }
+        TurretBulletHnd bullet_hnd = weapon_hnd.Attack(transform.position, direct);                                                            // shoot in target
+        if (bullet_hnd) bullet_hnd.target = target;                                                                                            // set target for bullet
     }
 }

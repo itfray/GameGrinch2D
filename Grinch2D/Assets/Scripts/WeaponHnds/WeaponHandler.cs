@@ -18,7 +18,7 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
 
     public int maxcBullets = 10;                                                  // max count bullets
 
-    private LinkedList<GameObject> bullets = new LinkedList<GameObject>();        // list generated bullets
+    private LinkedList<BulletHndT> bullet_hnds = new LinkedList<BulletHndT>();        // list generated bullets
 
     /// <summary>
     /// Method for creating bullets for weapon
@@ -31,8 +31,6 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
         for (int i = 0; i < maxcBullets; i++)
         {
             GameObject bullet = Instantiate(bulletPrefab, inst_bullet_pos, Quaternion.identity, transform.parent);              // generate bullet
-            bullets.AddLast(bullet);
-
             BulletHndT bulletHndlr = bullet.GetComponent<BulletHndT>();                                                         // get bullet handler
             if (bulletHndlr)
             {
@@ -42,6 +40,7 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
                     GameObject explod = Instantiate(explodPrefab, inst_bullet_pos, Quaternion.identity, transform.parent);      // generate bullet explod
                     bulletHndlr.explod_obj = explod;
                 }
+                bullet_hnds.AddLast(bulletHndlr);
             }
 
             DamageHandler dmg_hnd = bullet.GetComponent<DamageHandler>();
@@ -60,38 +59,31 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
     /// </summary>
     /// <param name="shoot_pos"> shoot position for bullet </param>
     /// <param name="shoot_direct"> shoot direction </param>
-    /// <returns> bullet game object </returns>
-    public GameObject Attack(Vector2 shoot_pos, Vector2 shoot_direct)
+    /// <returns> bullet handler </returns>
+    public BulletHndT Attack(Vector2 shoot_pos, Vector2 shoot_direct)
     {
-        if (!canShoot || bullets.Count == 0) return null;                                                       // check possibility of a shot
+        if (!canShoot || bullet_hnds.Count == 0) return null;                                                   // check possibility of a shot
 
         curRchrgTime = rechrgTime;                                                                              // update current recharge time
 
-        GameObject bullet = bullets.FirstOrDefault();                                                           // get bullet of bullets list
-        BulletHndT bulletHndlr = bullet.GetComponent<BulletHndT>();                                             // get bullet handler
+        BulletHndT bulletHndlr = bullet_hnds.FirstOrDefault();                                                  // get bullet handler of bullets list
 
-        if (bulletHndlr != null)
+        if (!bulletHndlr.isReleased)                                                                            // if bullet not released
         {
-            if (!bulletHndlr.isReleased)                                                                        // if bullet not released
-            {
-                bulletHndlr.BulletDestruction();                                                                // release bullet
-                bulletHndlr.Release();
-            }
+            bulletHndlr.BulletDestruction();                                                                    // release bullet
+            bulletHndlr.Release();
         }
 
-        bullet.transform.position = shoot_pos;                                                                  // set shoot positon
-        bullet.transform.eulerAngles = Vector3.forward * MathWay.calcAngle(shoot_direct);                       // set shoot angle
+        bulletHndlr.transform.position = shoot_pos;                                                              // set shoot positon
+        bulletHndlr.direction = shoot_direct;                                                                    // set shoot direction
+        bulletHndlr.transform.eulerAngles = Vector3.forward * MathWay.calcAngle(shoot_direct);                   // set shoot angle
 
-        if (bulletHndlr != null)
-        {
-            bulletHndlr.Init();                                                                                 // init bullet
-            bulletHndlr.direction = shoot_direct;                                                               // set shoot direction
-        }
+        bulletHndlr.Init();                                                                                      // init bullet
 
-        bullets.RemoveFirst();                                                                                  // put the bullet at the end of the list
-        bullets.AddLast(bullet);
+        bullet_hnds.RemoveFirst();                                                                               // put the bullet handler at the end of the list
+        bullet_hnds.AddLast(bulletHndlr);
 
-        return bullet;
+        return bulletHndlr;
     }
 }
 

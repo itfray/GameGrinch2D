@@ -15,7 +15,7 @@ public abstract class GenObjStrategy : MonoBehaviour
     public GameObject spwnrPrefab { set; get; }                     // spawner prefab for generation of spawner object for generation of main game object
     public GameObject spwnrParentField { set; get; }                // parent field for generation spawner object
 
-    public GameObject spwnrObj { set; get; }                        // spawner object for generation of main game object
+    public GameObjSpawner spwnrHnd { set; get; }                    // spawner handler for generation of main game object
 
     public Vector2 spwnrSize { set; get; }                          // size spawner block
 

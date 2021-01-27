@@ -272,8 +272,11 @@ MonoBehaviour:
   - {fileID: 5818134098678246762, guid: 6a6fca99a6743a94fa03380dfbb69b3f, type: 3}
   - {fileID: 1286023049779711281, guid: 3a141e822bc63ff42908afd465cf328d, type: 3}
   - {fileID: 5818134098678246762, guid: 3ba483859558c7f4084ff8024c976861, type: 3}
-  explod_obj: {fileID: 0}
   released_pos: {x: 0, y: 0}
+  explod_obj: {fileID: 0}
+  collider2d: {fileID: 1777145075478529910}
+  rgbody2d: {fileID: 846068119}
+  trailrndr: {fileID: 0}
   dDirect: 0.01
   dAngle: 0.4
   target: {fileID: 0}

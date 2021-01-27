@@ -9,8 +9,11 @@ public class PlayerHealthHnd : HealthHandler
     public GameObject blood_spltr_pref;                             // blood splatter prefab
     private GameObject blood_spltr;                                 // blood splatter object
 
+    private Animator animator;
+
     void Start()
     {
+        animator = GetComponent<Animator>();
         CreateBloodSplttr();                                        // create blood splatter object
     }
 
@@ -19,8 +22,8 @@ public class PlayerHealthHnd : HealthHandler
     /// </summary>
     protected override void Damaging()
     {
-        Animator animator = GetComponent<Animator>();
-        if (animator) animator.SetTrigger("Hitting");               // play hitting animation
+        if (animator) 
+            animator.SetTrigger("Hitting");               // play hitting animation
     }
 
     /// <summary>

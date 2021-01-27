@@ -15,8 +15,16 @@ public class BulletHandler : MoveHandler
 
     public GameObject explod_obj;                                           // explosion object, if has
 
+    protected Collider2D collider2d;
+    protected Rigidbody2D rgbody2d;
+    protected TrailRenderer trailrndr;
+
     void Awake()
     {
+        collider2d = GetComponent<Collider2D>();
+        rgbody2d = GetComponent<Rigidbody2D>();
+        trailrndr = GetComponentInChildren<TrailRenderer>();
+
         Release();
     }
 
@@ -25,14 +33,9 @@ public class BulletHandler : MoveHandler
     /// </summary>
     public virtual void Init()
     {
-        Collider2D collider = GetComponent<Collider2D>();
-        if (collider) collider.enabled = true;                                                  // enable collider
-
-        Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        if (rgbody) rgbody.constraints = RigidbodyConstraints2D.FreezeRotation;                 // unfreeze rigidgidbody actions
-
-        TrailRenderer trailrndr = GetComponentInChildren<TrailRenderer>();
-        if (trailrndr) trailrndr.Clear();                                                       // clear trails of bullets
+        if (trailrndr) trailrndr.Clear();                                                           // clear trails of bullets
+        if (collider2d) collider2d.enabled = true;                                                  // enable collider
+        if (rgbody2d) rgbody2d.constraints = RigidbodyConstraints2D.FreezeRotation;                 // unfreeze rigidgidbody actions
 
         is_released = false;
     }
@@ -42,16 +45,11 @@ public class BulletHandler : MoveHandler
     /// </summary>
     public virtual void Release()
     {
-        transform.position = released_pos;                                                      // set position in released position
+        transform.position = released_pos;                                                          // set position in released position
 
-        Collider2D collider = GetComponent<Collider2D>();
-        if (collider) collider.enabled = false;                                                 // unenable collider
-
-        TrailRenderer trailrndr = GetComponentInChildren<TrailRenderer>();
-        if (trailrndr) trailrndr.Clear();                                                       // freeze rigidgidbody actions
-
-        Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        if (rgbody) rgbody.constraints = RigidbodyConstraints2D.FreezeAll;                      // freeze rigidgidbody actions
+        if (trailrndr) trailrndr.Clear();                                                           // clear trails of bullets
+        if (collider2d) collider2d.enabled = false;                                                 // unenable collider
+        if (rgbody2d) rgbody2d.constraints = RigidbodyConstraints2D.FreezeAll;                      // freeze rigidgidbody actions
 
         is_released = true;
     }
@@ -71,10 +69,8 @@ public class BulletHandler : MoveHandler
     /// </summary>
     protected override void UpdatePosition()
     {
-        if (is_released) return;
-
-        Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        if (rgbody) rgbody.velocity = speed;
+        if (!is_released && rgbody2d != null)
+            rgbody2d.velocity = speed;
     }
 
     void OnCollisionEnter2D(Collision2D collisions)

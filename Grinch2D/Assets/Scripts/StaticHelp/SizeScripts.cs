@@ -5,37 +5,37 @@ public static class SizeScripts
     /// <summary>
     /// Function is calculate size game object by BoxCollider2D component
     /// </summary>
-    /// <param name="obj"> any game object </param>
+    /// <param name="objBox"> box collider of game object </param>
     /// <returns> size game object </returns>
-    public static Vector2 sizeObjByBoxCollider2D(GameObject obj)
+    public static Vector2 sizeObjBy(BoxCollider2D objBox)
     {
-        BoxCollider2D objBox = obj.GetComponent<BoxCollider2D>();
-        if (objBox == null) return Vector2.zero;
-        return new Vector2(Mathf.Abs(objBox.size.x * obj.transform.localScale.x),
-                           Mathf.Abs(objBox.size.y * obj.transform.localScale.y));
+        if (objBox)
+            return new Vector2(Mathf.Abs(objBox.size.x * objBox.transform.localScale.x),
+                               Mathf.Abs(objBox.size.y * objBox.transform.localScale.y));
+        return Vector2.zero;
     }
 
     /// <summary>
     /// Function is calculate size game object by CapsuleCollider2D component
     /// </summary>
-    /// <param name="obj"> any game object </param>
+    /// <param name="objBox"> box collider of game object </param>
     /// <returns> size game object </returns>
-    public static Vector2 sizeObjByCapsuleCollider2D(GameObject obj)
+    public static Vector2 sizeObjBy(CapsuleCollider2D objBox)
     {
-        CapsuleCollider2D objBox = obj.GetComponent<CapsuleCollider2D>();
-        if (objBox == null) return Vector2.zero;
-        return new Vector2(Mathf.Abs(objBox.size.x * obj.transform.localScale.x),
-                           Mathf.Abs(objBox.size.y * obj.transform.localScale.y));
+        if (objBox)
+            return new Vector2(Mathf.Abs(objBox.size.x * objBox.transform.localScale.x),
+                               Mathf.Abs(objBox.size.y * objBox.transform.localScale.y));
+        return Vector2.zero;
     }
 
     /// <summary>
     /// Function is calculate size game object by Renderer component
     /// </summary>
-    /// <param name="obj"> any game object </param>
+    /// <param name="objRndr"> renderer of game object </param>
     /// <returns> size game object </returns>
-    public static Vector2 sizeObjByRenderer(GameObject obj)
+    public static Vector2 sizeObjBy(Renderer objRndr)
     {
-        Renderer rndr = obj.GetComponent<Renderer>();
-        return rndr.bounds.max - rndr.bounds.min;
+        if (objRndr) return objRndr.bounds.max - objRndr.bounds.min;
+        return Vector2.zero;
     }
 }

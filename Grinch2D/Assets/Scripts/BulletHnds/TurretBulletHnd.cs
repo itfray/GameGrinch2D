@@ -11,6 +11,14 @@ public class TurretBulletHnd : BulletHandler
 
     public GameObject target;                                        // target game object
 
+    protected Animator explod_animtr;
+
+    void Start()
+    {
+        if (explod_obj)
+            explod_animtr = explod_obj.GetComponent<Animator>();
+    }
+
     /// <summary>
     /// Method is handler of changing bullet direction.
     /// </summary>
@@ -33,14 +41,16 @@ public class TurretBulletHnd : BulletHandler
     /// </summary>
     public override void BulletDestruction()
     {
-        if (explod_obj == null) return;
+        if (explod_obj)
+        {
+            explod_obj.transform.position =                                                                                             // set postion of explosion
+                       new Vector3(transform.position.x, transform.position.y, explod_obj.transform.position.z);
 
-        explod_obj.transform.position =                                                                                   // set postion of explosion
-            new Vector3(transform.position.x, transform.position.y, explod_obj.transform.position.z);
-
-        Animator animator = explod_obj.GetComponent<Animator>();                                                          // play explosion animation
-        if (animator)
-            if (animator.parameterCount > 0)
-                animator.SetTrigger(animator.parameters[0].name);
+            if (explod_animtr)
+            {
+                if (explod_animtr.parameterCount > 0)
+                    explod_animtr.SetTrigger(explod_animtr.parameters[0].name);                                                         // play explosion animation
+            }
+        }
     }
 }

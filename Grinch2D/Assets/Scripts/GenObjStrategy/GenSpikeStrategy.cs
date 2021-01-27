@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using System.Collections.Generic;
 
 
 /// <summary>
@@ -17,7 +16,7 @@ public class GenSpikeStrategy : GenBy4Strategy
             throw new System.ArgumentNullException("levelDict || levelMap || " +
                                                    "objPrefab || objParentField");
 
-        Vector2 spike_size = SizeScripts.sizeObjByBoxCollider2D(objPrefab);
+        Vector2 spike_size = SizeScripts.sizeObjBy(objPrefab.GetComponent<BoxCollider2D>());
         int row_pos = (int)map_spwnr_pos.y;
         int col_pos = (int)map_spwnr_pos.x;
 

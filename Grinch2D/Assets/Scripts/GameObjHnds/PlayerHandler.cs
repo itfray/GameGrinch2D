@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -9,16 +8,20 @@ using UnityEngine;
 /// </summary>
 public class PlayerHandler : JumpHandler
 {
-    private Animator animator;
-
     public enum CollisionDirect { Left = 0, Right = 1, Down = 2 , Up = 3};      // type for checking collisions information
     private int[] counts_collisions = new int[4];                               // count collisions down, left, up, right that have player
     private bool capturing = false;                                             // the player captures near the block
     public bool Capturing { get { return capturing; } }                         // Method check the player capturing near block
 
+    private Animator animator;
+    private Rigidbody2D rgbody2d;
+    private BoxCollider2D collider2d;
+
     void Start()
     {
         animator = GetComponent<Animator>();
+        rgbody2d = GetComponent<Rigidbody2D>();
+        collider2d = GetComponent<BoxCollider2D>();
     }
 
 
@@ -174,8 +177,7 @@ public class PlayerHandler : JumpHandler
     /// </summary>
     protected override void UpdatePosition()
     {
-        Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        rgbody.MovePosition(rgbody.position + speed * Time.deltaTime);
+        if (rgbody2d) rgbody2d.MovePosition(rgbody2d.position + speed * Time.deltaTime);
     }
 
     /// <summary>
@@ -185,8 +187,7 @@ public class PlayerHandler : JumpHandler
     {
         if (!capturing)
         {
-            Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-            rgbody.constraints = RigidbodyConstraints2D.FreezeAll;
+            if (rgbody2d) rgbody2d.constraints = RigidbodyConstraints2D.FreezeAll;
             capturing = true;
         }
     }
@@ -198,8 +199,7 @@ public class PlayerHandler : JumpHandler
     {
         if (capturing)
         {
-            Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-            rgbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+            if (rgbody2d)  rgbody2d.constraints = RigidbodyConstraints2D.FreezeRotation;
             capturing = false;
         }
     }
@@ -217,7 +217,7 @@ public class PlayerHandler : JumpHandler
     {
         unsetCountsCollisions();
 
-        Vector2 size2 = SizeScripts.sizeObjByBoxCollider2D(transform.gameObject) / 2;
+        Vector2 size2 = SizeScripts.sizeObjBy(collider2d) / 2;
         Vector2 position = new Vector2(transform.position.x, transform.position.y);
         Vector2[] direct_pos = new Vector2[counts_collisions.Length];                       // array of extreme boundary points of the player game object
 
