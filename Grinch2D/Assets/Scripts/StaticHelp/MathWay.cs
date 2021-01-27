@@ -76,7 +76,7 @@ public static class MathWay
     {
         float fc = (pos1 - pos2) / line_len;
         int fcsign = fc > 0 ? 1 : -1;
-        int c = fcsign * Mathf.RoundToInt(Mathf.Abs(fc));
+        int c = fcsign * Mathf.CeilToInt(Mathf.Abs(fc));
         return c;
     }
 }
