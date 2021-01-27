@@ -299,45 +299,51 @@ public class GameSceneHandler : MonoBehaviour
 
         Transform firstBg;
         Renderer firstRndr;
+        Vector3 firstSize;
 
         Transform lastBg;
         Renderer lastRndr;
+        Vector3 lastSize;
 
         firstBg = bg_sorted_byx.FirstOrDefault();
-        firstRndr = firstBg.GetComponent<Renderer>();
+        firstRndr = firstBg.GetComponent<SpriteRenderer>();
+        firstSize = SizeScripts.sizeObjBy(firstRndr);
 
         lastBg = bg_sorted_byx.LastOrDefault();
-        lastRndr = lastBg.GetComponent<Renderer>();
+        lastRndr = lastBg.GetComponent<SpriteRenderer>();
+        lastSize = SizeScripts.sizeObjBy(lastRndr);
 
         if (firstRndr.isVisible == false && Camera.main.transform.position.x > lastBg.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right);                                       // scroll backgrounds right
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right, firstBg, firstSize, lastBg, lastSize);     // scroll backgrounds right
         }
         else if (lastRndr.isVisible == false && Camera.main.transform.position.x < firstBg.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left);                                        // scroll backgrounds left
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left, firstBg, firstSize, lastBg, lastSize);      // scroll backgrounds left
         }
 
-        firstBg = bg_sorted_byy.FirstOrDefault();                                                           // first up background object
-        firstRndr = firstBg.GetComponent<Renderer>();
+        firstBg = bg_sorted_byy.FirstOrDefault();                                                               // first up background object
+        firstRndr = firstBg.GetComponent<SpriteRenderer>();
+        firstSize = SizeScripts.sizeObjBy(firstRndr);
 
-        lastBg = bg_sorted_byy.LastOrDefault();                                                             // last down background object
-        lastRndr = lastBg.GetComponent<Renderer>();
+        lastBg = bg_sorted_byy.LastOrDefault();                                                                 // last down background object
+        lastRndr = lastBg.GetComponent<SpriteRenderer>();
+        lastSize = SizeScripts.sizeObjBy(lastRndr);
 
         bool scrolled_y = false;
         if (firstRndr.isVisible == false && Camera.main.transform.position.y > lastBg.position.y)
         {
-            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Up);                                           // scroll backgrounds up
+            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Up, firstBg, firstSize, lastBg, lastSize);        // scroll backgrounds up
             scrolled_y = true;
         }
         else if (lastRndr.isVisible == false && Camera.main.transform.position.y < firstBg.position.y)
         {
-            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Down);                                         // scroll backgrounds down
+            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Down, firstBg, firstSize, lastBg, lastSize);      // scroll backgrounds down
             scrolled_y = true;
         }
 
         if (scrolled_y)
-            UpdateLevelBgSpritesInBgObjs();                                                                  // update sprites of background objects
+            UpdateLevelBgSpritesInBgObjs();                                                                     // update sprites of background objects
     }
 
     /// <summary>
@@ -345,14 +351,13 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     /// <param name="bg_sorted_list"> sorted backgrounds list to scroll </param>
     /// <param name="direct"> scrolling direction </param>
-    private void ScrollLevelBackground(LinkedList<Transform> bg_sorted_list, ScrollDirect direct)
+    /// <param name="firstBg"> transfrom of first background </param>
+    /// <param name="firstBgSize"> size of first background </param>
+    /// <param name="lastBg"> transfrom of last background </param>
+    /// <param name="lastBgSize"> size of first background </param>
+    private void ScrollLevelBackground(LinkedList<Transform> bg_sorted_list, ScrollDirect direct, Transform firstBg, Vector3 firstBgSize, 
+                                                                                                  Transform lastBg, Vector3 lastBgSize)
     {
-        Transform firstBg = bg_sorted_list.FirstOrDefault();
-        Vector3 firstBgSize = SizeScripts.sizeObjBy(firstBg.GetComponent<Renderer>());
-        
-        Transform lastBg = bg_sorted_list.LastOrDefault();
-        Vector3 lastBgSize = SizeScripts.sizeObjBy(lastBg.GetComponent<Renderer>());
-
         List<Transform> listBgs = new List<Transform>();
         for (int i = 0; i < 2; i++)
         {
