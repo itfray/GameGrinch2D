@@ -25,7 +25,7 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject[] gamePrefabs;                                                // all game prefabs
     public GameObject[] spawnPrefabs;                                               // all prefabs for spawning game objects
 
-    public string emptyPrefabName = "empty";                                         // empty block prefab name
+    public string emptyPrefabName = "empty";                                        // empty block prefab name
 
     private int current_level;                                                      // number current running level
 
@@ -35,9 +35,11 @@ public class GameSceneHandler : MonoBehaviour
 
     private GameObjSpawner playerSpawner;                                           // spawner of player game object
 
+    private List<SpriteRenderer> bg_rndrs;                                          // list background renderers
+
     private enum ScrollDirect { Left = -2, Down = -1, Up = 1, Right = 2 }           // type direction for background scrolling functions
-    private LinkedList<Transform> bg_sorted_byx;                                    // sorted on X-axis background objects list for current level
-    private LinkedList<Transform> bg_sorted_byy;                                    // sorted on Y-axis background objects list for current level
+    private LinkedList<SpriteRenderer> bg_sorted_byx;                               // sorted on X-axis background objects list for current level
+    private LinkedList<SpriteRenderer> bg_sorted_byy;                               // sorted on Y-axis background objects list for current level
 
     private GenPlayerStrategy gen_player_strtg;                                     // strategy of generation player
     private GenBlockStrategy gen_block_strtg;                                       // strategy of generation block
@@ -69,6 +71,10 @@ public class GameSceneHandler : MonoBehaviour
 
         blocksmpl_collider = blockSample.GetComponent<BoxCollider2D>();
         bgsmpl_collider = bgSample.GetComponent<BoxCollider2D>();
+
+        bg_rndrs = new List<SpriteRenderer>();
+        for (int i = 0; i < bgField.transform.childCount; i++)
+            bg_rndrs.Add(bgField.transform.GetChild(i).GetComponent<SpriteRenderer>());
 
         fileParser.parseLevelDict();                                                // parse data of level dictionary file
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
@@ -266,9 +272,10 @@ public class GameSceneHandler : MonoBehaviour
             }
         }
 
-        bg_sorted_byx = getSortedBgList(t => t.position.x);             // get sorted linked list backgrounds objects on X-axis
-        bg_sorted_byy = getSortedBgList(t => t.position.y);             // get sorted linked list backgrounds objects on Y-axis
-        UpdateLevelBgSpritesInBgObjs();                                 // update sprites in background objects
+        bg_sorted_byx = getSortedBgList(r => r.transform.position.x);             // get sorted linked list backgrounds objects on X-axis
+        bg_sorted_byy = getSortedBgList(r => r.transform.position.y);             // get sorted linked list backgrounds objects on Y-axis
+
+        UpdateLevelBgSpritesInBgObjs();                                           // update sprites in background objects
     }
 
     /// <summary>
@@ -276,17 +283,13 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     /// <param name="order_func"> specified condition </param>
     /// <returns> sorted background objects linked list </returns>
-    private LinkedList<Transform> getSortedBgList(System.Func<Transform, float> order_func)
+    private LinkedList<SpriteRenderer> getSortedBgList(System.Func<SpriteRenderer, float> order_func)
     {
-        LinkedList<Transform> bg_list = new LinkedList<Transform>();
-        List<Transform> bgs = new List<Transform>();
-        for (int i = 0; i < bgField.transform.childCount; i++)
-            bgs.Add(bgField.transform.GetChild(i));
+        LinkedList<SpriteRenderer> bg_list = new LinkedList<SpriteRenderer>();
 
-        bgs = bgs.OrderBy(order_func).ToList();
+        foreach (SpriteRenderer bg_rndr in bg_rndrs.OrderBy(order_func).ToList())
+            bg_list.AddLast(bg_rndr);
 
-        for (int i = 0; i < bgs.Count; i++)
-            bg_list.AddLast(bgs[i]);
         return bg_list;
     }
 
@@ -297,48 +300,33 @@ public class GameSceneHandler : MonoBehaviour
     {
         if (bg_sorted_byx.Count == 0 || bg_sorted_byy.Count == 0) return;
 
-        Transform firstBg;
         Renderer firstRndr;
-        Vector3 firstSize;
-
-        Transform lastBg;
         Renderer lastRndr;
-        Vector3 lastSize;
 
-        firstBg = bg_sorted_byx.FirstOrDefault();
-        firstRndr = firstBg.GetComponent<SpriteRenderer>();
-        firstSize = SizeScripts.sizeObjBy(firstRndr);
+        firstRndr = bg_sorted_byx.FirstOrDefault();
+        lastRndr = bg_sorted_byx.LastOrDefault();
 
-        lastBg = bg_sorted_byx.LastOrDefault();
-        lastRndr = lastBg.GetComponent<SpriteRenderer>();
-        lastSize = SizeScripts.sizeObjBy(lastRndr);
-
-        if (firstRndr.isVisible == false && Camera.main.transform.position.x > lastBg.position.x)
+        if (firstRndr.isVisible == false && Camera.main.transform.position.x > lastRndr.transform.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right, firstBg, firstSize, lastBg, lastSize);     // scroll backgrounds right
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Right, firstRndr, lastRndr);                      // scroll backgrounds right
         }
-        else if (lastRndr.isVisible == false && Camera.main.transform.position.x < firstBg.position.x)
+        else if (lastRndr.isVisible == false && Camera.main.transform.position.x < firstRndr.transform.position.x)
         {
-            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left, firstBg, firstSize, lastBg, lastSize);      // scroll backgrounds left
+            ScrollLevelBackground(bg_sorted_byx, ScrollDirect.Left, firstRndr, lastRndr);                       // scroll backgrounds left
         }
 
-        firstBg = bg_sorted_byy.FirstOrDefault();                                                               // first up background object
-        firstRndr = firstBg.GetComponent<SpriteRenderer>();
-        firstSize = SizeScripts.sizeObjBy(firstRndr);
-
-        lastBg = bg_sorted_byy.LastOrDefault();                                                                 // last down background object
-        lastRndr = lastBg.GetComponent<SpriteRenderer>();
-        lastSize = SizeScripts.sizeObjBy(lastRndr);
+        firstRndr = bg_sorted_byy.FirstOrDefault();                                                             // first up background object
+        lastRndr = bg_sorted_byy.LastOrDefault();                                                               // last down background object
 
         bool scrolled_y = false;
-        if (firstRndr.isVisible == false && Camera.main.transform.position.y > lastBg.position.y)
+        if (firstRndr.isVisible == false && Camera.main.transform.position.y > lastRndr.transform.position.y)
         {
-            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Up, firstBg, firstSize, lastBg, lastSize);        // scroll backgrounds up
+            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Up, firstRndr, lastRndr);                         // scroll backgrounds up
             scrolled_y = true;
         }
-        else if (lastRndr.isVisible == false && Camera.main.transform.position.y < firstBg.position.y)
+        else if (lastRndr.isVisible == false && Camera.main.transform.position.y < firstRndr.transform.position.y)
         {
-            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Down, firstBg, firstSize, lastBg, lastSize);      // scroll backgrounds down
+            ScrollLevelBackground(bg_sorted_byy, ScrollDirect.Down, firstRndr, lastRndr);                       // scroll backgrounds down
             scrolled_y = true;
         }
 
@@ -351,39 +339,44 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     /// <param name="bg_sorted_list"> sorted backgrounds list to scroll </param>
     /// <param name="direct"> scrolling direction </param>
-    /// <param name="firstBg"> transfrom of first background </param>
-    /// <param name="firstBgSize"> size of first background </param>
-    /// <param name="lastBg"> transfrom of last background </param>
-    /// <param name="lastBgSize"> size of first background </param>
-    private void ScrollLevelBackground(LinkedList<Transform> bg_sorted_list, ScrollDirect direct, Transform firstBg, Vector3 firstBgSize, 
-                                                                                                  Transform lastBg, Vector3 lastBgSize)
+    /// <param name="firstBgRndr"> renderer of first background </param>
+    /// <param name="lastBgRndr"> renderer of last background </param>
+    private void ScrollLevelBackground(LinkedList<SpriteRenderer> bg_sorted_list, ScrollDirect direct, Renderer firstBgRndr, Renderer lastBgRndr)
     {
-        List<Transform> listBgs = new List<Transform>();
+        Vector3 firstBgSize = SizeScripts.sizeObjBy(firstBgRndr);
+        Vector3 lastBgSize = SizeScripts.sizeObjBy(lastBgRndr);
+        Transform firstBg = firstBgRndr.transform;
+        Transform lastBg = lastBgRndr.transform;
+
+        List<SpriteRenderer> listBgs = new List<SpriteRenderer>();
         for (int i = 0; i < 2; i++)
         {
             Transform bg;
+            SpriteRenderer rndr;
             if (direct > 0)                                                                                      // values of Up and Right more zero
             {
-                bg = bg_sorted_list.FirstOrDefault();
+                rndr = bg_sorted_list.FirstOrDefault();
+                bg = rndr.transform;
                 bg.position = direct == ScrollDirect.Right ? 
                               new Vector3(lastBg.position.x + lastBgSize.x, bg.position.y, bg.position.z) :      // set position current after the last background on X-axis
                               new Vector3(bg.position.x, lastBg.position.y + lastBgSize.y, bg.position.z);
             }
             else
             {
-                bg = bg_sorted_list.LastOrDefault();
+                rndr = bg_sorted_list.LastOrDefault();
+                bg = rndr.transform;
                 bg.position = direct == ScrollDirect.Left ? 
                               new Vector3(firstBg.position.x - firstBgSize.x, bg.position.y, bg.position.z):
                               new Vector3(bg.position.x, firstBg.position.y - firstBgSize.y, bg.position.z);     // set position current before the first background on Y-axis
             }
-            listBgs.Add(bg);
-            bg_sorted_list.Remove(bg);                                                                           // 1. change background position in sorted backgrounds objects list
+            listBgs.Add(rndr);
+            bg_sorted_list.Remove(rndr);                                                                         // 1. change background position in sorted backgrounds objects list
         }
 
         for (int i = 0; i < 2; i++)
         {
             if (direct > 0)
-                bg_sorted_list.AddLast(listBgs[i]);                                                             // 2. change background position in sorted backgrounds objects list
+                bg_sorted_list.AddLast(listBgs[i]);                                                              // 2. change background position in sorted backgrounds objects list
             else
                 bg_sorted_list.AddFirst(listBgs[i]);
         }
@@ -396,7 +389,7 @@ public class GameSceneHandler : MonoBehaviour
     {
         Vector2 bgSmplSize = SizeScripts.sizeObjBy(bgsmpl_collider);
 
-        Transform firstBg = bg_sorted_byy.FirstOrDefault();
+        Transform firstBg = bg_sorted_byy.FirstOrDefault().transform;
 
         // calculate number of backgrounds between main camera and map center
         int cbg_from_center = MathWay.countLinesFitOnBetween(bgSmplSize.y, firstBg.position.y, mapCenterPos.y);
@@ -405,9 +398,8 @@ public class GameSceneHandler : MonoBehaviour
         int ind_bg = midLevelBgSpriteIndex() + cbg_from_center;                                         // get first background sprite index (which background stage to display)
 
         int i = 0;
-        foreach (Transform bg_trnsfm in bg_sorted_byy)
+        foreach (SpriteRenderer bg_srndr in bg_sorted_byy)
         {
-            SpriteRenderer bg_srndr = bg_trnsfm.gameObject.GetComponent<SpriteRenderer>();
             bg_srndr.sprite = getLevelBgSprite(ind_bg + i / 2);                                       // set right background sprite
             i++;
         }
