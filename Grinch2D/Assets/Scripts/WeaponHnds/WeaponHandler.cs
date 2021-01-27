@@ -20,6 +20,10 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
 
     private LinkedList<GameObject> bullets = new LinkedList<GameObject>();        // list generated bullets
 
+    /// <summary>
+    /// Method for creating bullets for weapon
+    /// </summary>
+    /// <param name="inst_bullet_pos"> position for instantiate bullets </param>
     public void CreateBullets(Vector2 inst_bullet_pos)
     {
         if (bulletPrefab == null) return;
@@ -48,45 +52,45 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
     void Update()
     {
         if (curRchrgTime > 0)
-            curRchrgTime -= Time.deltaTime;                                       // update current recharge time
+            curRchrgTime -= Time.deltaTime;                                                                     // update current recharge time
     }
 
     /// <summary>
-    /// Method shoots from weapon
+    /// Method shoots from weapon.
     /// </summary>
-    /// <typeparam name="BulletHndT"> type bullet handler </typeparam>
-    /// <param name="inst_pos"> instantiate position for bullet </param>
+    /// <param name="shoot_pos"> shoot position for bullet </param>
     /// <param name="shoot_direct"> shoot direction </param>
-    /// <returns> bullet </returns>
+    /// <returns> bullet game object </returns>
     public GameObject Attack(Vector2 shoot_pos, Vector2 shoot_direct)
     {
         if (!canShoot || bullets.Count == 0) return null;                                                       // check possibility of a shot
 
         curRchrgTime = rechrgTime;                                                                              // update current recharge time
 
-        GameObject bullet = bullets.FirstOrDefault();                                                           // generate bullet
+        GameObject bullet = bullets.FirstOrDefault();                                                           // get bullet of bullets list
         BulletHndT bulletHndlr = bullet.GetComponent<BulletHndT>();                                             // get bullet handler
 
         if (bulletHndlr != null)
         {
-            if (!bulletHndlr.isReleased)
+            if (!bulletHndlr.isReleased)                                                                        // if bullet not released
             {
-                bulletHndlr.BulletDestruction();
+                bulletHndlr.BulletDestruction();                                                                // release bullet
                 bulletHndlr.Release();
             }
         }
 
-        bullet.transform.position = shoot_pos;
+        bullet.transform.position = shoot_pos;                                                                  // set shoot positon
         bullet.transform.eulerAngles = Vector3.forward * MathWay.calcAngle(shoot_direct);                       // set shoot angle
 
         if (bulletHndlr != null)
         {
-            bulletHndlr.Init();
+            bulletHndlr.Init();                                                                                 // init bullet
             bulletHndlr.direction = shoot_direct;                                                               // set shoot direction
         }
 
-        bullets.RemoveFirst();
+        bullets.RemoveFirst();                                                                                  // put the bullet at the end of the list
         bullets.AddLast(bullet);
+
         return bullet;
     }
 }

@@ -1,7 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
+
+/// <summary>
+/// GenTurretStrategy is strategy of generation turret
+/// </summary>
 public class GenTurretStrategy : GenObjStrategy
 {
     public override void Generate()

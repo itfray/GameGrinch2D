@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 
 /// <summary>
@@ -8,42 +6,75 @@ using UnityEngine;
 /// </summary>
 public class BulletHandler : MoveHandler
 {
-    public GameObject[] destroyerObjs;                                      // tags of objects that call destroy of bullet
+    public GameObject[] destroyerObjs;                                      // inforamtion of objects that call destroy of bullet
 
-    public GameObject explod_obj;                                       // prefab for explosion
+    public Vector2 released_pos;                                            // postion in released state
 
-    public Vector2 released_pos;
-
-    private bool is_released;
+    protected bool is_released;                                             // bullet is released?
     public bool isReleased { get { return is_released; } }
+
+    public GameObject explod_obj;                                           // explosion object, if has
 
     void Awake()
     {
         Release();
     }
 
+    /// <summary>
+    /// Method allows actions of bullet and set bullet in init state.
+    /// </summary>
     public virtual void Init()
     {
         Collider2D collider = GetComponent<Collider2D>();
-        if (collider) collider.enabled = true;
-        is_released = false;
-        TrailRenderer trailrndr = GetComponentInChildren<TrailRenderer>();
-        if (trailrndr) trailrndr.Clear();
+        if (collider) collider.enabled = true;                                                  // enable collider
+
         Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        if (rgbody) rgbody.constraints = RigidbodyConstraints2D.FreezeRotation;
+        if (rgbody) rgbody.constraints = RigidbodyConstraints2D.FreezeRotation;                 // unfreeze rigidgidbody actions
+
+        TrailRenderer trailrndr = GetComponentInChildren<TrailRenderer>();
+        if (trailrndr) trailrndr.Clear();                                                       // clear trails of bullets
+
+        is_released = false;
     }
 
+    /// <summary>
+    /// Method unallows actions of bullet and set bullet in release state.
+    /// </summary>
+    public virtual void Release()
+    {
+        transform.position = released_pos;                                                      // set position in released position
+
+        Collider2D collider = GetComponent<Collider2D>();
+        if (collider) collider.enabled = false;                                                 // unenable collider
+
+        TrailRenderer trailrndr = GetComponentInChildren<TrailRenderer>();
+        if (trailrndr) trailrndr.Clear();                                                       // freeze rigidgidbody actions
+
+        Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
+        if (rgbody) rgbody.constraints = RigidbodyConstraints2D.FreezeAll;                      // freeze rigidgidbody actions
+
+        is_released = true;
+    }
+
+    /// <summary>
+    /// Method is handler of bullet destruction.
+    /// </summary>
+    public virtual void BulletDestruction() {}
+
+    /// <summary>
+    /// Method is handler of changing bullet direction.
+    /// </summary>
     protected override void UpdateDirection() {}
 
+    /// <summary>
+    /// Method is handler of changing bullet postion.
+    /// </summary>
     protected override void UpdatePosition()
     {
         if (is_released) return;
 
         Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        if (rgbody)
-        {
-            rgbody.velocity = speed;
-        }
+        if (rgbody) rgbody.velocity = speed;
     }
 
     void OnCollisionEnter2D(Collision2D collisions)
@@ -52,29 +83,13 @@ public class BulletHandler : MoveHandler
         {
             foreach (GameObject destroyerObj in destroyerObjs)
             {
-                if (destroyerObj.tag == collisions.GetContact(i).collider.tag)
+                if (destroyerObj.tag == collisions.GetContact(i).collider.tag)              // if object contains in list destroyerObjs
                 {
-                    BulletDestruction();
-                    Release();
+                    BulletDestruction();                                                    // bullet destruction                             
+                    Release();                                                              // release bullet
                     break;
                 }
             }
         }
-    }
-
-    public virtual void Release()
-    {
-        Collider2D collider = GetComponent<Collider2D>();
-        if (collider) collider.enabled = false;
-        is_released = true;
-        transform.position = released_pos;
-        TrailRenderer trailrndr = GetComponentInChildren<TrailRenderer>();
-        if (trailrndr) trailrndr.Clear();
-        Rigidbody2D rgbody = GetComponent<Rigidbody2D>();
-        if (rgbody) rgbody.constraints = RigidbodyConstraints2D.FreezeAll;
-    }
-
-    public virtual void BulletDestruction()
-    {
     }
 }

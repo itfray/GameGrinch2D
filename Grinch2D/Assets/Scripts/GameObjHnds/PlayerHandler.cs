@@ -25,7 +25,6 @@ public class PlayerHandler : JumpHandler
     /// <summary>
     /// Method contains code for updating current move direction
     /// </summary>
-    /// 
     protected override void UpdateDirection()
     {
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right

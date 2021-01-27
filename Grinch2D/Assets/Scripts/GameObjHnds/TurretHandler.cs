@@ -10,6 +10,8 @@ public class TurretHandler : MonoBehaviour
 {
     public GameObject target;                                               // target object
 
+    public float minDistance4Shoot = 100f;                                  // minimal distance for shoot
+
     private GameObject gun;                                                 // turret gun
 
     private TurretWeaponHnd weapon_hnd;                                     // turret weapon handler
@@ -17,16 +19,18 @@ public class TurretHandler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        gun = transform.GetChild(0).gameObject;                             // get gun reference
+        gun = transform.GetChild(0).gameObject;                             // get gun object
         weapon_hnd = GetComponent<TurretWeaponHnd>();                       // get weapon
-        weapon_hnd.CreateBullets(transform.position);
+        weapon_hnd.CreateBullets(transform.position);                       // create bullets
     }
 
     // Update is called once per frame
     void Update()
     {
         if (target == null) return;
+        if (Vector2.Distance(transform.position, target.transform.position) > minDistance4Shoot) return;                    // check target distance
 
+        // calculate target direction
         Vector2 direct = MathWay.calcDirect(new Vector2(transform.position.x, transform.position.y),                        
                                             new Vector2(target.transform.position.x, target.transform.position.y));
         RotateGun(direct);
@@ -49,11 +53,12 @@ public class TurretHandler : MonoBehaviour
     void Attack(Vector2 direct)
     {
         if (weapon_hnd == null) return;
-        Vector2 size = SizeScripts.sizeObjByBoxCollider2D(gameObject);
-        GameObject bullet = weapon_hnd.Attack(transform.position, direct);                                                            // shoot in target
 
-        if (bullet == null) return;
-        TurretBulletHnd bulletHnd = bullet.GetComponent<TurretBulletHnd>();
-        if (bulletHnd) bulletHnd.target = target;                                                                                     // set target for bullet
+        GameObject bullet = weapon_hnd.Attack(transform.position, direct);                                                            // shoot in target
+        if (bullet)
+        {
+            TurretBulletHnd bulletHnd = bullet.GetComponent<TurretBulletHnd>();
+            if (bulletHnd) bulletHnd.target = target;                                                                                 // set target for bullet
+        }
     }
 }

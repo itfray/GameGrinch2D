@@ -127,8 +127,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930e458721bddd04f86730366dcfd882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  targetTag: Player
   target: {fileID: 0}
+  minDistance4Shoot: 100
 --- !u!114 &1854439728
 MonoBehaviour:
   m_ObjectHideFlags: 0
