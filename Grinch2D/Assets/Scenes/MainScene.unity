@@ -857,7 +857,7 @@ GameObject:
   - component: {fileID: 428063125}
   - component: {fileID: 428063126}
   m_Layer: 5
-  m_Name: bts_group
+  m_Name: bts_layout
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
