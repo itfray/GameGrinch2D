@@ -1159,7 +1159,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 464520866}
-  - component: {fileID: 464520867}
   m_Layer: 5
   m_Name: SubMenu
   m_TagString: Untagged
@@ -1196,28 +1195,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &464520867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 464520865}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8c043bdbb00aa04cb2dea12f169df93, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  gameMenuCntrl: {fileID: 2079268591}
-  gameSceneHnd: {fileID: 1455934990}
-  header: {fileID: 1965389908}
-  timeBar: {fileID: 769537366}
-  levelBar: {fileID: 187612223}
-  startBarObj: {fileID: 1667018444}
-  starBar: {fileID: 1667018446}
-  upButtonObj: {fileID: 201742538}
-  upButton: {fileID: 201742540}
-  upButtonText: {fileID: 1426828641}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -3297,8 +3274,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fileParser: {fileID: 1455934991}
   bgField: {fileID: 1794582261}
-  bgSample: {fileID: 9213578557887392444, guid: 665dcc9c262ace64a98f9cace2ed5193,
-    type: 3}
   bgSprites:
   - {fileID: 21300000, guid: 558ec3b8e237aea4fbea444d99795f85, type: 3}
   - {fileID: 21300000, guid: 4b466b48d9d3da146ac625d35ca790f3, type: 3}
@@ -3310,8 +3285,6 @@ MonoBehaviour:
   spikesField: {fileID: 1705051703}
   turretsField: {fileID: 1205509373}
   starsField: {fileID: 763531944}
-  blockSample: {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec,
-    type: 3}
   gamePrefabs:
   - {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
   - {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec, type: 3}
@@ -3331,6 +3304,8 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty
+  blocksmpl_collider: {fileID: 0}
+  bgsmpl_collider: {fileID: 0}
 --- !u!114 &1455934991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4283,11 +4258,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c398b6c505df8540b8486fff2e5b91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  gameScnHnd: {fileID: 0}
+  starBarSprites: []
   gameMenu: {fileID: 188672124}
   subMenu: {fileID: 464520865}
   loadingMenu: {fileID: 1305469805}
-  subMenuCntrl: {fileID: 464520867}
-  gameScnHnd: {fileID: 0}
+  subMenuheader: {fileID: 0}
+  subTimeBar: {fileID: 0}
+  subLevelBar: {fileID: 0}
+  subStarBarObj: {fileID: 0}
+  subStarBar: {fileID: 0}
+  subUpBtObj: {fileID: 0}
+  subUpBt: {fileID: 0}
+  subUpBtText: {fileID: 0}
+  gameStarBarObj: {fileID: 0}
+  gameStarBar: {fileID: 0}
+  gameTimeBar: {fileID: 0}
 --- !u!1 &2094880245
 GameObject:
   m_ObjectHideFlags: 0
