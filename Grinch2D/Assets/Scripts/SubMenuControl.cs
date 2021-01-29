@@ -47,6 +47,8 @@ public class SubMenuControl : MonoBehaviour
         if (upBtActive)
         {
             upButtonText.text = upBtText;
+
+            upButton.onClick.RemoveAllListeners();
             upButton.onClick.AddListener(btAction);
         }
 
