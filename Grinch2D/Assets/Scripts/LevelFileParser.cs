@@ -113,4 +113,9 @@ public class LevelFileParser : MonoBehaviour
             map_size.x = file_max_w;                  
         }
     }
+
+    public int countLevels()
+    {
+        return Directory.GetFiles(levelsPath, "*.txt").Length;
+    }
 }

@@ -8,9 +8,9 @@ using System.Collections.Generic;
 /// </summary>
 public class GameSceneHandler : MonoBehaviour
 {
-/*    public enum GameState {Entry, Loading, Game, Pause, Win, Lose};
+    public enum GameState { Loading, Game, Pause, Win, Lose };
     private GameState state;
-    public GameState State { get { return state; } }*/
+    public GameState State { get { return state; } }
 
     public LevelFileParser fileParser;                                              // parser level files
 
@@ -30,8 +30,6 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject[] spawnPrefabs;                                               // all prefabs for spawning game objects
 
     public string emptyPrefabName = "empty";                                        // empty block prefab name
-
-    private int current_level;                                                      // number current running level
 
     private List<Sprite> levelBgSprites;                                            // background sprites for current level
 
@@ -55,14 +53,32 @@ public class GameSceneHandler : MonoBehaviour
     public float GameTime { get { return gameTime; } }
 
 
-    public int currentLevel
+    private int current_level;                                                      // number current running level
+    public int CurrentLevel { get { return current_level; } }
+
+    private int count_levels;
+    public int CountLevels { get { return count_levels; } }
+
+    public int CountStars 
     {
-        get { return current_level; }
-        set { ConstructLevel(value); }
+        get 
+        {
+            if (playerSpawner)
+            {
+                StarHandler starHnd = playerSpawner?.PlayerStarHnd;
+                if (starHnd) return starHnd.count_stars;
+            }
+
+            return 0;
+        } 
     }
 
     void Start()
     {
+        state = GameState.Loading;
+
+        levelBgSprites = new List<Sprite>();
+
         // get all strategys of generation game object
         gen_player_strtg = GetComponent<GenPlayerStrategy>();
         gen_block_strtg = GetComponent<GenBlockStrategy>();
@@ -81,14 +97,22 @@ public class GameSceneHandler : MonoBehaviour
         fileParser.parseLevelDict();                                                // parse data of level dictionary file
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
 
-        currentLevel = 5;
+        count_levels = fileParser.countLevels();
 
+        int level = PlayerPrefs.GetInt("level", 5);
+
+        if (level < 1 || level > count_levels) return;
+
+        ConstructLevel(level);
         StartGame();
     }
 
     void Update()
     {
         UpdateBackgroundLevel();
+
+        if (state == GameState.Game)
+            gameTime += Time.deltaTime;
     }
 
     /// <summary>
@@ -97,6 +121,8 @@ public class GameSceneHandler : MonoBehaviour
     /// <param name="level"> level number </param>
     public void ConstructLevel(int level)
     {
+        state = GameState.Loading;
+
         current_level = level;
         fileParser.parseLevelFile(level);                                                                   // parse data of level map file
 
@@ -105,8 +131,45 @@ public class GameSceneHandler : MonoBehaviour
         CalcMapCenterPos();                                                                                 // calculate map center
     }
 
+    public void DeconstructLevel()
+    {
+        state = GameState.Loading;
+
+        List<Transform> fields = new List<Transform>();
+
+        fields.Add(playerField.transform);
+        fields.Add(blocksField.transform);
+        fields.Add(sawsField.transform);
+        fields.Add(spikesField.transform);
+        fields.Add(turretsField.transform);
+        fields.Add(starsField.transform);
+
+        foreach (Transform field in fields)
+        {
+            foreach (Transform obj in field)
+            {
+                Destroy(obj.gameObject);
+            }
+        }
+    }
+
+    public void NextLevel()
+    {
+        int level = current_level + 1;
+        if (level > count_levels) return;
+
+        DeconstructLevel();
+        ConstructLevel(level);
+        StartGame();
+    }
+
     public void StartGame()
     {
+        if (state == GameState.Lose || state == GameState.Win || state == GameState.Pause)
+            StopGame(false);
+
+        state = GameState.Game;
+
         for (int istar = 0; istar < starsField.transform.childCount; istar++)
         {
             Transform star_trnsfm = starsField.transform.GetChild(istar);
@@ -114,22 +177,59 @@ public class GameSceneHandler : MonoBehaviour
         }
 
         if (playerSpawner) playerSpawner.Spawn();
+
         gameTime = 0f;
     }
 
     public void PauseGame()
     {
-/*        playerField;                                                  // field for created palyer
-        sawsField;                                                    // field for created saws
-        spikesField;                                                  // field for created spikes
-        urretsField;                                                  // field for created turrets
-        starsField;                                                   // field for created stars*/
-        // if (playerHandler) playerHandler.Stop(true);
+        if (state == GameState.Game)
+        {
+            state = GameState.Pause;
+            StopGame(true);
+        }
     }
 
-    public void ResumeGame()
+    public void LoseGame()
     {
-        // if (playerHandler) playerHandler.Stop(false);
+        if (state == GameState.Game)
+        {
+            state = GameState.Lose;
+            StopGame(true);
+        }
+    }
+
+    public void WinGame()
+    {
+        if (state == GameState.Game)
+        {
+            state = GameState.Win;
+            StopGame(true);
+        }
+    }
+
+    public void StopGame(bool value)
+    {
+        List<Transform> fields = new List<Transform>();
+
+        fields.Add(playerField.transform);
+        fields.Add(sawsField.transform);
+        fields.Add(turretsField.transform);
+
+        foreach (Transform field in fields)
+        {
+            foreach (Transform obj in field)
+            {
+                foreach(MonoBehaviour script in obj.GetComponents<MonoBehaviour>())
+                    script.enabled = !value;
+
+                Rigidbody2D rgbody = obj.GetComponent<Rigidbody2D>();
+                if (rgbody) rgbody.constraints = value? RigidbodyConstraints2D.FreezeAll: RigidbodyConstraints2D.FreezeRotation;
+
+                Collider2D collider = obj.GetComponent<Collider2D>();
+                if (collider) collider.enabled = !value;
+            }
+        }
     }
 
     /// <summary>
@@ -337,7 +437,11 @@ public class GameSceneHandler : MonoBehaviour
     /// <returns> background sprite </returns>
     private Sprite getLevelBgSprite(int sprt_ind)
     {
-        Sprite bg_sprite;
+        Sprite bg_sprite = null;
+
+        if (levelBgSprites.Count == 0) 
+            return bg_sprite;
+
         if (sprt_ind < 0)                                           // if (background index < 0) then repeat background first sprite
             bg_sprite = levelBgSprites[0];
         else if (sprt_ind >= levelBgSprites.Count)                  // if (background index >= count backgrounds) then repeat background last sprite
