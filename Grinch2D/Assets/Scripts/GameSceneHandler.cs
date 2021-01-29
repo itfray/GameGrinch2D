@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 
 /// <summary>
@@ -8,10 +9,6 @@ using System.Collections.Generic;
 /// </summary>
 public class GameSceneHandler : MonoBehaviour
 {
-    public enum GameState { Loading, Game, Pause, Win, Lose };
-    private GameState state;
-    public GameState State { get { return state; } }
-
     public LevelFileParser fileParser;                                              // parser level files
 
     public GameObject bgField;                                                      // field for store 4 childs (background game objects)
@@ -52,12 +49,20 @@ public class GameSceneHandler : MonoBehaviour
     private float gameTime = 0f;
     public float GameTime { get { return gameTime; } }
 
-
     private int current_level;                                                      // number current running level
     public int CurrentLevel { get { return current_level; } }
 
     private int count_levels;
     public int CountLevels { get { return count_levels; } }
+
+    private bool inited = false;
+    public bool Inited { get { return inited; } }
+
+    private bool constructed = false;
+    public bool Constructed { get { return constructed; } }
+
+    private bool stoped = false;
+    public bool Stoped { get { return stoped; } }
 
     public int CountStars 
     {
@@ -75,10 +80,18 @@ public class GameSceneHandler : MonoBehaviour
 
     void Start()
     {
-        state = GameState.Loading;
+        inited = false;
+        constructed = false;
+        stoped = false;
 
         levelBgSprites = new List<Sprite>();
+        bg_rndrs = new List<SpriteRenderer>();
 
+        StartCoroutine(InitGameScene());
+    }
+
+    private IEnumerator<object> InitGameScene()
+    {
         // get all strategys of generation game object
         gen_player_strtg = GetComponent<GenPlayerStrategy>();
         gen_block_strtg = GetComponent<GenBlockStrategy>();
@@ -90,29 +103,26 @@ public class GameSceneHandler : MonoBehaviour
         blocksmpl_collider = blockSample.GetComponent<BoxCollider2D>();
         bgsmpl_collider = bgSample.GetComponent<BoxCollider2D>();
 
-        bg_rndrs = new List<SpriteRenderer>();
         for (int i = 0; i < bgField.transform.childCount; i++)
             bg_rndrs.Add(bgField.transform.GetChild(i).GetComponent<SpriteRenderer>());
+        yield return null;
 
         fileParser.parseLevelDict();                                                // parse data of level dictionary file
+        yield return null;
+
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
+        yield return null;
 
         count_levels = fileParser.countLevels();
-
-        int level = PlayerPrefs.GetInt("level", 5);
-
-        if (level < 1 || level > count_levels) return;
-
-        ConstructLevel(level);
-        StartGame();
+        inited = true;
     }
 
     void Update()
     {
-        UpdateBackgroundLevel();
+        if (!constructed || !inited) return;
 
-        if (state == GameState.Game)
-            gameTime += Time.deltaTime;
+        UpdateBackgroundLevel();
+        if (!stoped) gameTime += Time.deltaTime;
     }
 
     /// <summary>
@@ -121,36 +131,23 @@ public class GameSceneHandler : MonoBehaviour
     /// <param name="level"> level number </param>
     public void ConstructLevel(int level)
     {
-        state = GameState.Loading;
+        constructed = false;
+
+        if (level < 1 || level > count_levels) return;
 
         current_level = level;
-        fileParser.parseLevelFile(level);                                                                   // parse data of level map file
+        fileParser.parseLevelFile(level);                                                                    // parse data of level map file
 
-        LoadLevelBgSprites();                                                                               // generate level backgrounds by level file data about background
-        CreateLevelObjsByMap();                                                                             // generate level game objects by level file data about map    
-        CalcMapCenterPos();                                                                                 // calculate map center
+        CalcMapCenterPos();                                                                                  // calculate map center
+        LoadLevelBgSprites();                                                                                // generate level backgrounds by level file data about background
+        StartCoroutine(CreateLevelObjsByMap(10));                                                            // generate level game objects by level file data about map    
     }
 
     public void DeconstructLevel()
     {
-        state = GameState.Loading;
+        constructed = false;
 
-        List<Transform> fields = new List<Transform>();
-
-        fields.Add(playerField.transform);
-        fields.Add(blocksField.transform);
-        fields.Add(sawsField.transform);
-        fields.Add(spikesField.transform);
-        fields.Add(turretsField.transform);
-        fields.Add(starsField.transform);
-
-        foreach (Transform field in fields)
-        {
-            foreach (Transform obj in field)
-            {
-                Destroy(obj.gameObject);
-            }
-        }
+        StartCoroutine(DeleteLevelObjs(10));
     }
 
     public void NextLevel()
@@ -160,15 +157,13 @@ public class GameSceneHandler : MonoBehaviour
 
         DeconstructLevel();
         ConstructLevel(level);
-        StartGame();
     }
 
     public void StartGame()
     {
-        if (state == GameState.Lose || state == GameState.Win || state == GameState.Pause)
-            StopGame(false);
+        if (!constructed) return;
 
-        state = GameState.Game;
+        if (stoped) StopGame(false);
 
         for (int istar = 0; istar < starsField.transform.childCount; istar++)
         {
@@ -181,44 +176,10 @@ public class GameSceneHandler : MonoBehaviour
         gameTime = 0f;
     }
 
-    public void ResumeGame()
-    {
-        if (state == GameState.Pause)
-        {
-            state = GameState.Game;
-            StopGame(false);
-        }
-    }
-
-    public void PauseGame()
-    {
-        if (state == GameState.Game)
-        {
-            state = GameState.Pause;
-            StopGame(true);
-        }
-    }
-
-    public void LoseGame()
-    {
-        if (state == GameState.Game)
-        {
-            state = GameState.Lose;
-            StopGame(true);
-        }
-    }
-
-    public void WinGame()
-    {
-        if (state == GameState.Game)
-        {
-            state = GameState.Win;
-            StopGame(true);
-        }
-    }
-
     public void StopGame(bool value)
     {
+        stoped = value;
+
         List<Transform> fields = new List<Transform>();
 
         fields.Add(playerField.transform);
@@ -276,9 +237,9 @@ public class GameSceneHandler : MonoBehaviour
     /// <summary>
     /// Method create level objects by level dictionary and level map
     /// </summary>
-    private void CreateLevelObjsByMap()
+    private IEnumerator<object> CreateLevelObjsByMap(int maxc_gen_per_frame)
     {
-        if (gamePrefabs.Length <= 0) return;
+        if (gamePrefabs.Length <= 0) yield break;
 
         Dictionary<char, string> level_dict = fileParser.levelDict;
         char[,] level_map = fileParser.levelMap;
@@ -286,6 +247,7 @@ public class GameSceneHandler : MonoBehaviour
 
         Vector2 blockSmplSize = SizeScripts.sizeObjBy(blocksmpl_collider);                                                  // get block sample size
 
+        int count_gen_objs = 0;
         for (int i = (int)map_size.y - 1; i >= 0; i--)                                                                      // reverse step, because file with map was readed top down
         {
             for (int j = 0; j < (int)map_size.x; j++)
@@ -299,12 +261,48 @@ public class GameSceneHandler : MonoBehaviour
                 if (prefab == null) continue;
 
                 generateGameObj(prefab, i, j, blockSmplSize);                                                               // generate game object
+
+                count_gen_objs++;
+                if (count_gen_objs >= maxc_gen_per_frame)
+                {
+                    count_gen_objs = 0;
+                    yield return null;
+                }
             }
         }
 
         if (playerSpawner.spawnedObj)
         {
             setTurretsTarget(playerSpawner.spawnedObj);                                                                     // specifies target for all created turrets and set player as target for turret
+        }
+
+        constructed = true;
+    }
+
+    private IEnumerator<object> DeleteLevelObjs(int maxc_del_per_frame)
+    {
+        List<Transform> fields = new List<Transform>();
+
+        fields.Add(playerField.transform);
+        fields.Add(blocksField.transform);
+        fields.Add(sawsField.transform);
+        fields.Add(spikesField.transform);
+        fields.Add(turretsField.transform);
+        fields.Add(starsField.transform);
+
+        int i = 0;
+        foreach (Transform field in fields)
+        {
+            foreach (Transform obj in field)
+            {
+                Destroy(obj.gameObject);
+                i++;
+                if (i >= maxc_del_per_frame)
+                {
+                    i = 0;
+                    yield return null;
+                }
+            }
         }
     }
 
