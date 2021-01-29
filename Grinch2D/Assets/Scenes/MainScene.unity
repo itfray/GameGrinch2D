@@ -588,7 +588,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &188672125
 RectTransform:
   m_ObjectHideFlags: 0
@@ -732,7 +732,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 485.5, y: -31.601265}
+  m_AnchoredPosition: {x: 467.375, y: -27.671257}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &201742540
@@ -1159,8 +1159,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 464520866}
+  - component: {fileID: 464520867}
   m_Layer: 5
-  m_Name: Menu
+  m_Name: SubMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1195,6 +1196,28 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &464520867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 464520865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a8c043bdbb00aa04cb2dea12f169df93, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameMenuCntrl: {fileID: 2079268591}
+  gameSceneHnd: {fileID: 1455934990}
+  header: {fileID: 1965389908}
+  timeBar: {fileID: 769537366}
+  levelBar: {fileID: 187612223}
+  startBarObj: {fileID: 1667018444}
+  starBar: {fileID: 1667018446}
+  upButtonObj: {fileID: 201742538}
+  upButton: {fileID: 201742540}
+  upButtonText: {fileID: 1426828641}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1908,7 +1931,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 901518985}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2079268591}
+        m_MethodName: PauseMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &901518985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2203,7 +2237,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 485.5, y: -81.601265}
+  m_AnchoredPosition: {x: 467.375, y: -77.67126}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1022838724
@@ -2344,7 +2378,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 485.5, y: -131.60126}
+  m_AnchoredPosition: {x: 467.375, y: -127.67126}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1130029065
@@ -2684,7 +2718,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1305469806
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3861,7 +3895,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 485.5, y: -181.60126}
+  m_AnchoredPosition: {x: 467.375, y: -177.67126}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1932531660
@@ -4127,6 +4161,7 @@ GameObject:
   - component: {fileID: 2079268589}
   - component: {fileID: 2079268588}
   - component: {fileID: 2079268587}
+  - component: {fileID: 2079268591}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -4216,6 +4251,22 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!114 &2079268591
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079268586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4c398b6c505df8540b8486fff2e5b91c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameMenu: {fileID: 188672124}
+  subMenu: {fileID: 464520865}
+  loadingMenu: {fileID: 1305469805}
+  subMenuCntrl: {fileID: 464520867}
 --- !u!1 &2094880245
 GameObject:
   m_ObjectHideFlags: 0
