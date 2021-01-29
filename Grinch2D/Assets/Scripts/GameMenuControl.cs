@@ -11,6 +11,11 @@ public class GameMenuControl : MonoBehaviour
 
     public GameSceneHandler gameScnHnd;
 
+    void Start()
+    {
+        LoadingMenu();
+    }
+
     public void PauseMenu()
     {
         CallMenu(false, true, false);

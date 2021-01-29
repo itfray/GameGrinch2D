@@ -181,6 +181,15 @@ public class GameSceneHandler : MonoBehaviour
         gameTime = 0f;
     }
 
+    public void ResumeGame()
+    {
+        if (state == GameState.Pause)
+        {
+            state = GameState.Game;
+            StopGame(false);
+        }
+    }
+
     public void PauseGame()
     {
         if (state == GameState.Game)
