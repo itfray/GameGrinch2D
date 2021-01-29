@@ -114,6 +114,10 @@ public class LevelFileParser : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Method getting number of level files
+    /// </summary>
+    /// <returns> number of levels </returns>
     public int countLevels()
     {
         return Directory.GetFiles(levelsPath, "*.txt").Length;

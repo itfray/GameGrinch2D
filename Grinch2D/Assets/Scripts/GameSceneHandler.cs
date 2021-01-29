@@ -12,7 +12,6 @@ public class GameSceneHandler : MonoBehaviour
     public LevelFileParser fileParser;                                              // parser level files
 
     public GameObject bgField;                                                      // field for store 4 childs (background game objects)
-    public GameObject bgSample;                                                     // background sample with box colider2d for getting size background game object
     public Sprite[] bgSprites;                                                      // all background sprites
 
     public GameObject playerField;                                                  // field for created palyer
@@ -22,11 +21,13 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject turretsField;                                                 // field for created turrets
     public GameObject starsField;                                                   // field for created stars
 
-    public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
     public GameObject[] gamePrefabs;                                                // all game prefabs
     public GameObject[] spawnPrefabs;                                               // all prefabs for spawning game objects
 
     public string emptyPrefabName = "empty";                                        // empty block prefab name
+
+    public BoxCollider2D blocksmpl_collider;                                        // sample block collider
+    public BoxCollider2D bgsmpl_collider;                                           // sample bg collider
 
     private List<Sprite> levelBgSprites;                                            // background sprites for current level
 
@@ -43,28 +44,25 @@ public class GameSceneHandler : MonoBehaviour
 
     private PlayerSpawner playerSpawner;                                            // spawner of player game object
 
-    private BoxCollider2D blocksmpl_collider;
-    private BoxCollider2D bgsmpl_collider;
-
-    private float gameTime = 0f;
-    public float GameTime { get { return gameTime; } }
+    private float gameTime = 0f;                                                    // time value player in game
+    public float GameTime { get { return gameTime; } }                          
 
     private int current_level;                                                      // number current running level
     public int CurrentLevel { get { return current_level; } }
 
-    private int count_levels;
+    private int count_levels;                                                       // number of levels in game
     public int CountLevels { get { return count_levels; } }
 
-    private bool inited = false;
+    private bool inited = false;                                                    // Is game scene initialized?
     public bool Inited { get { return inited; } }
 
-    private bool constructed = false;
+    private bool constructed = false;                                               // Is level constructed?
     public bool Constructed { get { return constructed; } }
 
-    private bool stoped = false;
+    private bool stoped = false;                                                    // Is game stoped?
     public bool Stoped { get { return stoped; } }
 
-    public int CountStars 
+    public int CountStars                                                           // number of taked stars
     {
         get 
         {
@@ -87,10 +85,14 @@ public class GameSceneHandler : MonoBehaviour
         levelBgSprites = new List<Sprite>();
         bg_rndrs = new List<SpriteRenderer>();
 
-        StartCoroutine(InitGameScene());
+        StartCoroutine(InitGameSceneHnd());                                             // start initialization
     }
 
-    private IEnumerator<object> InitGameScene()
+    /// <summary>
+    /// Method for initializtion game scene handler
+    /// </summary>
+    /// <returns> null </returns>
+    private IEnumerator<object> InitGameSceneHnd()
     {
         // get all strategys of generation game object
         gen_player_strtg = GetComponent<GenPlayerStrategy>();
@@ -100,85 +102,96 @@ public class GameSceneHandler : MonoBehaviour
         gen_move_saw_strtg = GetComponent<GenMovingSawStrategy>();
         gen_spike_strtg = GetComponent<GenSpikeStrategy>();
 
-        blocksmpl_collider = blockSample.GetComponent<BoxCollider2D>();
-        bgsmpl_collider = bgSample.GetComponent<BoxCollider2D>();
-
         for (int i = 0; i < bgField.transform.childCount; i++)
             bg_rndrs.Add(bgField.transform.GetChild(i).GetComponent<SpriteRenderer>());
         yield return null;
 
         fileParser.parseLevelDict();                                                // parse data of level dictionary file
-        yield return null;
-
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
         yield return null;
 
-        count_levels = fileParser.countLevels();
-        inited = true;
+        count_levels = fileParser.countLevels();                                    // parse data of number of levels
+        inited = true;                                                              // set flag intialized
     }
 
     void Update()
     {
         if (!constructed || !inited) return;
 
-        UpdateBackgroundLevel();
-        if (!stoped) gameTime += Time.deltaTime;
+        UpdateBackgroundLevel();                                                    // update background sprites and background postions
+        if (!stoped) gameTime += Time.deltaTime;                                    // count game time
     }
 
     /// <summary>
-    /// Method create level in gamescene by level files and level dictionary file
+    /// Method create level objects in gamescene by level files and level dictionary file
     /// </summary>
     /// <param name="level"> level number </param>
     public void ConstructLevel(int level)
     {
-        constructed = false;
+        constructed = false;                                                                                 // set not constructed flag 
 
-        if (level < 1 || level > count_levels) return;
+        if (level < 1 || level > count_levels) return;                                                       // check level value on valid
 
         current_level = level;
         fileParser.parseLevelFile(level);                                                                    // parse data of level map file
 
         CalcMapCenterPos();                                                                                  // calculate map center
         LoadLevelBgSprites();                                                                                // generate level backgrounds by level file data about background
+        
         StartCoroutine(CreateLevelObjsByMap(10));                                                            // generate level game objects by level file data about map    
     }
 
+    /// <summary>
+    /// Method destoy level objects in gamescene
+    /// </summary>
     public void DeconstructLevel()
     {
-        constructed = false;
+        constructed = false;                                                                                // set not constructed flag 
 
-        StartCoroutine(DeleteLevelObjs(10));
+        StartCoroutine(DeleteLevelObjs(10));                                                                // destroy level game objects
     }
 
+    /// <summary>
+    /// Method peforms transition on next level
+    /// </summary>
     public void NextLevel()
     {
         int level = current_level + 1;
-        if (level > count_levels) return;
+        if (level > count_levels) return;                                                                   // check level value on valid 
 
-        DeconstructLevel();
-        ConstructLevel(level);
+        DeconstructLevel();                                                                                 // destroy old level
+        ConstructLevel(level);                                                                              // create new level
     }
 
+    /// <summary>
+    /// Method runs constructed game from the beginning
+    /// </summary>
     public void StartGame()
     {
-        if (!constructed) return;
+        if (!constructed) return;                                                                           // if game not constructed
 
-        if (stoped) StopGame(false);
+        if (stoped) StopGame(false);                                                                        // if game was stoped
 
-        for (int istar = 0; istar < starsField.transform.childCount; istar++)
+        for (int istar = 0; istar < starsField.transform.childCount; istar++)                               // restore all stars
         {
             Transform star_trnsfm = starsField.transform.GetChild(istar);
             star_trnsfm.gameObject.SetActive(true);
         }
 
-        if (playerSpawner) playerSpawner.Spawn();
+        if (playerSpawner) playerSpawner.Spawn();                                                           // spawn player
 
-        gameTime = 0f;
+        gameTime = 0f;                                                                                      // reset game time
     }
 
+    /// <summary>
+    /// Method stops or resume constructed game
+    /// </summary>
+    /// <param name="value"> true: stop, false: resume </param>
     public void StopGame(bool value)
     {
-        stoped = value;
+        if (!constructed || !inited) return;
+        
+        stoped = value;                                                                                                                                               
 
         List<Transform> fields = new List<Transform>();
 
@@ -190,13 +203,14 @@ public class GameSceneHandler : MonoBehaviour
         {
             foreach (Transform obj in field)
             {
-                foreach(MonoBehaviour script in obj.GetComponents<MonoBehaviour>())
+                foreach(MonoBehaviour script in obj.GetComponents<MonoBehaviour>())                         // enable/not enable all game object scripts
                     script.enabled = !value;
 
-                Rigidbody2D rgbody = obj.GetComponent<Rigidbody2D>();
-                if (rgbody) rgbody.constraints = value? RigidbodyConstraints2D.FreezeAll: RigidbodyConstraints2D.FreezeRotation;
+                Rigidbody2D rgbody = obj.GetComponent<Rigidbody2D>();                                       // freeze/unfreeze all rigidbodys
+                if (rgbody) rgbody.constraints = value? RigidbodyConstraints2D.FreezeAll: 
+                                                        RigidbodyConstraints2D.FreezeRotation;
 
-                Collider2D collider = obj.GetComponent<Collider2D>();
+                Collider2D collider = obj.GetComponent<Collider2D>();                                       // enable/not enable all colliders
                 if (collider) collider.enabled = !value;
             }
         }
@@ -234,9 +248,12 @@ public class GameSceneHandler : MonoBehaviour
                                    blockSmplSize.y * (map_size.y - 1) / 2);
     }
 
+
     /// <summary>
     /// Method create level objects by level dictionary and level map
     /// </summary>
+    /// <param name="maxc_gen_per_frame"> max number of generated objects per frame </param>
+    /// <returns> void </returns>
     private IEnumerator<object> CreateLevelObjsByMap(int maxc_gen_per_frame)
     {
         if (gamePrefabs.Length <= 0) yield break;
@@ -247,7 +264,7 @@ public class GameSceneHandler : MonoBehaviour
 
         Vector2 blockSmplSize = SizeScripts.sizeObjBy(blocksmpl_collider);                                                  // get block sample size
 
-        int count_gen_objs = 0;
+        int count_gen_objs = 0;                                                                                             // count generated objects per frame
         for (int i = (int)map_size.y - 1; i >= 0; i--)                                                                      // reverse step, because file with map was readed top down
         {
             for (int j = 0; j < (int)map_size.x; j++)
@@ -276,30 +293,35 @@ public class GameSceneHandler : MonoBehaviour
             setTurretsTarget(playerSpawner.spawnedObj);                                                                     // specifies target for all created turrets and set player as target for turret
         }
 
-        constructed = true;
+        constructed = true;                                                                                     
     }
 
+    /// <summary>
+    /// Method destoru level objects
+    /// </summary>
+    /// <param name="maxc_del_per_frame">  max number of destroyed objects per frame </param>
+    /// <returns></returns>
     private IEnumerator<object> DeleteLevelObjs(int maxc_del_per_frame)
     {
         List<Transform> fields = new List<Transform>();
 
-        fields.Add(playerField.transform);
+        fields.Add(playerField.transform);                                          // get all fields
         fields.Add(blocksField.transform);
         fields.Add(sawsField.transform);
         fields.Add(spikesField.transform);
         fields.Add(turretsField.transform);
         fields.Add(starsField.transform);
 
-        int i = 0;
+        int count_del_objs = 0;                                                     // number of destroyed objects per frame
         foreach (Transform field in fields)
         {
             foreach (Transform obj in field)
             {
-                Destroy(obj.gameObject);
-                i++;
-                if (i >= maxc_del_per_frame)
+                Destroy(obj.gameObject);                                            // destoy object of game
+                count_del_objs++;
+                if (count_del_objs >= maxc_del_per_frame)
                 {
-                    i = 0;
+                    count_del_objs = 0;
                     yield return null;
                 }
             }
@@ -367,7 +389,7 @@ public class GameSceneHandler : MonoBehaviour
     }
 
     /// <summary>
-    /// Method specifies target(player) for all turrets
+    /// Method specifies target for all turrets
     /// </summary>
     private void setTurretsTarget(GameObject target)
     {
