@@ -11,8 +11,10 @@ public class PlayerHealthHnd : HealthHandler
 
     private Animator animator;
 
-    void Start()
+    protected override void InitHealthHnd()
     {
+        base.InitHealthHnd();
+
         animator = GetComponent<Animator>();
         CreateBloodSplttr();                                        // create blood splatter object
     }
@@ -32,6 +34,7 @@ public class PlayerHealthHnd : HealthHandler
     protected override void Dying()
     {
         BloodSplash();
+        gameObject.SetActive(false);
     }
 
     /// <summary>

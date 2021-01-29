@@ -24,12 +24,12 @@ public class PlayerHandler : JumpHandler
         collider2d = GetComponent<BoxCollider2D>();
     }
 
-
     /// <summary>
     /// Method contains code for updating current move direction
     /// </summary>
     protected override void UpdateDirection()
     {
+
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
@@ -177,7 +177,8 @@ public class PlayerHandler : JumpHandler
     /// </summary>
     protected override void UpdatePosition()
     {
-        if (rgbody2d) rgbody2d.MovePosition(rgbody2d.position + speed * Time.deltaTime);
+        if (rgbody2d)
+            rgbody2d.MovePosition(rgbody2d.position + speed * Time.deltaTime);
     }
 
     /// <summary>

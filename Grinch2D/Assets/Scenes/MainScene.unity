@@ -680,7 +680,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -898999001
-  m_SortingLayer: -9
+  m_SortingLayer: -10
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f1c0acdf0e4a5c7409f04f6a26047118, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1568,8 +1568,39 @@ Transform:
   - {fileID: 840537821}
   - {fileID: 1705051704}
   - {fileID: 1205509374}
+  - {fileID: 763531945}
   m_Father: {fileID: 1455934989}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &763531944
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 763531945}
+  m_Layer: 0
+  m_Name: stars
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &763531945
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 763531944}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 756761931}
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &769537364
 GameObject:
@@ -2965,7 +2996,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -898999001
-  m_SortingLayer: -9
+  m_SortingLayer: -10
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4b466b48d9d3da146ac625d35ca790f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3198,7 +3229,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -898999001
-  m_SortingLayer: -9
+  m_SortingLayer: -10
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: f1c0acdf0e4a5c7409f04f6a26047118, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -3228,7 +3259,6 @@ GameObject:
   - component: {fileID: 1455934992}
   - component: {fileID: 1455934996}
   - component: {fileID: 1455934997}
-  - component: {fileID: 1455934998}
   m_Layer: 0
   m_Name: gamescene
   m_TagString: Untagged
@@ -3279,6 +3309,7 @@ MonoBehaviour:
   sawsField: {fileID: 840537820}
   spikesField: {fileID: 1705051703}
   turretsField: {fileID: 1205509373}
+  starsField: {fileID: 763531944}
   blockSample: {fileID: 308226852408147019, guid: a55f229c95c64d9468d49524746938ec,
     type: 3}
   gamePrefabs:
@@ -3296,6 +3327,7 @@ MonoBehaviour:
   - {fileID: 1286023049779711281, guid: 3a141e822bc63ff42908afd465cf328d, type: 3}
   - {fileID: 1286023049779711281, guid: 17e3085159d0cf848b045a5c9399bb74, type: 3}
   - {fileID: 1641230939085965162, guid: 106d9c4f299e13c408bb704771fa4897, type: 3}
+  - {fileID: 308226852408147019, guid: ad4e6ad95cfe8e84db563f27100f73fe, type: 3}
   spawnPrefabs:
   - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty
@@ -3385,18 +3417,6 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 57588c50722993b4ea71572af6ccccde, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1455934998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1455934988}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4149b9c8b0b9494e86008fb9ff993de, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1590810455
@@ -3769,7 +3789,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -898999001
-  m_SortingLayer: -9
+  m_SortingLayer: -10
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 4b466b48d9d3da146ac625d35ca790f3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -4267,6 +4287,7 @@ MonoBehaviour:
   subMenu: {fileID: 464520865}
   loadingMenu: {fileID: 1305469805}
   subMenuCntrl: {fileID: 464520867}
+  gameScnHnd: {fileID: 0}
 --- !u!1 &2094880245
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ public class GameObjSpawner : MonoBehaviour
 {
     public GameObject parentField;                                                                      // parent filed of generated game object
     public GameObject prefab;                                                                           // prefab of generated game object
-    public Vector2 spawnPosition;                                                                       // spawn position of generated game object
+    public Vector3 spawnPosition;                                                                       // spawn position of generated game object
 
     protected GameObject spawned_obj;                                                                   // generated game object
 
@@ -23,7 +23,16 @@ public class GameObjSpawner : MonoBehaviour
     {
         prefab = obj_prefab;
         parentField = parent_field;
-        spawnPosition = spawn_position;
+        spawnPosition = new Vector3(spawn_position.x, spawn_position.y, prefab.transform.position.z);
+    }
+
+    /// <summary>
+    /// Method for creating game object 
+    /// </summary>
+    public virtual void Create()
+    {
+        spawned_obj = Instantiate(prefab, new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z),
+                                          Quaternion.identity, parentField.transform) as GameObject;
     }
 
     /// <summary>
@@ -31,10 +40,6 @@ public class GameObjSpawner : MonoBehaviour
     /// </summary>
     public virtual void Spawn()
     {
-        Vector3 spawn_pos = new Vector3(spawnPosition.x, spawnPosition.y, prefab.transform.position.z);
-        if (spawned_obj == null)
-            spawned_obj = Instantiate(prefab, spawn_pos, Quaternion.identity, parentField.transform) as GameObject;
-        else
-            spawned_obj.transform.position = spawn_pos;
+        spawned_obj.transform.position = new Vector3(spawnPosition.x, spawnPosition.y, spawnPosition.z);
     }
 }

@@ -6,11 +6,21 @@
 public class PlayerSpawner : GameObjSpawner
 {
     private MoveCameraHandler move_cam_hnd;                             // handler of camera moving
+    private PlayerHealthHnd health_hnd;
+    private StarHandler star_hnd;
 
-    void Update()
+    public PlayerHealthHnd PlayerHealthHnd { get { return health_hnd;  } }
+    public StarHandler PlayerStarHnd { get { return star_hnd; } }
+
+    public override void Create()
     {
-        if (Input.GetKeyDown(KeyCode.R)) 
-            Spawn();
+        base.Create();
+
+        health_hnd = spawned_obj.GetComponent<PlayerHealthHnd>();
+        star_hnd = spawned_obj.GetComponent<StarHandler>();
+        move_cam_hnd = Camera.main.transform.GetComponent<MoveCameraHandler>();
+        move_cam_hnd.following = spawned_obj.transform;                                 // do that main camera follow on the player
+        spawned_obj.SetActive(false);
     }
 
     /// <summary>
@@ -20,8 +30,9 @@ public class PlayerSpawner : GameObjSpawner
     {
         base.Spawn();
 
-        if (move_cam_hnd == null)
-            move_cam_hnd = Camera.main.transform.GetComponent<MoveCameraHandler>();
-        move_cam_hnd.following = spawned_obj.transform;                                 // do that main camera follow on the player
+        health_hnd.InitHealth();
+        star_hnd.ResetCounter();
+
+        spawned_obj.SetActive(true);
     }
 }

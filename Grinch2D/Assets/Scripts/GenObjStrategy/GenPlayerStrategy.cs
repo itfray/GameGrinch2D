@@ -73,7 +73,7 @@ public class GenPlayerStrategy : GenObjStrategy
         {
             spwnrHnd = player_spwnr;
             player_spwnr.InitSpawner(objPrefab, objParentField, spawn_pos);                                                   // init player spawner
-            player_spwnr.Spawn();
-        }                                                                                                                     // spawn player object
+            player_spwnr.Create();                                                                                            // create player object
+        }                                                                                           
     }
 }

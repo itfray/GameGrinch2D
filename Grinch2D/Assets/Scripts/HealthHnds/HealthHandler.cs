@@ -7,8 +7,24 @@
 /// </summary>
 public abstract class HealthHandler : MonoBehaviour
 {
+    public int max_health = 1;                                                      // max_health_value
     public int health = 1;                                                          // health value
     public GameObject[] damageObjs;                                                 // information of game objects that can damage this game object
+
+    void Start()
+    {
+        InitHealthHnd();
+    }
+
+    protected virtual void InitHealthHnd()
+    {
+        InitHealth();
+    }
+
+    public void InitHealth()
+    {
+        health = max_health;
+    }
 
     /// <summary>
     /// Method is handler damage game object.

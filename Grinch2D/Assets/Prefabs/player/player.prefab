@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 4793253245083234807}
   - component: {fileID: 2771906610155045659}
   - component: {fileID: 3429115756561989709}
+  - component: {fileID: 6548027834958359999}
   m_Layer: 0
   m_Name: player
   m_TagString: Player
@@ -180,7 +181,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4d1466d80eaa945b6c0afc06ed4dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  max_health: 10
+  health: 0
   damageObjs:
   - {fileID: 1641230939085965162, guid: 106d9c4f299e13c408bb704771fa4897, type: 3}
   - {fileID: 5818134098678246762, guid: 6a6fca99a6743a94fa03380dfbb69b3f, type: 3}
@@ -189,3 +191,18 @@ MonoBehaviour:
   - {fileID: 7860108709145032063, guid: ae8daee4ce528e140883a259d98b93c2, type: 3}
   blood_spltr_pref: {fileID: 5622191729787828374, guid: e07b18f96901a324babae97369458fff,
     type: 3}
+--- !u!114 &6548027834958359999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4915263352331208298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 91405fe464b672647bc4b90a72204c99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  starObj: {fileID: 308226852408147019, guid: ad4e6ad95cfe8e84db563f27100f73fe, type: 3}
+  max_count_stars: 3
+  count_stars: 0

@@ -9,6 +9,8 @@ public class GameMenuControl : MonoBehaviour
 
     public SubMenuControl subMenuCntrl;
 
+    public GameSceneHandler gameScnHnd;
+
     public void PauseMenu()
     {
         CallMenu(false, true, false);

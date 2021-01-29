@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System.Linq;
 
 
 /// <summary>
@@ -9,6 +8,10 @@ using System.Linq;
 /// </summary>
 public class GameSceneHandler : MonoBehaviour
 {
+/*    public enum GameState {Entry, Loading, Game, Pause, Win, Lose};
+    private GameState state;
+    public GameState State { get { return state; } }*/
+
     public LevelFileParser fileParser;                                              // parser level files
 
     public GameObject bgField;                                                      // field for store 4 childs (background game objects)
@@ -20,6 +23,7 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject sawsField;                                                    // field for created saws
     public GameObject spikesField;                                                  // field for created spikes
     public GameObject turretsField;                                                 // field for created turrets
+    public GameObject starsField;                                                   // field for created stars
 
     public GameObject blockSample;                                                  // block sample with box colider2d for generating other blocks
     public GameObject[] gamePrefabs;                                                // all game prefabs
@@ -41,12 +45,15 @@ public class GameSceneHandler : MonoBehaviour
     private GenBigSawStrategy gen_big_saw_strtg;                                    // strategy of generation big saw
     private GenMovingSawStrategy gen_move_saw_strtg;                                // strategy of generation moving saw
     private GenSpikeStrategy gen_spike_strtg;                                       // strategy of generation spike
-    private GenTurretStrategy gen_turret_strtg;                                     // strategy of generation turret
 
-    private GameObjSpawner playerSpawner;                                           // spawner of player game object
+    private PlayerSpawner playerSpawner;                                            // spawner of player game object
 
     private BoxCollider2D blocksmpl_collider;
     private BoxCollider2D bgsmpl_collider;
+
+    private float gameTime = 0f;
+    public float GameTime { get { return gameTime; } }
+
 
     public int currentLevel
     {
@@ -63,7 +70,6 @@ public class GameSceneHandler : MonoBehaviour
         gen_big_saw_strtg = GetComponent<GenBigSawStrategy>();
         gen_move_saw_strtg = GetComponent<GenMovingSawStrategy>();
         gen_spike_strtg = GetComponent<GenSpikeStrategy>();
-        gen_turret_strtg = GetComponent<GenTurretStrategy>();
 
         blocksmpl_collider = blockSample.GetComponent<BoxCollider2D>();
         bgsmpl_collider = bgSample.GetComponent<BoxCollider2D>();
@@ -76,6 +82,8 @@ public class GameSceneHandler : MonoBehaviour
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
 
         currentLevel = 5;
+
+        StartGame();
     }
 
     void Update()
@@ -95,6 +103,33 @@ public class GameSceneHandler : MonoBehaviour
         LoadLevelBgSprites();                                                                               // generate level backgrounds by level file data about background
         CreateLevelObjsByMap();                                                                             // generate level game objects by level file data about map    
         CalcMapCenterPos();                                                                                 // calculate map center
+    }
+
+    public void StartGame()
+    {
+        for (int istar = 0; istar < starsField.transform.childCount; istar++)
+        {
+            Transform star_trnsfm = starsField.transform.GetChild(istar);
+            star_trnsfm.gameObject.SetActive(true);
+        }
+
+        if (playerSpawner) playerSpawner.Spawn();
+        gameTime = 0f;
+    }
+
+    public void PauseGame()
+    {
+/*        playerField;                                                  // field for created palyer
+        sawsField;                                                    // field for created saws
+        spikesField;                                                  // field for created spikes
+        urretsField;                                                  // field for created turrets
+        starsField;                                                   // field for created stars*/
+        // if (playerHandler) playerHandler.Stop(true);
+    }
+
+    public void ResumeGame()
+    {
+        // if (playerHandler) playerHandler.Stop(false);
     }
 
     /// <summary>
@@ -158,7 +193,10 @@ public class GameSceneHandler : MonoBehaviour
             }
         }
 
-        setTurretsTarget();                                                                                                 // specifies target for all created turrets
+        if (playerSpawner.spawnedObj)
+        {
+            setTurretsTarget(playerSpawner.spawnedObj);                                                                     // specifies target for all created turrets and set player as target for turret
+        }
     }
 
     /// <summary>
@@ -201,8 +239,12 @@ public class GameSceneHandler : MonoBehaviour
                 genObj.objParentField = sawsField;
                 break;
             case "Turret":
-                genObj = gen_turret_strtg;
+                genObj = gen_block_strtg;
                 genObj.objParentField = turretsField;
+                break;
+            case "Star":
+                genObj = gen_block_strtg;
+                genObj.objParentField = starsField;
                 break;
             default:
                 return;
@@ -214,22 +256,19 @@ public class GameSceneHandler : MonoBehaviour
         genObj.Generate();                                                                                                          // create game object
 
         if (prefab.tag == "Player")
-            playerSpawner = genObj.spwnrHnd;                                                                                        // set playerSpawner  
+            playerSpawner = genObj.spwnrHnd as PlayerSpawner;                                                                       // get playerSpawner
     }
 
     /// <summary>
     /// Method specifies target(player) for all turrets
     /// </summary>
-    private void setTurretsTarget()
+    private void setTurretsTarget(GameObject target)
     {
-        if (playerSpawner)
+        for (int i = 0; i < turretsField.transform.childCount; i++)
         {
-            for (int i = 0; i < turretsField.transform.childCount; i++)
-            {
-                Transform turret = turretsField.transform.GetChild(i);
-                TurretHandler turret_hnd = turret.GetComponent<TurretHandler>();
-                if (turret_hnd) turret_hnd.target = playerSpawner.spawnedObj;                                                                // set player as target for turret
-            }
+            Transform turret = turretsField.transform.GetChild(i);
+            TurretHandler turret_hnd = turret.GetComponent<TurretHandler>();
+            if (turret_hnd) turret_hnd.target = target;
         }
     }
 
