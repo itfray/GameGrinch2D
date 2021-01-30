@@ -16,11 +16,17 @@ public abstract class HealthHandler : MonoBehaviour
         InitHealthHnd();
     }
 
+    /// <summary>
+    /// Method for initialization health handler
+    /// </summary>
     protected virtual void InitHealthHnd()
     {
         InitHealth();
     }
 
+    /// <summary>
+    /// Method for initializtion health value
+    /// </summary>
     public void InitHealth()
     {
         health = max_health;

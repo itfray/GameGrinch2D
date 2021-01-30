@@ -12,6 +12,9 @@ public class PlayerSpawner : GameObjSpawner
     public PlayerHealthHnd PlayerHealthHnd { get { return health_hnd;  } }
     public StarHandler PlayerStarHnd { get { return star_hnd; } }
 
+    /// <summary>
+    /// Method for creating player 
+    /// </summary>
     public override void Create()
     {
         base.Create();

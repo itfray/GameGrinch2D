@@ -24,7 +24,7 @@ public class StarHandler : MonoBehaviour
     /// Method for take star
     /// </summary>
     /// <param name="star"></param>
-    void TakeStar(GameObject star)
+    protected virtual void TakeStar(GameObject star)
     {
         if (count_stars < max_count_stars)
         {
