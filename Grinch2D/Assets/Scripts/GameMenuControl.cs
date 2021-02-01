@@ -39,6 +39,8 @@ public class GameMenuControl : MonoBehaviour
     public Text gameTimeBar;                                            // game play menu time bar
     // ***************************************************
 
+    public float time = 0f;
+
     private GameSceneHandler.GameSceneEventHnd on_construct_level = null;
 
     void Start()
@@ -137,11 +139,8 @@ public class GameMenuControl : MonoBehaviour
 
     public void UpdateTimeBar(Text timeBar)
     {
-        float time = gameScnHnd.GameTime;
-        int min = Mathf.RoundToInt(time / 60);
-        int sec = Mathf.RoundToInt(time - min * 60);
-        if (min > 99) min = 99;
-        timeBar.text = timeBarText + min + ":" + sec;
+        Debug.Log(SecondsToTimeStr(time));
+        timeBar.text = timeBarText + SecondsToTimeStr(gameScnHnd.GameTime);
     }
 
     public void PauseMenu()
@@ -194,5 +193,24 @@ public class GameMenuControl : MonoBehaviour
 
         UpdateStarBar(gmUnplStarBar);
         UpdateTimeBar(gmUnplTimeBar);
+    }
+
+    public static string SecondsToTimeStr(float time)
+    {
+        int min = (int)time / 60;
+        int sec = (int)time % 60;
+
+        if (min > 99)
+        {
+            min = 99;
+            sec = 59;
+        }
+
+        string NumTo2DigStr(int num)
+        {
+            return num < 10 ? "0" + num : num.ToString();
+        }
+
+        return NumTo2DigStr(min) + ":" + NumTo2DigStr(sec);
     }
 }

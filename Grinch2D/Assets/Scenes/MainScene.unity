@@ -732,7 +732,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 467.375, y: -27.671257}
+  m_AnchoredPosition: {x: 440.5, y: -24.232498}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &201742540
@@ -777,7 +777,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 201742541}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2079268591}
+        m_MethodName: ResumeGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &201742541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1941,7 +1952,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2079268591}
-        m_MethodName: PauseMenu
+        m_MethodName: PauseGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2245,7 +2256,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 467.375, y: -77.67126}
+  m_AnchoredPosition: {x: 440.5, y: -74.2325}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1022838724
@@ -2309,7 +2320,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1022838726}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2079268591}
+        m_MethodName: StartGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1022838726
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2386,7 +2408,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 467.375, y: -127.67126}
+  m_AnchoredPosition: {x: 440.5, y: -124.2325}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1130029065
@@ -3902,7 +3924,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 467.375, y: -177.67126}
+  m_AnchoredPosition: {x: 440.5, y: -174.2325}
   m_SizeDelta: {x: 160, y: 40}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!95 &1932531660
@@ -4283,7 +4305,7 @@ MonoBehaviour:
   gmUnplLevelBar: {fileID: 187612223}
   gmUnplStarBar: {fileID: 1667018446}
   gmUnplBt: {fileID: 201742540}
-  gmUnplBtText: {fileID: 100706951}
+  gmUnplBtText: {fileID: 1426828641}
   gameStarBar: {fileID: 1980006345}
   gameTimeBar: {fileID: 1793983084}
 --- !u!1 &2094880245

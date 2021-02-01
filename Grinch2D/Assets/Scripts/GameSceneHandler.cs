@@ -183,7 +183,6 @@ public class GameSceneHandler : MonoBehaviour
             return;
 
         List<Transform> fields = new List<Transform>();
-        fields.Add(playerField.transform);
         fields.Add(sawsField.transform);
         fields.Add(turretsField.transform);
 
@@ -191,19 +190,25 @@ public class GameSceneHandler : MonoBehaviour
         {
             foreach (Transform obj in field)
             {
-                foreach(MonoBehaviour script in obj.GetComponents<MonoBehaviour>())                         // enable/not enable all game object scripts
-                    script.enabled = !value;
-
-                Rigidbody2D rgbody = obj.GetComponent<Rigidbody2D>();                                       // freeze/unfreeze all rigidbodys
-                if (rgbody) rgbody.constraints = value? RigidbodyConstraints2D.FreezeAll: 
-                                                        RigidbodyConstraints2D.FreezeRotation;
-
-                Collider2D collider = obj.GetComponent<Collider2D>();                                       // enable/not enable all colliders
-                if (collider) collider.enabled = !value;
+                StopObject(obj.gameObject, value);
             }
         }
+        StopObject(playerSpawner.spawnedObj, value);
 
         state = value ? GameState.Stoped : GameState.Started;
+    }
+
+    public static void StopObject(GameObject obj, bool value)
+    {
+        foreach (MonoBehaviour script in obj.GetComponents<MonoBehaviour>())                         // enable/not enable all game object scripts
+            script.enabled = !value;
+
+        Rigidbody2D rgbody = obj.GetComponent<Rigidbody2D>();                                       // freeze/unfreeze all rigidbodys
+        if (rgbody) rgbody.constraints = value ? RigidbodyConstraints2D.FreezeAll :
+                                                RigidbodyConstraints2D.FreezeRotation;
+
+        Collider2D collider = obj.GetComponent<Collider2D>();                                       // enable/not enable all colliders
+        if (collider) collider.enabled = !value;
     }
 
     /// <summary>
