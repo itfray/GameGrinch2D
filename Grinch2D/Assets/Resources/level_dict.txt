@@ -15,4 +15,5 @@ f : concrete1_1
 3 : moving_big_saw
 4 : moving_big_saw_end
 ! : turret
-# : star
++ : star
+# : gift

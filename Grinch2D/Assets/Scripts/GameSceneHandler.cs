@@ -19,6 +19,7 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject spikesField;                                                  // field for created spikes
     public GameObject turretsField;                                                 // field for created turrets
     public GameObject starsField;                                                   // field for created stars
+    public GameObject giftsField;                                                   // field for created gifts
 
     public GameObject[] gamePrefabs;                                                // all game prefabs
     public GameObject[] spawnPrefabs;                                               // all prefabs for spawning game objects
@@ -158,11 +159,13 @@ public class GameSceneHandler : MonoBehaviour
         else
             state = GameState.Started;
 
-        for (int istar = 0; istar < starsField.transform.childCount; istar++)                                // restore all stars
-        {
-            Transform star_trnsfm = starsField.transform.GetChild(istar);
-            star_trnsfm.gameObject.SetActive(true);
-        }
+        List<Transform> fields = new List<Transform>();
+        fields.Add(starsField.transform);                                                                   // restore all stars
+        fields.Add(giftsField.transform);                                                                   // restore all gifts
+
+        foreach (Transform field in fields)
+            foreach (Transform obj in field)
+                obj.gameObject.SetActive(true);
 
         if (playerSpawner) playerSpawner.Spawn();                                                           // spawn player
 
@@ -281,6 +284,7 @@ public class GameSceneHandler : MonoBehaviour
         fields.Add(spikesField.transform);
         fields.Add(turretsField.transform);
         fields.Add(starsField.transform);
+        fields.Add(giftsField.transform);
 
         int count_del_objs = 0;                                                     // number of destroyed objects per frame
         foreach (Transform field in fields)
@@ -347,6 +351,10 @@ public class GameSceneHandler : MonoBehaviour
             case "Star":
                 genObj = gen_block_strtg;
                 genObj.objParentField = starsField;
+                break;
+            case "Gift":
+                genObj = gen_block_strtg;
+                genObj.objParentField = giftsField;
                 break;
             default:
                 return;
