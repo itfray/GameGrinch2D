@@ -182,7 +182,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bb4d1466d80eaa945b6c0afc06ed4dec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  max_health: 1000
+  max_health: 1
   health: 0
   damageObjs:
   - {fileID: 1641230939085965162, guid: 106d9c4f299e13c408bb704771fa4897, type: 3}

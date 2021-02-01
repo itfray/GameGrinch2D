@@ -7,6 +7,10 @@
 public class PlayerHealthHnd : HealthHandler
 { 
     public GameObject blood_spltr_pref;                             // blood splatter prefab
+
+    public delegate void PlayerHealthEventHnd();                    // type handler of events of PlayerHealthHandler
+    public event PlayerHealthEventHnd OnDied;                       // invoke when player is died
+
     private GameObject blood_spltr;                                 // blood splatter object
 
     private Animator animator;
@@ -35,6 +39,7 @@ public class PlayerHealthHnd : HealthHandler
     {
         BloodSplash();
         gameObject.SetActive(false);
+        OnDied?.Invoke();
     }
 
     /// <summary>

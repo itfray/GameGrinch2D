@@ -36,10 +36,33 @@ public class GameSceneHandler : MonoBehaviour
     public GenMovingSawStrategy gen_move_saw_strtg;                                // strategy of generation moving saw
     public GenSpikeStrategy gen_spike_strtg;                                       // strategy of generation spike
 
-    public delegate void GameSceneEventHnd();
-    public event GameSceneEventHnd OnInited = null;
-    public event GameSceneEventHnd OnConstructedLevel = null;
-    public event GameSceneEventHnd OnDeconstructedLevel = null;
+    public delegate void GameSceneEventHnd();                                       // type handler of events of GameSceneHandler
+    public event GameSceneEventHnd OnInited;                                        // invoke when game scene handler inited
+    public event GameSceneEventHnd OnConstructedLevel;                              // invoke when game scene handler constructed
+    public event GameSceneEventHnd OnDeconstructedLevel;                            // invoke when game scene gandler deconstructed
+
+    public event GameSceneEventHnd OnWined
+    {
+        add
+        {
+
+            if (playerSpawner != null && playerSpawner?.PlayerGiftHnd != null)
+                playerSpawner.PlayerGiftHnd.OnTaked += () => value?.Invoke();       // invoke callback of win handler when player is take gift 
+        }
+
+        remove {}
+    }
+
+    public event GameSceneEventHnd OnLosed  
+    {
+        add
+        {
+            if (playerSpawner != null && playerSpawner?.PlayerHealthHnd != null)
+                playerSpawner.PlayerHealthHnd.OnDied += () => value?.Invoke();      // invoke callback of lose handler when player is died 
+        }
+
+        remove {}
+    }
 
     private List<Sprite> levelBgSprites = new List<Sprite>();                       // background sprites for current level
 
@@ -130,7 +153,7 @@ public class GameSceneHandler : MonoBehaviour
         CalcMapCenterPos();                                                                                  // calculate map center
         LoadLevelBgSprites();                                                                                // generate level backgrounds by level file data about background
         
-        StartCoroutine(CreateLevelObjsByMap(10));                                                            // generate level game objects by level file data about map    
+        StartCoroutine(CreateLevelObjsByMap());                                                             // generate level game objects by level file data about map    
     }
 
     /// <summary>
@@ -143,7 +166,7 @@ public class GameSceneHandler : MonoBehaviour
 
         state = GameState.Deconstructing;
 
-        StartCoroutine(DeleteLevelObjs(10));                                                                // destroy level game objects
+        StartCoroutine(DeleteLevelObjs());                                                                // destroy level game objects
     }
 
     /// <summary>
@@ -224,9 +247,8 @@ public class GameSceneHandler : MonoBehaviour
     /// <summary>
     /// Method create level objects by level dictionary and level map
     /// </summary>
-    /// <param name="maxc_gen_per_frame"> max number of generated objects per frame </param>
     /// <returns> void </returns>
-    private IEnumerator<object> CreateLevelObjsByMap(int maxc_gen_per_frame)
+    private IEnumerator<object> CreateLevelObjsByMap()
     {
         if (gamePrefabs.Length <= 0) yield break;
 
@@ -236,7 +258,6 @@ public class GameSceneHandler : MonoBehaviour
 
         Vector2 blockSmplSize = SizeScripts.sizeObjBy(blocksmpl_collider);                                                  // get block sample size
 
-        int count_gen_objs = 0;                                                                                             // count generated objects per frame
         for (int i = (int)map_size.y - 1; i >= 0; i--)                                                                      // reverse step, because file with map was readed top down
         {
             for (int j = 0; j < (int)map_size.x; j++)
@@ -250,13 +271,7 @@ public class GameSceneHandler : MonoBehaviour
                 if (prefab == null) continue;
 
                 generateGameObj(prefab, i, j, blockSmplSize);                                                               // generate game object
-
-                count_gen_objs++;
-                if (count_gen_objs >= maxc_gen_per_frame)
-                {
-                    count_gen_objs = 0;
-                    yield return null;
-                }
+                yield return null;
             }
         }
 
@@ -265,6 +280,8 @@ public class GameSceneHandler : MonoBehaviour
             setTurretsTarget(playerSpawner.spawnedObj);                                                                     // specifies target for all created turrets and set player as target for turret
         }
 
+        yield return null;
+
         state = GameState.Constructed;
         OnConstructedLevel?.Invoke();
     }
@@ -272,12 +289,9 @@ public class GameSceneHandler : MonoBehaviour
     /// <summary>
     /// Method destoru level objects
     /// </summary>
-    /// <param name="maxc_del_per_frame">  max number of destroyed objects per frame </param>
-    /// <returns></returns>
-    private IEnumerator<object> DeleteLevelObjs(int maxc_del_per_frame)
+    private IEnumerator<object> DeleteLevelObjs()
     {
         List<Transform> fields = new List<Transform>();
-
         fields.Add(playerField.transform);                                          // get all fields
         fields.Add(blocksField.transform);
         fields.Add(sawsField.transform);
@@ -286,19 +300,19 @@ public class GameSceneHandler : MonoBehaviour
         fields.Add(starsField.transform);
         fields.Add(giftsField.transform);
 
-        int count_del_objs = 0;                                                     // number of destroyed objects per frame
+        List<Transform> objs = new List<Transform>();
         foreach (Transform field in fields)
         {
             foreach (Transform obj in field)
             {
-                Destroy(obj.gameObject);                                            // destoy object of game
-                count_del_objs++;
-                if (count_del_objs >= maxc_del_per_frame)
-                {
-                    count_del_objs = 0;
-                    yield return null;
-                }
+                objs.Add(obj);
             }
+        }
+
+        foreach (Transform obj in objs)
+        {
+            Destroy(obj.gameObject);                                            // destoy object of game
+            yield return null;
         }
 
         state = GameState.Deconstructed;
