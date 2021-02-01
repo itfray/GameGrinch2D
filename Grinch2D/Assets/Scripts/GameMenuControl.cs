@@ -5,9 +5,9 @@ using System.Collections.Generic;
 
 public class GameMenuControl : MonoBehaviour
 {
-    public GameSceneHandler gameScnHnd;
+    public GameSceneHandler gameScnHnd;                                 // Game Scene Handler 
 
-    public Sprite[] starBarSprites;
+    public Sprite[] starBarSprites;                                     // sprites for star bar
 
     // *************** All menu objects ******************
     public GameObject gamePlayMenu;                                     // game play menu
@@ -39,44 +39,71 @@ public class GameMenuControl : MonoBehaviour
     public Text gameTimeBar;                                            // game play menu time bar
     // ***************************************************
 
-    public float time = 0f;
+    public enum GameMenuState { Loading, Pause, Lose, Win, Game };      // game menu state
+    private GameMenuState menu_state;                                   // menu state
+    public GameMenuState MenuState { get { return menu_state; } }
 
-    private GameSceneHandler.GameSceneEventHnd on_construct_level = null;
 
+    private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
         LoadingMenu();                                                                                  // open loading menu
 
-        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt("level", 5));
-        gameScnHnd.OnConstructedLevel += StartGame;
+        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt("level", 5));         // add callback after initialization of game scene handler
+        gameScnHnd.OnConstructedLevel += StartGame;                                                     // add callback after construction of level
 
-        gameScnHnd.Init();
+        gameScnHnd.Init();                                                                              // run game scene handler initialization
     }
 
     void Update()
     {
+        HandleInput();                                                                                  // handles input
+
         if (gameScnHnd.State == GameSceneHandler.GameState.Started)                                     // update game play info
         {
-            UpdateStarBar(gameStarBar);
-            UpdateTimeBar(gameTimeBar);
+            UpdateStarBar(gameStarBar);                                                                 // player star bar
+            UpdateTimeBar(gameTimeBar);                                                                 // player time bar
         }
     }
 
+    /// <summary>
+    /// Method handles menu input
+    /// </summary>
+    public void HandleInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (menu_state == GameMenuState.Game)
+                PauseGame();
+            else if (menu_state == GameMenuState.Pause)
+                ResumeGame();
+        }
+    }
+
+    /// <summary>
+    /// Method for start/restart game
+    /// </summary>
     public void StartGame()
     {
-        GameMenu();
+        GameMenu();                                                                     // open game menu
         gameScnHnd.StartGame();
     }
 
+    /// <summary>
+    /// Method for pause game
+    /// </summary>
     public void PauseGame()
     {
-        if (gameScnHnd.State == GameSceneHandler.GameState.Started)
+        if (gameScnHnd.State == GameSceneHandler.GameState.Started)                     // if game scene handler started
         {
-            PauseMenu();
-            gameScnHnd.StopGame(true);
+            PauseMenu();                                                                // open pause menu
+            gameScnHnd.StopGame(true);                                                  // stop game
         }
     }
 
+    /// <summary>
+    /// Method for lose game
+    /// </summary>
     public void LoseGame()
     {
         if (gameScnHnd.State == GameSceneHandler.GameState.Started)
@@ -86,6 +113,9 @@ public class GameMenuControl : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Method for win game
+    /// </summary>
     public void WinGame()
     {
         if (gameScnHnd.State == GameSceneHandler.GameState.Started)
@@ -95,32 +125,42 @@ public class GameMenuControl : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Method for resume game
+    /// </summary>
     public void ResumeGame()
     {
         if (gameScnHnd.State == GameSceneHandler.GameState.Stoped)
         {
-            GameMenu();
-            gameScnHnd.StopGame(false);
+            GameMenu();                                                                    // run game menu
+            gameScnHnd.StopGame(false);                                                    // start game
         }
     }
 
+    /// <summary>
+    /// Method turns on next level in game
+    /// </summary>
     public void NextLevel()
     {
         int level = gameScnHnd.CurrentLevel + 1;
-        if (level > gameScnHnd.CountLevels) return;
+        if (level > gameScnHnd.CountLevels) return;                                         // is there next level in game?
 
-        LoadingMenu();
+        LoadingMenu();                                                                      // open loading menu
 
-        if (on_construct_level != null) 
-            gameScnHnd.OnDeconstructedLevel -= on_construct_level;
+        if (ConstructLevel != null) 
+            gameScnHnd.OnDeconstructedLevel -= ConstructLevel;                              // delete old handler
 
-        on_construct_level = () => gameScnHnd.ConstructLevel(level);
+        ConstructLevel = () => gameScnHnd.ConstructLevel(level);                            // create ConstructLevel handler
 
-        gameScnHnd.OnDeconstructedLevel += on_construct_level;
+        gameScnHnd.OnDeconstructedLevel += ConstructLevel;                                  // add callback after deconstruction of level
 
-        gameScnHnd.DeconstructLevel();
+        gameScnHnd.DeconstructLevel();                                                      // run deconstruction of level
     }
 
+    /// <summary>
+    /// Method for updating image in star bar
+    /// </summary>
+    /// <param name="starBar"> image of star bar </param>
     public void UpdateStarBar(Image starBar)
     {
         int count_stars = gameScnHnd.CountStars - 1;
@@ -133,68 +173,112 @@ public class GameMenuControl : MonoBehaviour
             starBar.gameObject.SetActive(true);
             if (count_stars >= starBarSprites.Length)
                 count_stars = starBarSprites.Length - 1;
-            starBar.sprite = starBarSprites[count_stars];
+            starBar.sprite = starBarSprites[count_stars];                                   // set sprite from sprites list for image of star bar
         }
     }
 
+    /// <summary>
+    /// Method for updating text in time bar
+    /// </summary>
+    /// <param name="timeBar"> text of time bar </param>
     public void UpdateTimeBar(Text timeBar)
     {
-        Debug.Log(SecondsToTimeStr(time));
         timeBar.text = timeBarText + SecondsToTimeStr(gameScnHnd.GameTime);
     }
 
+    /// <summary>
+    /// Method opens pause menu
+    /// </summary>
     public void PauseMenu()
     {
-        CallMenu(false, true, false);
+        CallMenu(false, true, false, GameMenuState.Pause);
         CallSubMenu(pauseHdrText, pauseBtText, true, ResumeGame);
     }
 
+    /// <summary>
+    /// Method opens win menu
+    /// </summary>
     public void WinMenu()
-    {
-        CallMenu(false, true, false);
-        CallSubMenu(winHdrText, winBtText, true, NextLevel);
+    {   
+        CallMenu(false, true, false, GameMenuState.Win);
+
+        int level = gameScnHnd.CurrentLevel + 1;
+        if (level <= gameScnHnd.CountLevels)
+            CallSubMenu(winHdrText, winBtText, true, NextLevel);
+        else
+            CallSubMenu(winHdrText, null, false, null);
+
     }
 
+    /// <summary>
+    /// Method opens lose menu
+    /// </summary>
     public void LoseMenu()
     {
-        CallMenu(false, true, false);
+        CallMenu(false, true, false, GameMenuState.Lose);
         CallSubMenu(loseHdrText, null, false, null);
     }
 
+    /// <summary>
+    /// Method opens game menu
+    /// </summary>
     public void GameMenu()
     {
-        CallMenu(true, false, false);
+        CallMenu(true, false, false, GameMenuState.Game);
     }
 
+    /// <summary>
+    /// Method opens loading menu
+    /// </summary>
     public void LoadingMenu()
     {
-        CallMenu(false, false, true);
+        CallMenu(false, false, true, GameMenuState.Loading);
     }
 
-    public void CallMenu(bool gameMenuActive, bool subMenuActive, bool loadMenuActive)
+    /// <summary>
+    /// Method opens specified menu
+    /// </summary>
+    /// <param name="gmPlayMenuActive"> flag of opening for game play menu </param>
+    /// <param name="gmUnplMenuActive"> flag of opening for game unplay menu </param>
+    /// <param name="loadMenuActive"> flag of opening for game loading menu</param>
+    /// <param name="state"> menu state </param>
+    public void CallMenu(bool gmPlayMenuActive, bool gmUnplMenuActive, bool loadMenuActive, GameMenuState state)
     {
-        gamePlayMenu.SetActive(gameMenuActive);
-        gameUnplayMenu.SetActive(subMenuActive);
+        gamePlayMenu.SetActive(gmPlayMenuActive);
+        gameUnplayMenu.SetActive(gmUnplMenuActive);
         loadingMenu.SetActive(loadMenuActive);
+        menu_state = state;
     }
 
-    public void CallSubMenu(string hdrText, string upBtText, bool upBtActive, UnityEngine.Events.UnityAction btAction)
+    /// <summary>
+    /// Method opens specified game unplay menu
+    /// </summary>
+    /// <param name="hdrText"> text of header of menu </param>
+    /// <param name="btText"> text of button of menu </param>
+    /// <param name="btActive"> flag of activation of button of menu</param>
+    /// <param name="btAction"> handler for button of menu </param>
+    public void CallSubMenu(string hdrText, string btText, bool btActive, UnityEngine.Events.UnityAction btAction)
     {
-        gmUnplHeader.text = hdrText;
+        gmUnplHeader.text = hdrText;                                                        // change text of header
 
-        gmUnplBt.gameObject.SetActive(upBtActive);
-        if (upBtActive)
+        gmUnplBt.gameObject.SetActive(btActive); 
+        if (btActive)
         {
-            gmUnplBtText.text = upBtText;
+            gmUnplBtText.text = btText;                                                     // change text of button
 
-            gmUnplBt.onClick.RemoveAllListeners();
-            gmUnplBt.onClick.AddListener(btAction);
+            gmUnplBt.onClick.RemoveAllListeners();                                          // clear all handlers
+            gmUnplBt.onClick.AddListener(btAction);                                         // set new handler
         }
 
-        UpdateStarBar(gmUnplStarBar);
-        UpdateTimeBar(gmUnplTimeBar);
+        UpdateStarBar(gmUnplStarBar);                                                       // updating star bar
+        UpdateTimeBar(gmUnplTimeBar);                                                       // updating time bar
     }
 
+    /// <summary>
+    /// Method transform float seconds value in time string
+    /// </summary>
+    /// <param name="time"> time in seconds </param>
+    /// <returns> time string format: "mm:ss" </returns>
     public static string SecondsToTimeStr(float time)
     {
         int min = (int)time / 60;
