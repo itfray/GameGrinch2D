@@ -11,6 +11,8 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
     public GameObject bulletPrefab;                                               // bullet prefab
     public GameObject explodPrefab;                                               // explosion prefab
 
+    public Transform bulletParent;                                                // bullet parent
+
     public float rechrgTime = 0.25f;                                              // recharge time in seconds
     private float curRchrgTime = 0f;                                              // current recharge time in seconds 
 
@@ -18,7 +20,7 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
 
     public int maxcBullets = 10;                                                  // max count bullets
 
-    private LinkedList<BulletHndT> bullet_hnds = new LinkedList<BulletHndT>();        // list generated bullets
+    private LinkedList<BulletHndT> bullet_hnds = new LinkedList<BulletHndT>();    // list generated bullets
 
     /// <summary>
     /// Method for creating bullets for weapon
@@ -28,16 +30,19 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
     {
         if (bulletPrefab == null) return;
 
+        if (bulletParent == null)
+            bulletParent = transform.parent;
+
         for (int i = 0; i < maxcBullets; i++)
         {
-            GameObject bullet = Instantiate(bulletPrefab, inst_bullet_pos, Quaternion.identity, transform.parent);              // generate bullet
-            BulletHndT bulletHndlr = bullet.GetComponent<BulletHndT>();                                                         // get bullet handler
+            GameObject bullet = Instantiate(bulletPrefab, inst_bullet_pos, Quaternion.identity, bulletParent);              // generate bullet
+            BulletHndT bulletHndlr = bullet.GetComponent<BulletHndT>();                                                     // get bullet handler
             if (bulletHndlr)
             {
                 bulletHndlr.released_pos = inst_bullet_pos;
                 if (explodPrefab)
                 {
-                    GameObject explod = Instantiate(explodPrefab, inst_bullet_pos, Quaternion.identity, transform.parent);      // generate bullet explod
+                    GameObject explod = Instantiate(explodPrefab, inst_bullet_pos, Quaternion.identity, bulletParent);      // generate bullet explod
                     bulletHndlr.explod_obj = explod;
                 }
                 bullet_hnds.AddLast(bulletHndlr);

@@ -164,11 +164,7 @@ public class GameSceneHandler : MonoBehaviour
             star_trnsfm.gameObject.SetActive(true);
         }
 
-        if (playerSpawner)
-        {
-            Debug.Log("spawn");
-            playerSpawner.Spawn();                                                           // spawn player
-        }
+        if (playerSpawner) playerSpawner.Spawn();                                                           // spawn player
 
         gameTime = 0f;                                                                                      // reset game time
     }
@@ -182,33 +178,11 @@ public class GameSceneHandler : MonoBehaviour
         if (!(state == GameState.Constructed || state == GameState.Started || state == GameState.Stoped))
             return;
 
-        List<Transform> fields = new List<Transform>();
-        fields.Add(sawsField.transform);
-        fields.Add(turretsField.transform);
-
-        foreach (Transform field in fields)
-        {
-            foreach (Transform obj in field)
-            {
-                StopObject(obj.gameObject, value);
-            }
-        }
-        StopObject(playerSpawner.spawnedObj, value);
+        playerField.SetActive(!value);                                                                      // stop player field activity
+        sawsField.SetActive(!value);                                                                        // stop saws field activity
+        turretsField.SetActive(!value);                                                                     // stop turrets field activity
 
         state = value ? GameState.Stoped : GameState.Started;
-    }
-
-    public static void StopObject(GameObject obj, bool value)
-    {
-        foreach (MonoBehaviour script in obj.GetComponents<MonoBehaviour>())                         // enable/not enable all game object scripts
-            script.enabled = !value;
-
-        Rigidbody2D rgbody = obj.GetComponent<Rigidbody2D>();                                       // freeze/unfreeze all rigidbodys
-        if (rgbody) rgbody.constraints = value ? RigidbodyConstraints2D.FreezeAll :
-                                                RigidbodyConstraints2D.FreezeRotation;
-
-        Collider2D collider = obj.GetComponent<Collider2D>();                                       // enable/not enable all colliders
-        if (collider) collider.enabled = !value;
     }
 
     /// <summary>
