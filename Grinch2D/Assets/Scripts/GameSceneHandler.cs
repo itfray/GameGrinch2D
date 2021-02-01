@@ -21,6 +21,16 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject starsField;                                                   // field for created stars
     public GameObject giftsField;                                                   // field for created gifts
 
+    public const string playerTag = "Player";
+    public const string blockTag = "Block";
+    public const string sawTag = "Saw";
+    public const string bigSawTag = "BigSaw";
+    public const string movingSawTag = "MovingSaw";
+    public const string spikeTag = "Spike";
+    public const string turretTag = "Turret";
+    public const string starTag = "Star";
+    public const string giftTag = "Gift";
+
     public GameObject[] gamePrefabs;                                                // all game prefabs
     public GameObject[] spawnPrefabs;                                               // all prefabs for spawning game objects
 
@@ -153,7 +163,7 @@ public class GameSceneHandler : MonoBehaviour
         CalcMapCenterPos();                                                                                  // calculate map center
         LoadLevelBgSprites();                                                                                // generate level backgrounds by level file data about background
         
-        StartCoroutine(CreateLevelObjsByMap());                                                             // generate level game objects by level file data about map    
+        StartCoroutine(CreateLevelObjsByMap());                                                              // generate level game objects by level file data about map    
     }
 
     /// <summary>
@@ -329,44 +339,43 @@ public class GameSceneHandler : MonoBehaviour
     private void generateGameObj(GameObject prefab, int row_pos, int col_pos, Vector2 block_size)
     {
         GenObjStrategy genObj;                                                                                                      // strategy of generation game object
-
         switch (prefab.tag)
         {
-            case "Player":
+            case playerTag:
                 genObj = gen_player_strtg;                                                                                          // select strategy of generation player                                                                                                                                            
                 genObj.spwnrPrefab = findGameObjByName(prefab.name, spawnPrefabs, (key_n, val_n) => val_n.Contains(key_n));         // search of spawner prefab by player prefab name
                 genObj.spwnrParentField = playerField;                                                                              // select parent fields for generation
                 genObj.objParentField = playerField;
                 break;
-            case "Block":
+            case blockTag:
                 genObj = gen_block_strtg;
                 genObj.objParentField = blocksField;
                 break;
-            case "Saw":
+            case sawTag:
                 genObj = gen_saw_strtg;
                 genObj.objParentField = sawsField;
                 break;
-            case "BigSaw":
+            case bigSawTag:
                 genObj = gen_big_saw_strtg;
                 genObj.objParentField = sawsField;
                 break;
-            case "Spike":
+            case spikeTag:
                 genObj = gen_spike_strtg;
                 genObj.objParentField = spikesField;
                 break;
-            case "MovingSaw":
+            case movingSawTag:
                 genObj = gen_move_saw_strtg;
                 genObj.objParentField = sawsField;
                 break;
-            case "Turret":
+            case turretTag:
                 genObj = gen_block_strtg;
                 genObj.objParentField = turretsField;
                 break;
-            case "Star":
+            case starTag:
                 genObj = gen_block_strtg;
                 genObj.objParentField = starsField;
                 break;
-            case "Gift":
+            case giftTag:
                 genObj = gen_block_strtg;
                 genObj.objParentField = giftsField;
                 break;
@@ -379,7 +388,7 @@ public class GameSceneHandler : MonoBehaviour
         genObj.setSpwnrPosInMap(row_pos, col_pos);
         genObj.Generate();                                                                                                          // create game object
 
-        if (prefab.tag == "Player")
+        if (prefab.tag == playerTag)
             playerSpawner = genObj.spwnrHnd as PlayerSpawner;                                                                       // get playerSpawner
     }
 
