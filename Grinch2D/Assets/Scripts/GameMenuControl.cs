@@ -9,71 +9,55 @@ public class GameMenuControl : MonoBehaviour
 
     public Sprite[] starBarSprites;
 
-    // !------------------------ All menus -----------------!
-    public GameObject gameMenu;
-    public GameObject subMenu;
-    public GameObject loadingMenu;
-    // !-----------------------------------------------------!
+    // *************** All menu objects ******************
+    public GameObject gamePlayMenu;                                     // game play menu
+    public GameObject gameUnplayMenu;                                   // game unplay menu
+    public GameObject loadingMenu;                                      // loading menu
+    // ***************************************************
 
-    // !--------------- Sub menu elements ------------------!
-    // !------- { WinMenu, LoseMenu, PauseMenu } -----------!
-    public Text subMenuheader;
-    public Text subTimeBar;
-    public Text subLevelBar;
-    public GameObject subStarBarObj;
-    public Image subStarBar;
-    public GameObject subUpBtObj;
-    public Button subUpBt;
-    public Text subUpBtText;
+    // ************* Game unplay menu elements ***********
+    // ********* { WinMenu, LoseMenu, PauseMenu } ********
+    public Text gmUnplHeader;                                           // game unplay menu header
+    public Text gmUnplTimeBar;                                          // game unplay menu time bar
+    public Text gmUnplLevelBar;                                         // game unplay menu level bar
+    public Image gmUnplStarBar;                                         // game unplay menu star bar
+    public Button gmUnplBt;                                             // game unplay menu button
+    public Text gmUnplBtText;                                           // game unplay menu button text
 
-    public const string pauseHdrText = "Pause";
+    public const string pauseHdrText = "Pause";                         // game unplay menu header text
     public const string winHdrText = "You Win";
     public const string loseHdrText = "You Lose";
-    public const string pauseBtText = "Resume";
-    public const string winBtText = "Next";
-    // !----------------------------------------------------!
 
-    // !------------------ Game menu elements --------------!
-    public GameObject gameStarBarObj;
-    public Image gameStarBar;
-    public Text gameTimeBar;
-    // !----------------------------------------------------!
+    public const string pauseBtText = "Resume";                         // game unplay menu button text
+    public const string winBtText = "Next";
+    // ***************************************************
 
     public const string timeBarText = "Time ";
 
-    public enum GameState { Loading, Game, Pause, Win, Lose };
-    private GameState state;
-    public GameState State { get { return state; } }
+    // ************* Game play menu elements ***********
+    public Image gameStarBar;                                           // game play menu star bar
+    public Text gameTimeBar;                                            // game play menu time bar
+    // ***************************************************
+
+    private GameSceneHandler.GameSceneEventHnd on_construct_level = null;
 
     void Start()
     {
-        LoadingMenu();
-        StartCoroutine(ConstructLevel());
-        StartCoroutine(StartLevel());
+        LoadingMenu();                                                                                  // open loading menu
+
+        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt("level", 5));
+        gameScnHnd.OnConstructedLevel += StartGame;
+
+        gameScnHnd.Init();
     }
 
     void Update()
     {
-        if (state == GameState.Game)
+        if (gameScnHnd.State == GameSceneHandler.GameState.Started)                                     // update game play info
         {
-            UpdateStarAndTimeBars(gameStarBarObj, gameStarBar, gameTimeBar);
+            UpdateStarBar(gameStarBar);
+            UpdateTimeBar(gameTimeBar);
         }
-    }
-
-    IEnumerator<object> ConstructLevel()
-    {
-        if (state != GameState.Loading) yield break;
-
-        while (!gameScnHnd.Inited)
-            yield return null;
-        gameScnHnd.ConstructLevel(PlayerPrefs.GetInt("level", 5));
-    }
-
-    IEnumerator<object> StartLevel()
-    {
-        while (!gameScnHnd.Constructed)
-            yield return null;
-        StartGame();
     }
 
     public void StartGame()
@@ -84,7 +68,7 @@ public class GameMenuControl : MonoBehaviour
 
     public void PauseGame()
     {
-        if (state == GameState.Game)
+        if (gameScnHnd.State == GameSceneHandler.GameState.Started)
         {
             PauseMenu();
             gameScnHnd.StopGame(true);
@@ -93,7 +77,7 @@ public class GameMenuControl : MonoBehaviour
 
     public void LoseGame()
     {
-        if (state == GameState.Game)
+        if (gameScnHnd.State == GameSceneHandler.GameState.Started)
         {
             LoseMenu();
             gameScnHnd.StopGame(true);
@@ -102,7 +86,7 @@ public class GameMenuControl : MonoBehaviour
 
     public void WinGame()
     {
-        if (state == GameState.Game)
+        if (gameScnHnd.State == GameSceneHandler.GameState.Started)
         {
             WinMenu();
             gameScnHnd.StopGame(true);
@@ -111,38 +95,48 @@ public class GameMenuControl : MonoBehaviour
 
     public void ResumeGame()
     {
-        if (state == GameState.Pause)
+        if (gameScnHnd.State == GameSceneHandler.GameState.Stoped)
         {
             GameMenu();
             gameScnHnd.StopGame(false);
         }
     }
 
-    public void NextGame()
+    public void NextLevel()
     {
-        if (state == GameState.Win)
-        {
-            LoadingMenu();
-            gameScnHnd.NextLevel();
-            StartCoroutine(StartLevel());
-        }
+        int level = gameScnHnd.CurrentLevel + 1;
+        if (level > gameScnHnd.CountLevels) return;
+
+        LoadingMenu();
+
+        if (on_construct_level != null) 
+            gameScnHnd.OnDeconstructedLevel -= on_construct_level;
+
+        on_construct_level = () => gameScnHnd.ConstructLevel(level);
+
+        gameScnHnd.OnDeconstructedLevel += on_construct_level;
+
+        gameScnHnd.DeconstructLevel();
     }
 
-    public void UpdateStarAndTimeBars(GameObject starBarObj, Image starBar, Text timeBar)
+    public void UpdateStarBar(Image starBar)
     {
         int count_stars = gameScnHnd.CountStars - 1;
         if (count_stars < 0)
         {
-            starBarObj.SetActive(false);
+            starBar.gameObject.SetActive(false);
         }
         else
         {
-            starBarObj.SetActive(true);
+            starBar.gameObject.SetActive(true);
             if (count_stars >= starBarSprites.Length)
                 count_stars = starBarSprites.Length - 1;
             starBar.sprite = starBarSprites[count_stars];
         }
+    }
 
+    public void UpdateTimeBar(Text timeBar)
+    {
         float time = gameScnHnd.GameTime;
         int min = Mathf.RoundToInt(time / 60);
         int sec = Mathf.RoundToInt(time - min * 60);
@@ -152,53 +146,53 @@ public class GameMenuControl : MonoBehaviour
 
     public void PauseMenu()
     {
-        CallMenu(false, true, false, GameState.Pause);
+        CallMenu(false, true, false);
         CallSubMenu(pauseHdrText, pauseBtText, true, ResumeGame);
     }
 
     public void WinMenu()
     {
-        CallMenu(false, true, false, GameState.Win);
-        CallSubMenu(winHdrText, winBtText, true, NextGame);
+        CallMenu(false, true, false);
+        CallSubMenu(winHdrText, winBtText, true, NextLevel);
     }
 
     public void LoseMenu()
     {
-        CallMenu(false, true, false, GameState.Lose);
+        CallMenu(false, true, false);
         CallSubMenu(loseHdrText, null, false, null);
     }
 
     public void GameMenu()
     {
-        CallMenu(true, false, false, GameState.Game);
+        CallMenu(true, false, false);
     }
 
     public void LoadingMenu()
     {
-        CallMenu(false, false, true, GameState.Loading);
+        CallMenu(false, false, true);
     }
 
-    public void CallMenu(bool gameMenuActive, bool subMenuActive, bool loadMenuActive, GameState state)
+    public void CallMenu(bool gameMenuActive, bool subMenuActive, bool loadMenuActive)
     {
-        gameMenu.SetActive(gameMenuActive);
-        subMenu.SetActive(subMenuActive);
+        gamePlayMenu.SetActive(gameMenuActive);
+        gameUnplayMenu.SetActive(subMenuActive);
         loadingMenu.SetActive(loadMenuActive);
-        this.state = state;
     }
 
     public void CallSubMenu(string hdrText, string upBtText, bool upBtActive, UnityEngine.Events.UnityAction btAction)
     {
-        subMenuheader.text = hdrText;
+        gmUnplHeader.text = hdrText;
 
-        subUpBtObj.SetActive(upBtActive);
+        gmUnplBt.gameObject.SetActive(upBtActive);
         if (upBtActive)
         {
-            subUpBtText.text = upBtText;
+            gmUnplBtText.text = upBtText;
 
-            subUpBt.onClick.RemoveAllListeners();
-            subUpBt.onClick.AddListener(btAction);
+            gmUnplBt.onClick.RemoveAllListeners();
+            gmUnplBt.onClick.AddListener(btAction);
         }
 
-        UpdateStarAndTimeBars(subStarBarObj, subStarBar, subTimeBar);
+        UpdateStarBar(gmUnplStarBar);
+        UpdateTimeBar(gmUnplTimeBar);
     }
 }

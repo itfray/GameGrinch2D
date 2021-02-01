@@ -583,7 +583,7 @@ GameObject:
   m_Component:
   - component: {fileID: 188672125}
   m_Layer: 5
-  m_Name: GameMenu
+  m_Name: GamePlayMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1160,7 +1160,7 @@ GameObject:
   m_Component:
   - component: {fileID: 464520866}
   m_Layer: 5
-  m_Name: SubMenu
+  m_Name: GameUnplayMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2721,7 +2721,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1305469806}
   m_Layer: 5
-  m_Name: LoadMenu
+  m_Name: LoadingMenu
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3273,12 +3273,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fileParser: {fileID: 1455934991}
-  bgField: {fileID: 1794582261}
   bgSprites:
   - {fileID: 21300000, guid: 558ec3b8e237aea4fbea444d99795f85, type: 3}
   - {fileID: 21300000, guid: 4b466b48d9d3da146ac625d35ca790f3, type: 3}
   - {fileID: 21300000, guid: f1c0acdf0e4a5c7409f04f6a26047118, type: 3}
   - {fileID: 21300000, guid: d2974e8d80263a94188c2b749b13f977, type: 3}
+  bgRndrs:
+  - {fileID: 1427752799}
+  - {fileID: 195185531}
+  - {fileID: 1794659745}
+  - {fileID: 1366993333}
   playerField: {fileID: 756761930}
   blocksField: {fileID: 311718987}
   sawsField: {fileID: 840537820}
@@ -3304,8 +3308,16 @@ MonoBehaviour:
   spawnPrefabs:
   - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty
-  blocksmpl_collider: {fileID: 0}
-  bgsmpl_collider: {fileID: 0}
+  blocksmpl_collider: {fileID: 308226852408147023, guid: a55f229c95c64d9468d49524746938ec,
+    type: 3}
+  bgsmpl_collider: {fileID: 4062354872953943466, guid: 665dcc9c262ace64a98f9cace2ed5193,
+    type: 3}
+  gen_player_strtg: {fileID: 1455934994}
+  gen_block_strtg: {fileID: 1455934995}
+  gen_saw_strtg: {fileID: 1455934993}
+  gen_big_saw_strtg: {fileID: 1455934992}
+  gen_move_saw_strtg: {fileID: 1455934997}
+  gen_spike_strtg: {fileID: 1455934996}
 --- !u!114 &1455934991
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4258,22 +4270,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c398b6c505df8540b8486fff2e5b91c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameScnHnd: {fileID: 0}
-  starBarSprites: []
-  gameMenu: {fileID: 188672124}
-  subMenu: {fileID: 464520865}
+  gameScnHnd: {fileID: 1455934990}
+  starBarSprites:
+  - {fileID: 21300000, guid: 167266224e94ec54db5300d2c9335b67, type: 3}
+  - {fileID: 21300000, guid: 48cf4111e13ab06419483c949fdd51dd, type: 3}
+  - {fileID: 21300000, guid: b2eef9b7cf20a7b40bd6e87b49934f52, type: 3}
+  gamePlayMenu: {fileID: 188672124}
+  gameUnplayMenu: {fileID: 464520865}
   loadingMenu: {fileID: 1305469805}
-  subMenuheader: {fileID: 0}
-  subTimeBar: {fileID: 0}
-  subLevelBar: {fileID: 0}
-  subStarBarObj: {fileID: 0}
-  subStarBar: {fileID: 0}
-  subUpBtObj: {fileID: 0}
-  subUpBt: {fileID: 0}
-  subUpBtText: {fileID: 0}
-  gameStarBarObj: {fileID: 0}
-  gameStarBar: {fileID: 0}
-  gameTimeBar: {fileID: 0}
+  gmUnplHeader: {fileID: 1965389908}
+  gmUnplTimeBar: {fileID: 769537366}
+  gmUnplLevelBar: {fileID: 187612223}
+  gmUnplStarBar: {fileID: 1667018446}
+  gmUnplBt: {fileID: 201742540}
+  gmUnplBtText: {fileID: 100706951}
+  gameStarBar: {fileID: 1980006345}
+  gameTimeBar: {fileID: 1793983084}
 --- !u!1 &2094880245
 GameObject:
   m_ObjectHideFlags: 0

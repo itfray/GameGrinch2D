@@ -1,6 +1,5 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
-using System;
 
 
 /// <summary>
@@ -11,8 +10,8 @@ public class GameSceneHandler : MonoBehaviour
 {
     public LevelFileParser fileParser;                                              // parser level files
 
-    public GameObject bgField;                                                      // field for store 4 childs (background game objects)
     public Sprite[] bgSprites;                                                      // all background sprites
+    public SpriteRenderer[] bgRndrs;                                                // list background renderers on game scene
 
     public GameObject playerField;                                                  // field for created palyer
     public GameObject blocksField;                                                  // field for created blocks
@@ -29,38 +28,36 @@ public class GameSceneHandler : MonoBehaviour
     public BoxCollider2D blocksmpl_collider;                                        // sample block collider
     public BoxCollider2D bgsmpl_collider;                                           // sample bg collider
 
-    private List<Sprite> levelBgSprites;                                            // background sprites for current level
+    public GenPlayerStrategy gen_player_strtg;                                     // strategy of generation player
+    public GenBlockStrategy gen_block_strtg;                                       // strategy of generation block
+    public GenSawStrategy gen_saw_strtg;                                           // strategy of generation saw
+    public GenBigSawStrategy gen_big_saw_strtg;                                    // strategy of generation big saw
+    public GenMovingSawStrategy gen_move_saw_strtg;                                // strategy of generation moving saw
+    public GenSpikeStrategy gen_spike_strtg;                                       // strategy of generation spike
+
+    public delegate void GameSceneEventHnd();
+    public event GameSceneEventHnd OnInited = null;
+    public event GameSceneEventHnd OnConstructedLevel = null;
+    public event GameSceneEventHnd OnDeconstructedLevel = null;
+
+    private List<Sprite> levelBgSprites = new List<Sprite>();                       // background sprites for current level
 
     private Vector2 mapCenterPos;                                                   // central map position for current level
 
-    private List<SpriteRenderer> bg_rndrs;                                          // list background renderers on game scene
-
-    private GenPlayerStrategy gen_player_strtg;                                     // strategy of generation player
-    private GenBlockStrategy gen_block_strtg;                                       // strategy of generation block
-    private GenSawStrategy gen_saw_strtg;                                           // strategy of generation saw
-    private GenBigSawStrategy gen_big_saw_strtg;                                    // strategy of generation big saw
-    private GenMovingSawStrategy gen_move_saw_strtg;                                // strategy of generation moving saw
-    private GenSpikeStrategy gen_spike_strtg;                                       // strategy of generation spike
-
     private PlayerSpawner playerSpawner;                                            // spawner of player game object
 
+    public enum GameState { Uninited, Initing, Inited, Constructing, Constructed, Deconstructing, Deconstructed, Started, Stoped }
+    private GameState state = GameState.Uninited;
+    public GameState State { get { return state; } }
+
     private float gameTime = 0f;                                                    // time value player in game
-    public float GameTime { get { return gameTime; } }                          
+    public float GameTime { get { return gameTime; } }
 
     private int current_level;                                                      // number current running level
     public int CurrentLevel { get { return current_level; } }
 
     private int count_levels;                                                       // number of levels in game
     public int CountLevels { get { return count_levels; } }
-
-    private bool inited = false;                                                    // Is game scene initialized?
-    public bool Inited { get { return inited; } }
-
-    private bool constructed = false;                                               // Is level constructed?
-    public bool Constructed { get { return constructed; } }
-
-    private bool stoped = false;                                                    // Is game stoped?
-    public bool Stoped { get { return stoped; } }
 
     public int CountStars                                                           // number of taked stars
     {
@@ -76,16 +73,14 @@ public class GameSceneHandler : MonoBehaviour
         } 
     }
 
-    void Start()
+
+    public void Init()
     {
-        inited = false;
-        constructed = false;
-        stoped = false;
-
-        levelBgSprites = new List<Sprite>();
-        bg_rndrs = new List<SpriteRenderer>();
-
-        StartCoroutine(InitGameSceneHnd());                                             // start initialization
+        if (state == GameState.Uninited)
+        {
+            state = GameState.Initing;
+            StartCoroutine(InitGameSceneHnd());                                             // start initialization
+        }
     }
 
     /// <summary>
@@ -94,32 +89,24 @@ public class GameSceneHandler : MonoBehaviour
     /// <returns> null </returns>
     private IEnumerator<object> InitGameSceneHnd()
     {
-        // get all strategys of generation game object
-        gen_player_strtg = GetComponent<GenPlayerStrategy>();
-        gen_block_strtg = GetComponent<GenBlockStrategy>();
-        gen_saw_strtg = GetComponent<GenSawStrategy>();
-        gen_big_saw_strtg = GetComponent<GenBigSawStrategy>();
-        gen_move_saw_strtg = GetComponent<GenMovingSawStrategy>();
-        gen_spike_strtg = GetComponent<GenSpikeStrategy>();
-
-        for (int i = 0; i < bgField.transform.childCount; i++)
-            bg_rndrs.Add(bgField.transform.GetChild(i).GetComponent<SpriteRenderer>());
-        yield return null;
-
-        fileParser.parseLevelDict();                                                // parse data of level dictionary file
+        count_levels = fileParser.countLevels();                                    // parse data of number of levels
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
         yield return null;
 
-        count_levels = fileParser.countLevels();                                    // parse data of number of levels
-        inited = true;                                                              // set flag intialized
+        fileParser.parseLevelDict();                                                // parse data of level dictionary file
+
+        state = GameState.Inited;                                                   // set flag intialized
+        OnInited?.Invoke();                                                         // callback OnInited handler
     }
 
     void Update()
     {
-        if (!constructed || !inited) return;
-
-        UpdateBackgroundLevel();                                                    // update background sprites and background postions
-        if (!stoped) gameTime += Time.deltaTime;                                    // count game time
+        if (state == GameState.Started || state == GameState.Stoped)
+        {
+            UpdateBackgroundLevel();                                                    // update background sprites and background postions
+            if (state == GameState.Started) 
+                gameTime += Time.deltaTime;                                             // count game time
+        }
     }
 
     /// <summary>
@@ -128,9 +115,13 @@ public class GameSceneHandler : MonoBehaviour
     /// <param name="level"> level number </param>
     public void ConstructLevel(int level)
     {
-        constructed = false;                                                                                 // set not constructed flag 
+        if (state == GameState.Initing || state == GameState.Deconstructing || state == GameState.Constructing)
+            return;
 
-        if (level < 1 || level > count_levels) return;                                                       // check level value on valid
+        if (level < 1 || level > count_levels)                                                               // check level value on valid
+            return;             
+
+        state = GameState.Constructing;
 
         current_level = level;
         fileParser.parseLevelFile(level);                                                                    // parse data of level map file
@@ -146,21 +137,12 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     public void DeconstructLevel()
     {
-        constructed = false;                                                                                // set not constructed flag 
+        if (state == GameState.Initing || state == GameState.Deconstructing || state == GameState.Constructing)
+            return;
+
+        state = GameState.Deconstructing;
 
         StartCoroutine(DeleteLevelObjs(10));                                                                // destroy level game objects
-    }
-
-    /// <summary>
-    /// Method peforms transition on next level
-    /// </summary>
-    public void NextLevel()
-    {
-        int level = current_level + 1;
-        if (level > count_levels) return;                                                                   // check level value on valid 
-
-        DeconstructLevel();                                                                                 // destroy old level
-        ConstructLevel(level);                                                                              // create new level
     }
 
     /// <summary>
@@ -168,17 +150,25 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
-        if (!constructed) return;                                                                           // if game not constructed
+        if (!(state == GameState.Constructed || state == GameState.Started || state == GameState.Stoped))
+            return;
+            
+        if (state == GameState.Stoped)                                                                      // if game was stoped
+            StopGame(false);                                                     
+        else
+            state = GameState.Started;
 
-        if (stoped) StopGame(false);                                                                        // if game was stoped
-
-        for (int istar = 0; istar < starsField.transform.childCount; istar++)                               // restore all stars
+        for (int istar = 0; istar < starsField.transform.childCount; istar++)                                // restore all stars
         {
             Transform star_trnsfm = starsField.transform.GetChild(istar);
             star_trnsfm.gameObject.SetActive(true);
         }
 
-        if (playerSpawner) playerSpawner.Spawn();                                                           // spawn player
+        if (playerSpawner)
+        {
+            Debug.Log("spawn");
+            playerSpawner.Spawn();                                                           // spawn player
+        }
 
         gameTime = 0f;                                                                                      // reset game time
     }
@@ -189,12 +179,10 @@ public class GameSceneHandler : MonoBehaviour
     /// <param name="value"> true: stop, false: resume </param>
     public void StopGame(bool value)
     {
-        if (!constructed || !inited) return;
-        
-        stoped = value;                                                                                                                                               
+        if (!(state == GameState.Constructed || state == GameState.Started || state == GameState.Stoped))
+            return;
 
         List<Transform> fields = new List<Transform>();
-
         fields.Add(playerField.transform);
         fields.Add(sawsField.transform);
         fields.Add(turretsField.transform);
@@ -214,6 +202,8 @@ public class GameSceneHandler : MonoBehaviour
                 if (collider) collider.enabled = !value;
             }
         }
+
+        state = value ? GameState.Stoped : GameState.Started;
     }
 
     /// <summary>
@@ -293,7 +283,8 @@ public class GameSceneHandler : MonoBehaviour
             setTurretsTarget(playerSpawner.spawnedObj);                                                                     // specifies target for all created turrets and set player as target for turret
         }
 
-        constructed = true;                                                                                     
+        state = GameState.Constructed;
+        OnConstructedLevel?.Invoke();
     }
 
     /// <summary>
@@ -326,6 +317,9 @@ public class GameSceneHandler : MonoBehaviour
                 }
             }
         }
+
+        state = GameState.Deconstructed;
+        OnDeconstructedLevel?.Invoke();
     }
 
     /// <summary>
@@ -450,10 +444,10 @@ public class GameSceneHandler : MonoBehaviour
             for (int j = jstart; j <= jend; j++)
             {
                 // change bg position in front of the camera
-                bg_rndrs[iobj].transform.position = new Vector3(mapCenterPos.x + (cbgx_frm_cntr + j) * bgSmplSize.x,
+                bgRndrs[iobj].transform.position = new Vector3(mapCenterPos.x + (cbgx_frm_cntr + j) * bgSmplSize.x,
                                                                 mapCenterPos.y + (cbgy_frm_cntr + i) * bgSmplSize.y, 
-                                                                bg_rndrs[iobj].transform.position.z);
-                bg_rndrs[iobj].sprite = getLevelBgSprite(imid_sprt + cbgy_frm_cntr + i);
+                                                                bgRndrs[iobj].transform.position.z);
+                bgRndrs[iobj].sprite = getLevelBgSprite(imid_sprt + cbgy_frm_cntr + i);
                 iobj++;
             }
         }
