@@ -17,6 +17,7 @@ public class GameMenuControl : MonoBehaviour
     public GameObject gamePlayMenu;                                     // game play menu
     public GameObject gameUnplayMenu;                                   // game unplay menu
     public GameObject loadingMenu;                                      // loading menu
+    public GameObject settingMenu;                                      // setting menu
     // ***************************************************
 
     // ************* Game unplay menu elements ***********
@@ -52,7 +53,7 @@ public class GameMenuControl : MonoBehaviour
     private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
-        //LoadingMenu();                                                                                  // open loading menu
+        LoadingMenu();                                                                                  // open loading menu
 
         gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt("level", 1));         // add callback after initialization of game scene handler
 
@@ -73,7 +74,7 @@ public class GameMenuControl : MonoBehaviour
 
         gameScnHnd.OnConstructedLevel += StartGame;                                                     // add callback after construction of level
 
-        //gameScnHnd.Init();                                                                              // run game scene handler initialization
+        gameScnHnd.Init();                                                                              // run game scene handler initialization
     }
 
     void Update()
@@ -227,8 +228,8 @@ public class GameMenuControl : MonoBehaviour
     /// </summary>
     public void PauseMenu()
     {
-        CallMenu(false, true, false, GameMenuState.Pause);
-        CallSubMenu(pauseHdrText, true, pauseBtText, true, ResumeGame);
+        CallMenu(GameMenuState.Pause, gameUnplayMenu, gamePlayMenu, loadingMenu, settingMenu);
+        CallGmUnplMenu(pauseHdrText, true, pauseBtText, true, ResumeGame);
     }
 
     /// <summary>
@@ -236,13 +237,13 @@ public class GameMenuControl : MonoBehaviour
     /// </summary>
     public void WinMenu()
     {   
-        CallMenu(false, true, false, GameMenuState.Win);
+        CallMenu(GameMenuState.Win, gameUnplayMenu, gamePlayMenu, loadingMenu, settingMenu);
 
         int level = gameScnHnd.CurrentLevel + 1;
         if (level <= gameScnHnd.CountLevels)
-            CallSubMenu(winHdrText, true, winBtText, true, NextLevel);
+            CallGmUnplMenu(winHdrText, true, winBtText, true, NextLevel);
         else
-            CallSubMenu(winHdrText, true, null, false, null);
+            CallGmUnplMenu(winHdrText, true, null, false, null);
 
     }
 
@@ -251,8 +252,8 @@ public class GameMenuControl : MonoBehaviour
     /// </summary>
     public void LoseMenu()
     {
-        CallMenu(false, true, false, GameMenuState.Lose);
-        CallSubMenu(loseHdrText, false, null, false, null);
+        CallMenu(GameMenuState.Lose, gameUnplayMenu, gamePlayMenu, loadingMenu, settingMenu);
+        CallGmUnplMenu(loseHdrText, false, null, false, null);
     }
 
     /// <summary>
@@ -260,7 +261,7 @@ public class GameMenuControl : MonoBehaviour
     /// </summary>
     public void GameMenu()
     {
-        CallMenu(true, false, false, GameMenuState.Game);
+        CallMenu(GameMenuState.Game, gamePlayMenu, loadingMenu, gameUnplayMenu, settingMenu);
     }
 
     /// <summary>
@@ -268,21 +269,53 @@ public class GameMenuControl : MonoBehaviour
     /// </summary>
     public void LoadingMenu()
     {
-        CallMenu(false, false, true, GameMenuState.Loading);
+        CallMenu(GameMenuState.Loading, loadingMenu, gamePlayMenu, gameUnplayMenu, settingMenu);
+    }
+
+    /// <summary>
+    /// Method opens setting menu
+    /// </summary>
+    public void SettingMenu()
+    {
+        CallMenu(menu_state, settingMenu, loadingMenu, gamePlayMenu, gameUnplayMenu);
+    }
+
+    /// <summary>
+    /// Method closes sub menu of game menu
+    /// </summary>
+    public void CloseSubGameMenu()
+    {
+        switch (menu_state)
+        {
+            case GameMenuState.Loading:
+                LoadingMenu();
+                return;
+            case GameMenuState.Game:
+                GameMenu();
+                return;
+            case GameMenuState.Pause:
+                PauseMenu();
+                return;
+            case GameMenuState.Lose:
+                LoseMenu();
+                return;
+            case GameMenuState.Win:
+                WinMenu();
+                return;
+        }
     }
 
     /// <summary>
     /// Method opens specified menu
     /// </summary>
-    /// <param name="gmPlayMenuActive"> flag of opening for game play menu </param>
-    /// <param name="gmUnplMenuActive"> flag of opening for game unplay menu </param>
-    /// <param name="loadMenuActive"> flag of opening for game loading menu</param>
     /// <param name="state"> menu state </param>
-    public void CallMenu(bool gmPlayMenuActive, bool gmUnplMenuActive, bool loadMenuActive, GameMenuState state)
+    /// <param name="open_menu"> menu, that will open </param>
+    /// <param name="close_menus"> all menus, that will close </param>
+    public void CallMenu(GameMenuState state, GameObject open_menu, params GameObject[] close_menus)
     {
-        gamePlayMenu.SetActive(gmPlayMenuActive);
-        gameUnplayMenu.SetActive(gmUnplMenuActive);
-        loadingMenu.SetActive(loadMenuActive);
+        open_menu.SetActive(true);
+        foreach (GameObject close_menu in close_menus)
+            close_menu.SetActive(false);
         menu_state = state;
     }
 
@@ -293,7 +326,7 @@ public class GameMenuControl : MonoBehaviour
     /// <param name="btText"> text of button of menu </param>
     /// <param name="btActive"> flag of activation of button of menu</param>
     /// <param name="btAction"> handler for button of menu </param>
-    public void CallSubMenu(string hdrText, bool starBarActive, string btText, bool btActive, UnityEngine.Events.UnityAction btAction)
+    public void CallGmUnplMenu(string hdrText, bool starBarActive, string btText, bool btActive, UnityEngine.Events.UnityAction btAction)
     {
         gmUnplHeader.text = hdrText;                                                        // change text of header
 
