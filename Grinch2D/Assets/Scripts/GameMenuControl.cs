@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 using System.Collections;
-using System;
+using UnityEngine.SceneManagement;
 
 
 public class GameMenuControl : MonoBehaviour
@@ -44,6 +43,8 @@ public class GameMenuControl : MonoBehaviour
     public Image gameStarBar;                                           // game play menu star bar
     public Text gameTimeBar;                                            // game play menu time bar
     // ***************************************************
+
+    public const string mainMenuSceneName = "MainMenuScene";
 
     public enum GameMenuState { Loading, Pause, Lose, Win, Game };      // game menu state
     private GameMenuState menu_state;                                   // menu state
@@ -278,6 +279,14 @@ public class GameMenuControl : MonoBehaviour
     public void SettingMenu()
     {
         CallMenu(menu_state, settingMenu, loadingMenu, gamePlayMenu, gameUnplayMenu);
+    }
+
+    /// <summary>
+    /// Method opens main menu
+    /// </summary>
+    public void MainMenu()
+    {
+        SceneManager.LoadScene(mainMenuSceneName);
     }
 
     /// <summary>
