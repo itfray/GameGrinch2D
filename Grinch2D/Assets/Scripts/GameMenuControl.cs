@@ -52,7 +52,7 @@ public class GameMenuControl : MonoBehaviour
     private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
-        LoadingMenu();                                                                                  // open loading menu
+        //LoadingMenu();                                                                                  // open loading menu
 
         gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt("level", 1));         // add callback after initialization of game scene handler
 
@@ -73,7 +73,7 @@ public class GameMenuControl : MonoBehaviour
 
         gameScnHnd.OnConstructedLevel += StartGame;                                                     // add callback after construction of level
 
-        gameScnHnd.Init();                                                                              // run game scene handler initialization
+        //gameScnHnd.Init();                                                                              // run game scene handler initialization
     }
 
     void Update()
