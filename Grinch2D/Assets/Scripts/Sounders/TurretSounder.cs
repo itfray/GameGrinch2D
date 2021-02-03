@@ -6,7 +6,7 @@
 /// </summary>
 public class TurretSounder : MonoBehaviour
 {
-    public AudioClip shootSound;                                                                // shoo sound
+    public AudioSource shootSound;                                                                // shoo sound
 
     public TurretWeaponHnd weaponHnd;                                                           // weapon handler of turret
 
@@ -15,8 +15,16 @@ public class TurretSounder : MonoBehaviour
         if (weaponHnd)
         {
             if (shootSound)
-                weaponHnd.OnAttacked += () => 
-                          AudioSource.PlayClipAtPoint(shootSound, transform.position);         // add playing of sound in callback
+            {
+                shootSound.transform.parent = null;
+                weaponHnd.OnAttacked += () => shootSound.Play();         // add playing of sound in callback
+            }
         }
+    }
+
+    void OnDestroy()
+    {
+        if (shootSound) 
+            Destroy(shootSound.gameObject);
     }
 }

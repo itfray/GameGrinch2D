@@ -6,7 +6,7 @@
 /// </summary>
 public class TurretBulletSounder: MonoBehaviour
 {
-    public AudioClip bulletExplosion;                                                               // sound explosion
+    public AudioSource bulletExplosion;                                                             // sound explosion
 
     public BulletHandler bulletHnd;                                                                 // bullet handler
 
@@ -15,8 +15,16 @@ public class TurretBulletSounder: MonoBehaviour
         if (bulletHnd)
         {
             if (bulletExplosion)
-                bulletHnd.OnDestructed += () => 
-                          AudioSource.PlayClipAtPoint(bulletExplosion, transform.position);        // add playing of sound in callback
+            {
+                bulletExplosion.transform.parent = null;
+                bulletHnd.OnDestructed += () => bulletExplosion.Play();                             // add playing of sound in callback
+            }
         }
+    }
+
+    void OnDestroy()
+    {
+        if (bulletExplosion) 
+            Destroy(bulletExplosion.gameObject);
     }
 }

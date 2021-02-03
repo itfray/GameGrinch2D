@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using static CoroutineScripts;
 
 
 /// <summary>
@@ -7,20 +8,20 @@ using System.Collections.Generic;
 /// </summary>
 public class PlayerSounder : MonoBehaviour
 {
-    public AudioClip takeStarSound;                                                                     // sound getting of star
-    public AudioClip takeGiftSound;                                                                     // sound getting of gift
-    public AudioClip dieSound;                                                                          // sound of player death
+    public AudioSource takeStarSound;                                                                   // sound getting of star
+    public AudioSource takeGiftSound;                                                                   // sound getting of gift
+    public AudioSource dieSound;                                                                        // sound of player death
 
     public HealthHandler playerHealthHnd;                                                               // handler of player health
     public StarHandler playerStarHnd;                                                                   // handler stars
     public GiftHandler playerGiftHnd;                                                                   // handler gifts
 
-    public AudioClip dieFromSawSound;                                                                   // sound of player death from saw
+    public AudioSource dieFromSawSound;                                                                 // sound of player death from saw
     public GameObject sawObject;                                                                        // example saw
     public GameObject bigSawObject;                                                                     // example big saw
     public GameObject movingSawObject;                                                                  // example moving saw
 
-    private Dictionary<string, AudioClip> diedSoundDict = new Dictionary<string, AudioClip>();          // dicitionary of audio clips for appointing sounds for death ways
+    Dictionary<string, AudioSource> diedSoundDict = new Dictionary<string, AudioSource>();              // dicitionary of audio clips for appointing sounds for death ways
 
 
     void Start()
@@ -41,6 +42,9 @@ public class PlayerSounder : MonoBehaviour
             if (bigSawObject) diedSoundDict.Add(bigSawObject.tag, dieFromSawSound);
             if (movingSawObject) diedSoundDict.Add(movingSawObject.tag, dieFromSawSound);                               // add this sound and tag of movingSawObject if killer is movingSawObject
         }
+
+        foreach (KeyValuePair<string, AudioSource> pair in diedSoundDict)
+            pair.Value.transform.parent = null;
     }
 
     /// <summary>
@@ -51,7 +55,10 @@ public class PlayerSounder : MonoBehaviour
         if (playerHealthHnd == null) return;
 
         if (dieSound)                                                                                                    // add death sound for death event
-            playerHealthHnd.OnDied += (obj) => AudioSource.PlayClipAtPoint(dieSound, transform.position);                // add playing of sound in callback
+        {
+            dieSound.transform.parent = null;
+            playerHealthHnd.OnDied += obj => dieSound.Play();                                                            // add playing of sound in callback
+        }
 
         FillDiedSoundDict();                                                                                             // fill diedSoundDict
 
@@ -59,9 +66,9 @@ public class PlayerSounder : MonoBehaviour
         {
             playerHealthHnd.OnDied += delegate (GameObject killer)
             {
-                AudioClip kill_sound;
+                AudioSource kill_sound;
                 if (diedSoundDict.TryGetValue(killer.tag, out kill_sound))                                              // search of death sound of killer object by tag
-                    AudioSource.PlayClipAtPoint(kill_sound, killer.transform.position);                                 
+                    kill_sound.Play();
             };
         }
     }
@@ -74,7 +81,10 @@ public class PlayerSounder : MonoBehaviour
         if (playerGiftHnd == null) return;
 
         if (takeGiftSound)
-            playerGiftHnd.OnTaked += () => AudioSource.PlayClipAtPoint(takeGiftSound, transform.position);
+        {
+            takeGiftSound.transform.parent = null;
+            playerGiftHnd.OnTaked += () => takeGiftSound.Play();
+        }
     }
 
     /// <summary>
@@ -85,6 +95,19 @@ public class PlayerSounder : MonoBehaviour
         if (playerStarHnd == null) return;
 
         if (takeStarSound)
-            playerStarHnd.OnTaked += () => AudioSource.PlayClipAtPoint(takeStarSound, transform.position);           // add playing of sound in callback
+        {
+            takeStarSound.transform.parent = null;
+            playerStarHnd.OnTaked += () => takeStarSound.Play();                                                        // add playing of sound in callback
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (takeGiftSound) Destroy(takeGiftSound.gameObject);                                                           // destroy all of used sounds
+        if (takeStarSound) Destroy(takeStarSound.gameObject);
+        if (dieSound) Destroy(dieSound.gameObject);
+
+        foreach (KeyValuePair<string, AudioSource> pair in diedSoundDict)
+            Destroy(pair.Value.gameObject);
     }
 }
