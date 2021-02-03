@@ -7,11 +7,8 @@
 public class PlayerHealthHnd : HealthHandler
 { 
     public GameObject blood_spltr_pref;                             // blood splatter prefab
-
-    public delegate void PlayerHealthEventHnd();                    // type handler of events of PlayerHealthHandler
-    public event PlayerHealthEventHnd OnDied;                       // invoke when player is died
-
     private GameObject blood_spltr;                                 // blood splatter object
+    private Animator blood_spltr_anmtr;                             // animator of blood splatter object
 
     private Animator animator;
 
@@ -30,6 +27,8 @@ public class PlayerHealthHnd : HealthHandler
     {
         if (animator) 
             animator.SetTrigger("Hitting");               // play hitting animation
+
+        base.Damaging();
     }
 
     /// <summary>
@@ -39,7 +38,8 @@ public class PlayerHealthHnd : HealthHandler
     {
         BloodSplash();
         gameObject.SetActive(false);
-        OnDied?.Invoke();
+
+        base.Dying();
     }
 
     /// <summary>
@@ -48,7 +48,10 @@ public class PlayerHealthHnd : HealthHandler
     private void CreateBloodSplttr()
     {
         if (blood_spltr_pref)
+        {
             blood_spltr = Instantiate(blood_spltr_pref, transform.position, Quaternion.identity, transform.parent);
+            blood_spltr_anmtr = blood_spltr.GetComponent<Animator>();
+        }
     }
 
     /// <summary>
@@ -60,10 +63,9 @@ public class PlayerHealthHnd : HealthHandler
         {
             blood_spltr.transform.position = new Vector3(transform.position.x, transform.position.y,
                                                          blood_spltr.transform.position.z);
-            Animator animator = blood_spltr.GetComponent<Animator>();
-            if (animator)
-                if (animator.parameterCount > 0)
-                    animator.SetTrigger(animator.parameters[0].name);
+            if (blood_spltr_anmtr)
+                if (blood_spltr_anmtr.parameterCount > 0)
+                    blood_spltr_anmtr.SetTrigger(blood_spltr_anmtr.parameters[0].name);
         }
     }
 }

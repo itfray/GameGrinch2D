@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 3429115756561989709}
   - component: {fileID: 6548027834958359999}
   - component: {fileID: -3115130200687028544}
+  - component: {fileID: -8051209713838636601}
   m_Layer: 0
   m_Name: player
   m_TagString: Player
@@ -220,3 +221,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   giftObj: {fileID: 308226852408147019, guid: 4720126678fcd0d4fa7f51ba0843ed28, type: 3}
+--- !u!114 &-8051209713838636601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4915263352331208298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c9e193d21ad8cc419f7ccd45dfe9ac1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  takeStarSound: {fileID: 8300000, guid: 55d660c4d0482bf47b2a0ed8ad5a0c5b, type: 3}
+  takeGiftSound: {fileID: 8300000, guid: c30535eaa22aaea4c9222f4a0bef1224, type: 3}
+  dieSound: {fileID: 8300000, guid: 095b7eceb2cb8074183af5ec38998d2b, type: 3}
+  playerHealthHnd: {fileID: 3429115756561989709}
+  playerStarHnd: {fileID: 6548027834958359999}
+  playerGiftHnd: {fileID: -3115130200687028544}

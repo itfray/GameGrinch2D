@@ -11,6 +11,9 @@ public class StarHandler : MonoBehaviour
     public int max_count_stars = 3;                                        // maximum count of taked stars
     public int count_stars = 0;                                            // currect count of take stars
 
+    public delegate void StarEventHnd();                                   // type handler of events of StarHandler
+    public event StarEventHnd OnTaked;                                     // invoke when star is taked 
+
     /// <summary>
     /// Method resets stars counter
     /// </summary>
@@ -30,6 +33,8 @@ public class StarHandler : MonoBehaviour
         {
             count_stars++;
             star.SetActive(false);                                           // hide star object on game scene
+
+            OnTaked?.Invoke();
         }
     }
 

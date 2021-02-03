@@ -11,6 +11,10 @@ public abstract class HealthHandler : MonoBehaviour
     public int health = 1;                                                          // health value
     public GameObject[] damageObjs;                                                 // information of game objects that can damage this game object
 
+    public delegate void HealthEventHnd();                          // type handler of events of HealthHandler
+    public event HealthEventHnd OnDied;                             // invoke when player is died
+    public event HealthEventHnd OnDamaged;                          // invoke when player is damaged
+
     void Start()
     {
         InitHealthHnd();
@@ -35,12 +39,18 @@ public abstract class HealthHandler : MonoBehaviour
     /// <summary>
     /// Method is handler damage game object.
     /// </summary>
-    protected abstract void Damaging();
+    protected virtual void Damaging()
+    {
+        OnDamaged?.Invoke();
+    }
 
     /// <summary>
     /// Method is handler of gameobject death.
     /// </summary>
-    protected abstract void Dying();
+    protected virtual void Dying()
+    {
+        OnDied?.Invoke();
+    }
 
     /// <summary>
     /// Method damages game object.
