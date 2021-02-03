@@ -2870,7 +2870,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 85}
-  m_SizeDelta: {x: 300, y: 75}
+  m_SizeDelta: {x: 200, y: 75}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &920630930
 MonoBehaviour:
@@ -2904,7 +2904,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Load game....
+  m_Text: Loading...
 --- !u!222 &920630931
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -6274,6 +6274,7 @@ MonoBehaviour:
   gameScnHnd: {fileID: 1455934990}
   waitForSecWin: 0.5
   waitForSecLose: 1
+  waitForSecMainMenu: 1.5
   starBarSprites:
   - {fileID: 21300000, guid: 167266224e94ec54db5300d2c9335b67, type: 3}
   - {fileID: 21300000, guid: 48cf4111e13ab06419483c949fdd51dd, type: 3}

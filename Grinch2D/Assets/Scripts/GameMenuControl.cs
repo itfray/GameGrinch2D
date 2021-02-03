@@ -9,6 +9,7 @@ public class GameMenuControl : MonoBehaviour
     public GameSceneHandler gameScnHnd;                                 // Game Scene Handler
     public float waitForSecWin = 0.5f;                                  // wait for seconds of win
     public float waitForSecLose = 1f;                                   // wait for seconds of lose
+    public float waitForSecMainMenu = 1f;                               // wait for secinds of transition to main menu
 
     public Sprite[] starBarSprites;                                     // sprites for star bar
 
@@ -39,6 +40,8 @@ public class GameMenuControl : MonoBehaviour
     public const string timeBarText = "Time ";
     public const string levelBarText = "Level ";
 
+    public const string levelPrefName = "level";                        // name preference that store number of level
+
     // ************* Game play menu elements ***********
     public Image gameStarBar;                                           // game play menu star bar
     public Text gameTimeBar;                                            // game play menu time bar
@@ -56,7 +59,7 @@ public class GameMenuControl : MonoBehaviour
     {
         LoadingMenu();                                                                                  // open loading menu
 
-        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt("level", 1));         // add callback after initialization of game scene handler
+        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt(levelPrefName, 1));   // add callback after initialization of game scene handler
 
         gameScnHnd.OnConstructedLevel += () =>
         {
@@ -219,6 +222,10 @@ public class GameMenuControl : MonoBehaviour
         timeBar.text = timeBarText + SecondsToTimeStr(gameScnHnd.GameTime);
     }
 
+    /// <summary>
+    /// Method for updating text in level bar
+    /// </summary>
+    /// <param name="levelBar"> text component of level bar </param>
     public void UpdateLevelBar(Text levelBar)
     {
         levelBar.text = levelBarText + " " + gameScnHnd.CurrentLevel;
@@ -286,7 +293,8 @@ public class GameMenuControl : MonoBehaviour
     /// </summary>
     public void MainMenu()
     {
-        SceneManager.LoadScene(mainMenuSceneName);
+        LoadingMenu();
+        StartCoroutine(ExecWithWait(() => SceneManager.LoadScene(mainMenuSceneName), waitForSecMainMenu));
     }
 
     /// <summary>
