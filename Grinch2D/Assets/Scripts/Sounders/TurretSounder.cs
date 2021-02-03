@@ -2,9 +2,9 @@
 
 
 /// <summary>
-/// TurretSoundPlayer is class for playing turret action sounds
+/// TurretSounder is class for playing turret action sounds
 /// </summary>
-public class TurretSoundPlayer : SoundPlayer
+public class TurretSounder : MonoBehaviour
 {
     public AudioClip shootSound;                                                                // shoo sound
 
@@ -15,7 +15,8 @@ public class TurretSoundPlayer : SoundPlayer
         if (weaponHnd)
         {
             if (shootSound)
-                weaponHnd.OnAttacked += () => PlaySound(shootSound, transform.position);        // add playing of sound in callback
+                weaponHnd.OnAttacked += () => 
+                          AudioSource.PlayClipAtPoint(shootSound, transform.position);         // add playing of sound in callback
         }
     }
 }

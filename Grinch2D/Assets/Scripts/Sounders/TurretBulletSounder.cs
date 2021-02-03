@@ -2,9 +2,9 @@
 
 
 /// <summary>
-/// TurretBulletSoundPlayer is class for playing bullet of turret action sounds
+/// TurretBulletSounder is class for playing bullet of turret action sounds
 /// </summary>
-public class TurretBulletSoundPlayer: SoundPlayer
+public class TurretBulletSounder: MonoBehaviour
 {
     public AudioClip bulletExplosion;                                                               // sound explosion
 
@@ -15,7 +15,8 @@ public class TurretBulletSoundPlayer: SoundPlayer
         if (bulletHnd)
         {
             if (bulletExplosion)
-                bulletHnd.OnDestructed += () => PlaySound(bulletExplosion, transform.position);     // add playing of sound in callback
+                bulletHnd.OnDestructed += () => 
+                          AudioSource.PlayClipAtPoint(bulletExplosion, transform.position);        // add playing of sound in callback
         }
     }
 }
