@@ -7,6 +7,8 @@ using static CoroutineScripts;
 public class GameMenuControl : MonoBehaviour
 {
     public GameSceneHandler gameScnHnd;                                 // Game Scene Handler
+    public AudioPlayer audioPlayer;                                     // Audio player in game
+
     public float waitForSecWin = 0.5f;                                  // wait for seconds of win
     public float waitForSecLose = 1f;                                   // wait for seconds of lose
     public float waitForSecMainMenu = 1f;                               // wait for secinds of transition to main menu
@@ -57,6 +59,8 @@ public class GameMenuControl : MonoBehaviour
     private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
+        audioPlayer.Play();
+
         LoadingMenu();                                                                                  // open loading menu
 
         gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt(levelPrefName, 1));   // add callback after initialization of game scene handler

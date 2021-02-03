@@ -108,6 +108,8 @@ public class PlayerSounder : MonoBehaviour
         if (dieSound) Destroy(dieSound.gameObject);
 
         foreach (KeyValuePair<string, AudioSource> pair in diedSoundDict)
-            Destroy(pair.Value.gameObject);
+        {
+            if (pair.Value) Destroy(pair.Value.gameObject);
+        }
     }
 }
