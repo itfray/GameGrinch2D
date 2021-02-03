@@ -15,6 +15,9 @@ public class BulletHandler : MoveHandler
 
     public GameObject explod_obj;                                           // explosion object, if has
 
+    public delegate void BulletEventHnd();                                        // type handler of events of BulletHandler
+    public event BulletEventHnd OnDestructed;                                     // invoke when bullet is destructed
+
     protected Collider2D collider2d;
     protected Rigidbody2D rgbody2d;
     protected TrailRenderer trailrndr;
@@ -60,7 +63,10 @@ public class BulletHandler : MoveHandler
     /// <summary>
     /// Method is handler of bullet destruction.
     /// </summary>
-    public virtual void BulletDestruction() {}
+    public virtual void BulletDestruction()
+    {
+        OnDestructed?.Invoke();
+    }
 
     /// <summary>
     /// Method is handler of changing bullet direction.

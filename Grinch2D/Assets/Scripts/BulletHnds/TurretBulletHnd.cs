@@ -52,5 +52,7 @@ public class TurretBulletHnd : BulletHandler
                     explod_animtr.SetTrigger(explod_animtr.parameters[0].name);                                                         // play explosion animation
             }
         }
+
+        base.BulletDestruction();
     }
 }

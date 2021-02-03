@@ -23,23 +23,23 @@ public class PlayerHealthHnd : HealthHandler
     /// <summary>
     /// Method is handler damage player.
     /// </summary>
-    protected override void Damaging()
+    protected override void Damaging(GameObject obj)
     {
         if (animator) 
             animator.SetTrigger("Hitting");               // play hitting animation
 
-        base.Damaging();
+        base.Damaging(obj);
     }
 
     /// <summary>
     /// Method is handler of player death.
     /// </summary>
-    protected override void Dying()
+    protected override void Dying(GameObject obj)
     {
         BloodSplash();
         gameObject.SetActive(false);
 
-        base.Dying();
+        base.Dying(obj);
     }
 
     /// <summary>

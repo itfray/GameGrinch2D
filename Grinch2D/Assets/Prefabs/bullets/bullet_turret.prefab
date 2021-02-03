@@ -69,7 +69,7 @@ TrailRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -449530997
-  m_SortingLayer: -5
+  m_SortingLayer: -6
   m_SortingOrder: 0
   m_Time: 0.1
   m_Parameters:
@@ -142,6 +142,7 @@ GameObject:
   - component: {fileID: 1777145075478529910}
   - component: {fileID: 1551633373}
   - component: {fileID: -4415618493417963390}
+  - component: {fileID: -6816471923318578960}
   m_Layer: 0
   m_Name: bullet_turret
   m_TagString: Bullet
@@ -201,7 +202,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 184396925
-  m_SortingLayer: -4
+  m_SortingLayer: -7
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 358aa566028516c4b901de41fcdb3008, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -274,9 +275,6 @@ MonoBehaviour:
   - {fileID: 5818134098678246762, guid: 3ba483859558c7f4084ff8024c976861, type: 3}
   released_pos: {x: 0, y: 0}
   explod_obj: {fileID: 0}
-  collider2d: {fileID: 1777145075478529910}
-  rgbody2d: {fileID: 846068119}
-  trailrndr: {fileID: 0}
   dDirect: 0.01
   dAngle: 0.4
   target: {fileID: 0}
@@ -294,3 +292,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   owner: {fileID: 0}
+--- !u!114 &-6816471923318578960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1777145075478529913}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77f62a90daecefd49a4c4b4e0fb9c758, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletExplosion: {fileID: 8300000, guid: 47071d63e78e3da4bbab7ec47100cb6f, type: 3}
+  bulletHnd: {fileID: 1551633373}

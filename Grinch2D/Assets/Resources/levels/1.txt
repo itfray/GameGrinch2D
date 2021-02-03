@@ -1,10 +1,10 @@
 0
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 a                                  a
-a                                  a
+a                 !                a
 a     b                            a
 a    ba                            a
 a           bbb  b  b  b  bbb      a
 a        b                         a
-a p   b                         #  a
+a p   b       2       1         #  a
 abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbba

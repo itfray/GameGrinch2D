@@ -239,3 +239,10 @@ MonoBehaviour:
   playerHealthHnd: {fileID: 3429115756561989709}
   playerStarHnd: {fileID: 6548027834958359999}
   playerGiftHnd: {fileID: -3115130200687028544}
+  dieFromSawSound: {fileID: 8300000, guid: 207296edb639c8f4baa861d2e70f0a83, type: 3}
+  sawObject: {fileID: 5818134098678246762, guid: 3ba483859558c7f4084ff8024c976861,
+    type: 3}
+  bigSawObject: {fileID: 5818134098678246762, guid: 6a6fca99a6743a94fa03380dfbb69b3f,
+    type: 3}
+  movingSawObject: {fileID: 1286023049779711281, guid: d343a5213050c8e4c9fd2916dd62b3bd,
+    type: 3}

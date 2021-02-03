@@ -68,7 +68,7 @@ public class GameSceneHandler : MonoBehaviour
         add
         {
             if (playerSpawner != null && playerSpawner?.PlayerHealthHnd != null)
-                playerSpawner.PlayerHealthHnd.OnDied += () => value?.Invoke();      // invoke callback of lose handler when player is died 
+                playerSpawner.PlayerHealthHnd.OnDied += (obj) => value?.Invoke();     // invoke callback of lose handler when player is died 
         }
 
         remove {}

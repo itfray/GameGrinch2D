@@ -5,13 +5,13 @@
 /// HealthHandler is class for game objects, that 
 /// have health bar.
 /// </summary>
-public abstract class HealthHandler : MonoBehaviour
+public class HealthHandler : MonoBehaviour
 {
     public int max_health = 1;                                                      // max_health_value
     public int health = 1;                                                          // health value
     public GameObject[] damageObjs;                                                 // information of game objects that can damage this game object
 
-    public delegate void HealthEventHnd();                          // type handler of events of HealthHandler
+    public delegate void HealthEventHnd(GameObject obj);                          // type handler of events of HealthHandler
     public event HealthEventHnd OnDied;                             // invoke when player is died
     public event HealthEventHnd OnDamaged;                          // invoke when player is damaged
 
@@ -39,33 +39,33 @@ public abstract class HealthHandler : MonoBehaviour
     /// <summary>
     /// Method is handler damage game object.
     /// </summary>
-    protected virtual void Damaging()
+    protected virtual void Damaging(GameObject obj)
     {
-        OnDamaged?.Invoke();
+        OnDamaged?.Invoke(obj);
     }
 
     /// <summary>
     /// Method is handler of gameobject death.
     /// </summary>
-    protected virtual void Dying()
+    protected virtual void Dying(GameObject obj)
     {
-        OnDied?.Invoke();
+        OnDied?.Invoke(obj);
     }
 
     /// <summary>
     /// Method damages game object.
     /// </summary>
     /// <param name="damage"> damage value </param>
-    public virtual void Damage(int damage)
+    public virtual void Damage(int damage, GameObject obj)
     {
         if (health > 0)
         {
-            Damaging();
+            Damaging(obj);
 
             health -= damage;
 
             if (health <= 0)
-                Dying();
+                Dying(obj);
         }
     }
 
@@ -84,7 +84,7 @@ public abstract class HealthHandler : MonoBehaviour
                 {
                     if (dmg_obj.tag == dmg_hnd.owner.tag)                                   // if tag of checked object contains in list damageObjs
                     {
-                        Damage(dmg_hnd.damage);                                             // damage
+                        Damage(dmg_hnd.damage, obj);                                        // damage
                         damaged = true;
                         break;
                     }

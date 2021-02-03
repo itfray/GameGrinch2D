@@ -20,6 +20,9 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
 
     public int maxcBullets = 10;                                                  // max count bullets
 
+    public delegate void WeaponEventHnd();                                        // type handler of events of WeaponHandler<T>
+    public event WeaponEventHnd OnAttacked;                                       // invoke when weapon attack
+
     private LinkedList<BulletHndT> bullet_hnds = new LinkedList<BulletHndT>();    // list generated bullets
 
     /// <summary>
@@ -88,6 +91,8 @@ public class WeaponHandler<BulletHndT> : MonoBehaviour where BulletHndT: BulletH
 
         bullet_hnds.RemoveFirst();                                                                               // put the bullet handler at the end of the list
         bullet_hnds.AddLast(bulletHndlr);
+
+        OnAttacked?.Invoke();
 
         return bulletHndlr;
     }
