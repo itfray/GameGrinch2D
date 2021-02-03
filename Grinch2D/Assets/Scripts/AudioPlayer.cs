@@ -9,7 +9,16 @@ public class AudioPlayer : MonoBehaviour
     private int audio_ind = 0;                                                      // index of last playing audio
     private bool is_playing = false;                                                // Is palyer play music in this moment?
 
+    public delegate void AudioPlayerEvent();                                        // type handler of events of AudioPlayer
+    public event AudioPlayerEvent OnPlay;                                           // invoke when AudioPlayer execute "Play"
+    public event AudioPlayerEvent OnStop;
+    public event AudioPlayerEvent OnNext;
+    public event AudioPlayerEvent OnPrev;
+    public event AudioPlayerEvent OnPause;
+    public event AudioPlayerEvent OnUnPause;
+
     public bool isPlaying { get { return is_playing; } }
+    public int audioIndex { get { return audio_ind; } }
 
     void Update()
     {
@@ -35,6 +44,8 @@ public class AudioPlayer : MonoBehaviour
         audio_ind = validAudioIndex(start_ind);                                 // transform index to valid state
         musicList[audio_ind].Play();                                            // play new audio
         is_playing = true;
+
+        OnPlay?.Invoke();
     }
 
     /// <summary>
@@ -48,6 +59,8 @@ public class AudioPlayer : MonoBehaviour
             audio_ind = 0;
         musicList[audio_ind].Play();
         is_playing = true;
+
+        OnNext?.Invoke();
     }
 
     /// <summary>
@@ -61,6 +74,8 @@ public class AudioPlayer : MonoBehaviour
             audio_ind = musicList.Length - 1;
         musicList[audio_ind].Play();
         is_playing = true;
+
+        OnPrev?.Invoke();
     }
 
     /// <summary>
@@ -70,6 +85,8 @@ public class AudioPlayer : MonoBehaviour
     {
         musicList[audio_ind].Stop();
         is_playing = false;
+
+        OnStop?.Invoke();
     }
 
     /// <summary>
@@ -79,6 +96,8 @@ public class AudioPlayer : MonoBehaviour
     {
         musicList[audio_ind].Pause();
         is_playing = false;
+
+        OnPause?.Invoke();
     }
 
     /// <summary>
@@ -88,6 +107,8 @@ public class AudioPlayer : MonoBehaviour
     {
         musicList[audio_ind].UnPause();
         is_playing = true;
+
+        OnUnPause?.Invoke();
     }
 
     /// <summary>

@@ -42,7 +42,10 @@ public class GameMenuControl : MonoBehaviour
     public const string timeBarText = "Time ";
     public const string levelBarText = "Level ";
 
-    public const string levelPrefName = "level";                        // name preference that store number of level
+    // ************ preference names **********************
+    public const string levelPref = "level";                            // preference name that store number of level
+    public const string lastAudioIndPref = "lastGameAudioIndex";        // preference name that store last audio index that used AudioPlayer
+    // ****************************************************
 
     // ************* Game play menu elements ***********
     public Image gameStarBar;                                           // game play menu star bar
@@ -59,11 +62,17 @@ public class GameMenuControl : MonoBehaviour
     private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
-        audioPlayer.Play();
+        AudioPlayer.AudioPlayerEvent fAudioPrefs = 
+                                 () => PlayerPrefs.SetInt(lastAudioIndPref, audioPlayer.audioIndex);    // callback for saving audio player preferences
+        audioPlayer.OnPlay += fAudioPrefs;
+        audioPlayer.OnNext += fAudioPrefs;
+        audioPlayer.OnPrev += fAudioPrefs;
+
+        audioPlayer.Play(PlayerPrefs.GetInt(lastAudioIndPref, 0));                                      // start music list playing
 
         LoadingMenu();                                                                                  // open loading menu
 
-        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt(levelPrefName, 1));   // add callback after initialization of game scene handler
+        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt(levelPref, 1));   // add callback after initialization of game scene handler
 
         gameScnHnd.OnConstructedLevel += () =>
         {
