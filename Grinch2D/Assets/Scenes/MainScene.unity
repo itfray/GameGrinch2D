@@ -5854,6 +5854,7 @@ MonoBehaviour:
   - {fileID: 734025024}
   - {fileID: 1513404707}
   - {fileID: 814132484}
+  audioIndexPrefName: gameAudioIndex
 --- !u!4 &1704149258
 Transform:
   m_ObjectHideFlags: 0

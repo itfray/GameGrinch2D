@@ -9,6 +9,8 @@ public class AudioPlayer : MonoBehaviour
     private int audio_ind = 0;                                                      // index of last playing audio
     private bool is_playing = false;                                                // Is palyer play music in this moment?
 
+    public string audioIndexPrefName = "";
+
     public delegate void AudioPlayerEvent();                                        // type handler of events of AudioPlayer
     public event AudioPlayerEvent OnPlay;                                           // invoke when AudioPlayer execute "Play"
     public event AudioPlayerEvent OnStop;
@@ -26,12 +28,23 @@ public class AudioPlayer : MonoBehaviour
             Next();
     }
 
+    private void PlayWith(int index)
+    {
+        musicList[audio_ind].Stop();                                // stop old audio
+        audio_ind = index;                                          // transform index to valid state
+        musicList[audio_ind].Play();                                // play new audio
+        is_playing = true;
+
+        if (audioIndexPrefName.Length > 0)
+            PlayerPrefs.SetInt(audioIndexPrefName, audio_ind);      // store audio index as preference
+    }
+
     /// <summary>
     /// Method starts playing music list
     /// </summary>
     public void Play()
     {
-        Play(0);
+        Play(PlayerPrefs.GetInt(audioIndexPrefName, 0));
     }
 
     /// <summary>
@@ -40,11 +53,7 @@ public class AudioPlayer : MonoBehaviour
     /// <param name="start_ind"> audio index </param>
     public void Play(int start_ind)
     {
-        musicList[audio_ind].Stop();                                            // stop old audio
-        audio_ind = validAudioIndex(start_ind);                                 // transform index to valid state
-        musicList[audio_ind].Play();                                            // play new audio
-        is_playing = true;
-
+        PlayWith(ValidAudioIndex(start_ind));
         OnPlay?.Invoke();
     }
 
@@ -53,13 +62,7 @@ public class AudioPlayer : MonoBehaviour
     /// </summary>
     public void Next()
     {
-        musicList[audio_ind].Stop();
-        audio_ind++;
-        if (audio_ind >= musicList.Length)
-            audio_ind = 0;
-        musicList[audio_ind].Play();
-        is_playing = true;
-
+        PlayWith(NextAudioIndex());
         OnNext?.Invoke();
     }
 
@@ -68,13 +71,7 @@ public class AudioPlayer : MonoBehaviour
     /// </summary>
     public void Prev()
     {
-        musicList[audio_ind].Stop();
-        audio_ind--;
-        if (audio_ind < 0)
-            audio_ind = musicList.Length - 1;
-        musicList[audio_ind].Play();
-        is_playing = true;
-
+        PlayWith(PrevAudioIndex());
         OnPrev?.Invoke();
     }
 
@@ -112,11 +109,11 @@ public class AudioPlayer : MonoBehaviour
     }
 
     /// <summary>
-    /// Method for transformation any audio index to valid state
+    /// Method for transformation any audio index to valid audio index
     /// </summary>
     /// <param name="index"> audio index </param>
     /// <returns> valid audio index </returns>
-    private int validAudioIndex(int index)
+    public int ValidAudioIndex(int index)
     {
         if (index < 0)
             return 0;
@@ -124,5 +121,29 @@ public class AudioPlayer : MonoBehaviour
             return musicList.Length - 1;
         else
             return index;
+    }
+
+    /// <summary>
+    /// Method calculates next audio index  in list of music
+    /// </summary>
+    /// <returns> next audio index </returns>
+    public int NextAudioIndex()
+    {
+        int index = audio_ind + 1;
+        if (index >= musicList.Length)
+            index = 0;
+        return index;
+    }
+
+    /// <summary>
+    /// Method calculates prev audio index  in list of music
+    /// </summary>
+    /// <returns> prev audio index </returns>
+    public int PrevAudioIndex()
+    {
+        int index = audio_ind - 1;
+        if (index < 0)
+            index = musicList.Length - 1;
+        return index;
     }
 }

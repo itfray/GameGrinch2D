@@ -62,17 +62,11 @@ public class GameMenuControl : MonoBehaviour
     private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
-        AudioPlayer.AudioPlayerEvent fAudioPrefs = 
-                                 () => PlayerPrefs.SetInt(lastAudioIndPref, audioPlayer.audioIndex);    // callback for saving audio player preferences
-        audioPlayer.OnPlay += fAudioPrefs;
-        audioPlayer.OnNext += fAudioPrefs;
-        audioPlayer.OnPrev += fAudioPrefs;
+        audioPlayer.Play();                                                                            // start music list playing
 
-        audioPlayer.Play(PlayerPrefs.GetInt(lastAudioIndPref, 0));                                      // start music list playing
+        LoadingMenu();                                                                                 // open loading menu
 
-        LoadingMenu();                                                                                  // open loading menu
-
-        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt(levelPref, 1));   // add callback after initialization of game scene handler
+        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt(levelPref, 1));      // add callback after initialization of game scene handler
 
         gameScnHnd.OnConstructedLevel += () =>
         {
