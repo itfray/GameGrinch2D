@@ -8,13 +8,13 @@ public class SettingsMenuController : MonoBehaviour
     public AudioMixerGroup mixer;
 
     public const string musicVolParamName = "MusicVolume";
-    public const string soundVolParamName = "SoundVolume";
+    public const string soundVolParamName = "EffectsVolume";
     public const string masterVolParamName = "MasterVolume";
 
     public Image btMute;
     public Sprite onMute;
     public Sprite offMute;
-    private bool muted = false;
+    private bool mute = false;
 
     public void SoundToggle(bool enabled)
     {
@@ -39,9 +39,9 @@ public class SettingsMenuController : MonoBehaviour
 
     public void MuteButtonClick()
     {
-        muted = !muted;
+        mute = !mute;
 
-        if (muted)
+        if (mute)
         {
             btMute.sprite = onMute;
             mixer.audioMixer.SetFloat(masterVolParamName, -80);
