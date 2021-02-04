@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using static CoroutineScripts;
+using static MenuControlHelper;
 
 
 /// <summary>
@@ -208,18 +209,7 @@ public class GameMenuControl : MonoBehaviour
             return;
         }
 
-        int count_stars = gameScnHnd.CountStars - 1;
-        if (count_stars < 0)
-        {
-            starBar.gameObject.SetActive(false);
-        }
-        else
-        {
-            starBar.gameObject.SetActive(true);
-            if (count_stars >= starBarSprites.Length)
-                count_stars = starBarSprites.Length - 1;
-            starBar.sprite = starBarSprites[count_stars];                                   // set sprite from sprites list for image of star bar
-        }
+        UpdateSpriteStarBar(gameScnHnd.CountStars, starBar, starBarSprites);            // set sprite from sprites list for image of star bar
     }
 
     /// <summary>
@@ -368,29 +358,5 @@ public class GameMenuControl : MonoBehaviour
         UpdateStarBar(gmUnplStarBar, starBarActive);                                        // updating star bar
         UpdateTimeBar(gmUnplTimeBar);                                                       // updating time bar
         UpdateLevelBar(gmUnplLevelBar);                                                     // updating level bar
-    }
-
-    /// <summary>
-    /// Method transform float seconds value in time string
-    /// </summary>
-    /// <param name="time"> time in seconds </param>
-    /// <returns> time string format: "mm:ss" </returns>
-    public static string SecondsToTimeStr(float time)
-    {
-        int min = (int)time / 60;
-        int sec = (int)time % 60;
-
-        if (min > 99)
-        {
-            min = 99;
-            sec = 59;
-        }
-
-        string NumTo2DigStr(int num)
-        {
-            return num < 10 ? "0" + num : num.ToString();
-        }
-
-        return NumTo2DigStr(min) + ":" + NumTo2DigStr(sec);
     }
 }

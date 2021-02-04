@@ -251,7 +251,29 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 20606576}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 199606002}
+        m_MethodName: NextMenuPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &20606576
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -791,7 +813,9 @@ GameObject:
   - component: {fileID: 199605998}
   - component: {fileID: 199605997}
   - component: {fileID: 199606001}
+  - component: {fileID: 199606002}
   - component: {fileID: 199605996}
+  - component: {fileID: 199606003}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -918,6 +942,77 @@ MonoBehaviour:
   audioPlayer: {fileID: 6644421}
   mainMenu: {fileID: 724516646}
   settingsMenu: {fileID: 1469509765}
+  selectLevelMenu: {fileID: 971374427}
+--- !u!114 &199606002
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199605995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 500b7227397223b4592edf0eb7f11168, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fileParser: {fileID: 199606003}
+  levelBoxButtons:
+  - {fileID: 2141195687}
+  - {fileID: 1809145267}
+  - {fileID: 709124709}
+  - {fileID: 827071173}
+  - {fileID: 1027725960}
+  - {fileID: 767024309}
+  levelBoxTexts:
+  - {fileID: 476387205}
+  - {fileID: 573981921}
+  - {fileID: 468201471}
+  - {fileID: 986254155}
+  - {fileID: 1256129452}
+  - {fileID: 1462444124}
+  levelBoxLocks:
+  - {fileID: 1047870134}
+  - {fileID: 1524356800}
+  - {fileID: 378784399}
+  - {fileID: 988508927}
+  - {fileID: 1358957048}
+  - {fileID: 1046381252}
+  levelBoxStarBars:
+  - {fileID: 456968783}
+  - {fileID: 1784995665}
+  - {fileID: 1788394635}
+  - {fileID: 205154444}
+  - {fileID: 1634303117}
+  - {fileID: 1204790277}
+  levelBoxTimeBars:
+  - {fileID: 893139808}
+  - {fileID: 433292799}
+  - {fileID: 1684561289}
+  - {fileID: 719118655}
+  - {fileID: 1031943344}
+  - {fileID: 942503805}
+  starBarSprites:
+  - {fileID: 21300000, guid: 167266224e94ec54db5300d2c9335b67, type: 3}
+  - {fileID: 21300000, guid: 48cf4111e13ab06419483c949fdd51dd, type: 3}
+  - {fileID: 21300000, guid: b2eef9b7cf20a7b40bd6e87b49934f52, type: 3}
+  nextButton: {fileID: 20606575}
+  prevButton: {fileID: 2042836688}
+--- !u!114 &199606003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 199605995}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93c5591b86633ea449f64b5c36d6c7f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelDictPath: Assets/Resources/level_dict.txt
+  bgDictPath: Assets/Resources/bg_dict.txt
+  levelsPath: Assets/Resources/levels
+  maxLevelSize: {x: 0, y: 0}
 --- !u!1 &205154442
 GameObject:
   m_ObjectHideFlags: 0
@@ -1774,7 +1869,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &433292798
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1852,7 +1947,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &456968782
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2074,7 +2169,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.7686275, g: 0.7686275, b: 0.7686275, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -2379,6 +2474,17 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 199606001}
+        m_MethodName: SelectLevelMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &548150503
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2672,7 +2778,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 709124710}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &709124710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2998,7 +3115,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 767024310}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &767024310
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3320,7 +3448,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 827071174}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &827071174
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3892,7 +4031,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &893139807
 RectTransform:
   m_ObjectHideFlags: 0
@@ -4641,7 +4780,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1027725961}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1027725961
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4848,7 +4998,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1046381251
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5799,7 +5949,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1358957047
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7072,7 +7222,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1684561288
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7299,7 +7449,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1784995664
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7608,7 +7758,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1809145268}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &1809145268
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8753,7 +8914,29 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2042836689}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 199606002}
+        m_MethodName: PrevMenuPage
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2042836689
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8954,7 +9137,18 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 2141195688}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 30760610}
+        m_MethodName: Play
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &2141195688
 MonoBehaviour:
   m_ObjectHideFlags: 0

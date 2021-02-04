@@ -12,6 +12,7 @@ public class MainMenuControl : MonoBehaviour
     // *************** All menu objects ******************
     public GameObject mainMenu;                                         // main menu
     public GameObject settingsMenu;                                     // settings menu
+    public GameObject selectLevelMenu;                                  // select level menu
     // ***************************************************
 
     // ************ preference names **********************
@@ -23,22 +24,28 @@ public class MainMenuControl : MonoBehaviour
     void Start()
     {
         if (audioPlayer) audioPlayer.Play();                                                           // start music list playing
+
+        MainMenu();                                                                                    // open main menu
     }
 
     public void ExitGame()
     {
         Application.Quit();
-        Debug.Log("Application.Quit()");
     }
 
     public void MainMenu()
     {
-        CallMenu(mainMenu, settingsMenu);
+        CallMenu(mainMenu, settingsMenu, selectLevelMenu);
     }
 
     public void SettingMenu()
     {
-        CallMenu(settingsMenu, mainMenu);
+        CallMenu(settingsMenu, mainMenu, selectLevelMenu);
+    }
+
+    public void SelectLevelMenu()
+    {
+        CallMenu(selectLevelMenu, settingsMenu, mainMenu);
     }
 
     public void CallMenu(GameObject open_menu, params GameObject[] close_menus)
