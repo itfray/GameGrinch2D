@@ -190,7 +190,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Sounds
+  m_Text: Effects
 --- !u!222 &66804859
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1251,7 +1251,7 @@ GameObject:
   - component: {fileID: 415678986}
   - component: {fileID: 415678987}
   m_Layer: 5
-  m_Name: sounds_tgl
+  m_Name: effects_tgl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1276,7 +1276,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 125, y: 32}
+  m_SizeDelta: {x: 130, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &415678987
 MonoBehaviour:
@@ -1324,8 +1324,8 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1691274543}
-        m_MethodName: SoundToggle
+      - m_Target: {fileID: 2079268592}
+        m_MethodName: EffectsToggle
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2123,7 +2123,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 125, y: 32}
+  m_SizeDelta: {x: 130, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &704283345
 MonoBehaviour:
@@ -2171,7 +2171,7 @@ MonoBehaviour:
   onValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1691274543}
+      - m_Target: {fileID: 2079268592}
         m_MethodName: MusicToggle
         m_Mode: 0
         m_Arguments:
@@ -3647,7 +3647,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 125, y: 100}
+  m_SizeDelta: {x: 130, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1095945500
 MonoBehaviour:
@@ -4406,7 +4406,7 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1691274543}
+      - m_Target: {fileID: 2079268592}
         m_MethodName: ChangeVolume
         m_Mode: 0
         m_Arguments:
@@ -4886,8 +4886,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 1691274543}
-        m_MethodName: MuteButtonClick
+      - m_Target: {fileID: 2079268592}
+        m_MethodName: MuteToggle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -5769,7 +5769,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1691274542}
-  - component: {fileID: 1691274543}
   m_Layer: 5
   m_Name: SettingsMenu
   m_TagString: Untagged
@@ -5804,22 +5803,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &1691274543
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1691274541}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 14b1908c7e9932545a617a4a2576fce9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mixer: {fileID: 24300002, guid: e79dfacdd485e744bb7fd063cd1b304f, type: 2}
-  btMute: {fileID: 1446898619}
-  onMute: {fileID: 21300000, guid: d5bf619b9c4ab944e8aa0e9f8fe90477, type: 3}
-  offMute: {fileID: 21300000, guid: 283d1f0f18a23a441a5bae3a4114bd59, type: 3}
 --- !u!1 &1704149256
 GameObject:
   m_ObjectHideFlags: 0
@@ -6795,6 +6778,7 @@ GameObject:
   - component: {fileID: 2079268588}
   - component: {fileID: 2079268587}
   - component: {fileID: 2079268591}
+  - component: {fileID: 2079268592}
   m_Layer: 5
   m_Name: UICanvas
   m_TagString: Untagged
@@ -6918,6 +6902,27 @@ MonoBehaviour:
   gmUnplBtText: {fileID: 1426828641}
   gameStarBar: {fileID: 1980006345}
   gameTimeBar: {fileID: 1793983084}
+--- !u!114 &2079268592
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2079268586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 14b1908c7e9932545a617a4a2576fce9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mixer: {fileID: 24300002, guid: e79dfacdd485e744bb7fd063cd1b304f, type: 2}
+  maxVolume: 0
+  minVolume: -80
+  buttonMute: {fileID: 1446898619}
+  onMuteSprite: {fileID: 21300000, guid: d5bf619b9c4ab944e8aa0e9f8fe90477, type: 3}
+  offMuteSprite: {fileID: 21300000, guid: 283d1f0f18a23a441a5bae3a4114bd59, type: 3}
+  volumeSlider: {fileID: 1356975098}
+  effectsToggle: {fileID: 415678987}
+  musicToggle: {fileID: 704283345}
 --- !u!1 &2086269996
 GameObject:
   m_ObjectHideFlags: 0
