@@ -4,6 +4,9 @@ using UnityEngine.SceneManagement;
 using static CoroutineScripts;
 
 
+/// <summary>
+/// GameMenuControl is class for control game menu
+/// </summary>
 public class GameMenuControl : MonoBehaviour
 {
     public GameSceneHandler gameScnHnd;                                 // Game Scene Handler
@@ -44,7 +47,6 @@ public class GameMenuControl : MonoBehaviour
 
     // ************ preference names **********************
     public const string levelPref = "level";                            // preference name that store number of level
-    public const string lastAudioIndPref = "lastGameAudioIndex";        // preference name that store last audio index that used AudioPlayer
     // ****************************************************
 
     // ************* Game play menu elements ***********
@@ -62,7 +64,7 @@ public class GameMenuControl : MonoBehaviour
     private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
-        audioPlayer.Play();                                                                            // start music list playing
+        if (audioPlayer) audioPlayer.Play();                                                           // start music list playing
 
         LoadingMenu();                                                                                 // open loading menu
 

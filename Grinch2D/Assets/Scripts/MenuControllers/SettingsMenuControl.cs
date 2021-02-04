@@ -3,7 +3,10 @@ using UnityEngine.Audio;
 using UnityEngine.UI;
 
 
-public class SettingsMenuController : MonoBehaviour
+/// <summary>
+/// SttingsMenuControl is class for control settings menu
+/// </summary>
+public class SettingsMenuControl : MonoBehaviour
 {
     public AudioMixerGroup mixer;
 
