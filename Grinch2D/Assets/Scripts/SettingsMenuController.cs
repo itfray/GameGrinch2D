@@ -7,49 +7,59 @@ public class SettingsMenuController : MonoBehaviour
 {
     public AudioMixerGroup mixer;
 
+    public float maxVolume = 0;
+    public float minVolume = -80;
+
     public const string musicVolParamName = "MusicVolume";
     public const string soundVolParamName = "EffectsVolume";
     public const string masterVolParamName = "MasterVolume";
 
-    public Image btMute;
-    public Sprite onMute;
-    public Sprite offMute;
+    public Image buttonMute;
+    public Sprite onMuteSprite;
+    public Sprite offMuteSprite;
     private bool mute = false;
 
+    void Start()
+    {
+        mixer.audioMixer.SetFloat(soundVolParamName, PlayerPrefs.GetFloat(soundVolParamName, maxVolume));
+        mixer.audioMixer.SetFloat(musicVolParamName, PlayerPrefs.GetFloat(musicVolParamName, maxVolume));
+        mixer.audioMixer.SetFloat(masterVolParamName, PlayerPrefs.GetFloat(masterVolParamName, maxVolume));
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="enabled"></param>
     public void SoundToggle(bool enabled)
     {
-        if (enabled)
-            mixer.audioMixer.SetFloat(soundVolParamName, 0);
-        else
-            mixer.audioMixer.SetFloat(soundVolParamName, -80);
+        float volume = enabled? maxVolume: minVolume;                               // calculate volume
+        mixer.audioMixer.SetFloat(soundVolParamName, volume);                       // change volume in mixer
+        PlayerPrefs.SetFloat(soundVolParamName, volume);                            // store preference
     }
 
     public void MusicToggle(bool enabled)
     {
-        if (enabled)
-            mixer.audioMixer.SetFloat(musicVolParamName, 0);
-        else
-            mixer.audioMixer.SetFloat(musicVolParamName, -80);
+        float volume = enabled ? maxVolume : minVolume;
+        mixer.audioMixer.SetFloat(musicVolParamName, volume);
+        PlayerPrefs.SetFloat(musicVolParamName, volume);
     }
 
     public void ChangeVolume(float volume)
     {
-        mixer.audioMixer.SetFloat(masterVolParamName, Mathf.Lerp(-80, 0, volume));
+        volume = Mathf.Lerp(minVolume, maxVolume, volume);
+        mixer.audioMixer.SetFloat(masterVolParamName, volume);
+        PlayerPrefs.SetFloat(masterVolParamName, volume);
     }
 
     public void MuteButtonClick()
     {
         mute = !mute;
 
-        if (mute)
-        {
-            btMute.sprite = onMute;
-            mixer.audioMixer.SetFloat(masterVolParamName, -80);
-        }
-        else
-        {
-            btMute.sprite = offMute;
-            mixer.audioMixer.SetFloat(masterVolParamName, 0);
-        }
+        float volume = mute ? minVolume : maxVolume;
+        mixer.audioMixer.SetFloat(masterVolParamName, volume);
+        PlayerPrefs.SetFloat(masterVolParamName, volume);
+
+        if (buttonMute != null && onMuteSprite != null && offMuteSprite != null)
+            buttonMute.sprite = mute ? onMuteSprite : offMuteSprite;
     }
 }
