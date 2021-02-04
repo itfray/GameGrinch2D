@@ -24,4 +24,27 @@ public class MainMenuControl : MonoBehaviour
     {
         if (audioPlayer) audioPlayer.Play();                                                           // start music list playing
     }
+
+    public void ExitGame()
+    {
+        Application.Quit();
+        Debug.Log("Application.Quit()");
+    }
+
+    public void MainMenu()
+    {
+        CallMenu(mainMenu, settingsMenu);
+    }
+
+    public void SettingMenu()
+    {
+        CallMenu(settingsMenu, mainMenu);
+    }
+
+    public void CallMenu(GameObject open_menu, params GameObject[] close_menus)
+    {
+        open_menu.SetActive(true);
+        foreach (GameObject close_menu in close_menus)
+            close_menu.SetActive(false);
+    }
 }
