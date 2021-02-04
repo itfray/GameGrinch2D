@@ -13,13 +13,8 @@ public class MainMenuControl : MonoBehaviour
     public GameObject mainMenu;                                         // main menu
     public GameObject settingsMenu;                                     // settings menu
     public GameObject selectLevelMenu;                                  // select level menu
+    public GameObject loadingMenu;                                      // loading menu
     // ***************************************************
-
-    // ************ preference names **********************
-    public const string levelPref = "level";                            // preference name that store number of level
-    // ****************************************************
-
-    public const string gameSceneName = "GameScene";
 
     void Start()
     {
@@ -35,17 +30,22 @@ public class MainMenuControl : MonoBehaviour
 
     public void MainMenu()
     {
-        CallMenu(mainMenu, settingsMenu, selectLevelMenu);
+        CallMenu(mainMenu, settingsMenu, selectLevelMenu, loadingMenu);
     }
 
     public void SettingMenu()
     {
-        CallMenu(settingsMenu, mainMenu, selectLevelMenu);
+        CallMenu(settingsMenu, mainMenu, selectLevelMenu, loadingMenu);
     }
 
     public void SelectLevelMenu()
     {
-        CallMenu(selectLevelMenu, settingsMenu, mainMenu);
+        CallMenu(selectLevelMenu, settingsMenu, mainMenu, loadingMenu);
+    }
+
+    public void LoadingMenu()
+    {
+        CallMenu(loadingMenu, selectLevelMenu, settingsMenu, mainMenu);
     }
 
     public void CallMenu(GameObject open_menu, params GameObject[] close_menus)
