@@ -3,7 +3,7 @@ aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 a5        6                       6a
 a                                  a
 a    +b                            a
-a    ea      +             +       a
+a    ea      +     &       +       a
 a           bbb  ffffff   bbb     5a
 a        b                         a
 a p          2       1         #   a

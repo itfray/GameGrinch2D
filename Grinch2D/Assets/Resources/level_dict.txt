@@ -19,3 +19,5 @@ f : concrete1_1
 4 : moving_big_saw_end
 5 : moving_block
 6 : moving_block_end
+& : key0
+% : key0_lock

@@ -21,6 +21,7 @@ public class GameSceneHandler : MonoBehaviour
     public GameObject turretsField;                                                 // field for created turrets
     public GameObject starsField;                                                   // field for created stars
     public GameObject giftsField;                                                   // field for created gifts
+    public GameObject keysField;                                                    // field for created keys
 
     public const string playerTag = "Player";
     public const string blockTag = "Block";
@@ -33,6 +34,7 @@ public class GameSceneHandler : MonoBehaviour
     public const string turretTag = "Turret";
     public const string starTag = "Star";
     public const string giftTag = "Gift";
+    public const string keyTag = "Key";
 
     public GameObject[] gamePrefabs;                                                // all game prefabs
     public GameObject[] spawnPrefabs;                                               // all prefabs for spawning game objects
@@ -48,6 +50,7 @@ public class GameSceneHandler : MonoBehaviour
     public GenBigSawStrategy gen_big_saw_strtg;                                    // strategy of generation big saw
     public GenMovingBlockStrategy gen_move_block_strtg;                            // strategy of generation moving block
     public GenSpikeStrategy gen_spike_strtg;                                       // strategy of generation spike
+    public GenKeyStrategy gen_key_strtg;                                           // strategy of generation key
 
     public delegate void GameSceneEventHnd();                                       // type handler of events of GameSceneHandler
     public event GameSceneEventHnd OnInited;                                        // invoke when game scene handler inited
@@ -389,6 +392,12 @@ public class GameSceneHandler : MonoBehaviour
             case turretTag:
                 genObj = gen_block_strtg;
                 genObj.objParentField = turretsField;
+                break;
+            case keyTag:
+                genObj = gen_key_strtg;
+                genObj.objParentField = blocksField;
+                genObj.spwnrParentField = keysField;
+                genObj.spwnrPrefab = prefab;
                 break;
             case starTag:
                 genObj = gen_block_strtg;
