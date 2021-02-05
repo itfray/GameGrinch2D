@@ -5168,6 +5168,7 @@ MonoBehaviour:
   - {fileID: 1641230939085965162, guid: 106d9c4f299e13c408bb704771fa4897, type: 3}
   - {fileID: 308226852408147019, guid: ad4e6ad95cfe8e84db563f27100f73fe, type: 3}
   - {fileID: 308226852408147019, guid: 4720126678fcd0d4fa7f51ba0843ed28, type: 3}
+  - {fileID: 308226852408147019, guid: 706712202721673468cbb5afdafd52c6, type: 3}
   spawnPrefabs:
   - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty

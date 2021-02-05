@@ -25,6 +25,7 @@ public class GameSceneHandler : MonoBehaviour
     public const string playerTag = "Player";
     public const string blockTag = "Block";
     public const string disappBlockTag = "DisappBlock";
+    public const string movingBlockTag = "MovingBlock";
     public const string sawTag = "Saw";
     public const string bigSawTag = "BigSaw";
     public const string movingSawTag = "MovingSaw";
@@ -364,6 +365,10 @@ public class GameSceneHandler : MonoBehaviour
             case disappBlockTag:
                 genObj = gen_block_strtg;
                 genObj.objParentField = disappBlocksField;
+                break;
+            case movingBlockTag:
+                genObj = gen_move_block_strtg;
+                genObj.objParentField = blocksField;
                 break;
             case sawTag:
                 genObj = gen_saw_strtg;
