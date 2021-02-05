@@ -153,7 +153,7 @@ MonoBehaviour:
   musicList:
   - {fileID: 1253840104}
   - {fileID: 346823257}
-  audioIndexPrefName: menuAudioIndex
+  audioIndexPrefName: 
 --- !u!4 &6644422
 Transform:
   m_ObjectHideFlags: 0
@@ -836,11 +836,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mixer: {fileID: 24300002, guid: e79dfacdd485e744bb7fd063cd1b304f, type: 2}
-  maxVolume: 0
-  minVolume: -80
+  masterVolBounds: {x: -80, y: 0}
+  musicVolBounds: {x: -80, y: -10}
+  effectsVolBounds: {x: -80, y: 0}
   buttonMute: {fileID: 865007537}
-  onMuteSprite: {fileID: 21300000, guid: d5bf619b9c4ab944e8aa0e9f8fe90477, type: 3}
-  offMuteSprite: {fileID: 21300000, guid: 283d1f0f18a23a441a5bae3a4114bd59, type: 3}
+  onMuteSprite: {fileID: 21300000, guid: 283d1f0f18a23a441a5bae3a4114bd59, type: 3}
+  offMuteSprite: {fileID: 21300000, guid: d5bf619b9c4ab944e8aa0e9f8fe90477, type: 3}
   volumeSlider: {fileID: 1846625868}
   effectsToggle: {fileID: 1503548130}
   musicToggle: {fileID: 270455805}

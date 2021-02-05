@@ -10,8 +10,9 @@ public class SettingsMenuControl : MonoBehaviour
 {
     public AudioMixerGroup mixer;
 
-    public float maxVolume = 0;                                                                 // max value volume in mixer
-    public float minVolume = -80;                                                               // min value volume in mixer
+    public Vector2 masterVolBounds = new Vector2(-80, 0);                                    // min/max value master volume in mixer {x: min, y: max}
+    public Vector2 musicVolBounds = new Vector2(-80, 0);
+    public Vector2 effectsVolBounds = new Vector2(-80, 0);
 
     public const string musicVolParamName = "MusicVolume";
     public const string effectsVolParamName = "EffectsVolume";
@@ -29,9 +30,9 @@ public class SettingsMenuControl : MonoBehaviour
 
     void Start()
     {
-        float effectVolume = PlayerPrefs.GetFloat(effectsVolParamName, maxVolume);              // load volume preferences
-        float musicVolume = PlayerPrefs.GetFloat(musicVolParamName, maxVolume);
-        float masterVolume = PlayerPrefs.GetFloat(masterVolParamName, maxVolume);
+        float effectVolume = PlayerPrefs.GetFloat(effectsVolParamName, effectsVolBounds.y);              // load volume preferences
+        float musicVolume = PlayerPrefs.GetFloat(musicVolParamName, musicVolBounds.y);
+        float masterVolume = PlayerPrefs.GetFloat(masterVolParamName, masterVolBounds.y);
 
         mixer.audioMixer.SetFloat(effectsVolParamName, effectVolume);                           // set volume preferences
         mixer.audioMixer.SetFloat(musicVolParamName, musicVolume);
@@ -49,7 +50,7 @@ public class SettingsMenuControl : MonoBehaviour
     /// <param name="enabled"> { true: enable, false: disable } </param>
     public void EffectsToggle(bool enabled)
     {
-        float volume = enabled? maxVolume: minVolume;                               // calculate volume
+        float volume = enabled? effectsVolBounds.y: effectsVolBounds.x;             // calculate volume
         mixer.audioMixer.SetFloat(effectsVolParamName, volume);                     // change volume in mixer
         PlayerPrefs.SetFloat(effectsVolParamName, volume);                          // store preference
     }
@@ -60,7 +61,7 @@ public class SettingsMenuControl : MonoBehaviour
     /// <param name="enabled"> { true: enable, false: disable } </param>
     public void MusicToggle(bool enabled)
     {
-        float volume = enabled ? maxVolume : minVolume;
+        float volume = enabled ? musicVolBounds.y : musicVolBounds.x;
         mixer.audioMixer.SetFloat(musicVolParamName, volume);
         PlayerPrefs.SetFloat(musicVolParamName, volume);
     }
@@ -71,7 +72,7 @@ public class SettingsMenuControl : MonoBehaviour
     /// <param name="volume"> volume value </param>
     public void ChangeVolume(float volume)
     {
-        volume = Mathf.Lerp(minVolume, maxVolume, volume);
+        volume = Mathf.Lerp(masterVolBounds.x, masterVolBounds.y, volume);
         mixer.audioMixer.SetFloat(masterVolParamName, volume);
         PlayerPrefs.SetFloat(masterVolParamName, volume);
 
@@ -83,7 +84,7 @@ public class SettingsMenuControl : MonoBehaviour
     /// </summary>
     public void MuteToggle()
     {
-        float volume = !mute ? minVolume : maxVolume;
+        float volume = !mute ? masterVolBounds.x: masterVolBounds.y;
         mixer.audioMixer.SetFloat(masterVolParamName, volume);
         PlayerPrefs.SetFloat(masterVolParamName, volume);
 
@@ -98,7 +99,7 @@ public class SettingsMenuControl : MonoBehaviour
     public void UpdateEffectsToggle(float volume)
     {;
         if (effectsToggle)
-            effectsToggle.isOn = volume >= midVolume();
+            effectsToggle.isOn = volume >= midVolume(effectsVolBounds.x, effectsVolBounds.y);
     }
 
     /// <summary>
@@ -108,7 +109,7 @@ public class SettingsMenuControl : MonoBehaviour
     public void UpdateMusicToggle(float volume)
     {
         if (musicToggle)
-            musicToggle.isOn = volume >= midVolume();
+            musicToggle.isOn = volume >= midVolume(musicVolBounds.x, musicVolBounds.y);
     }
 
     /// <summary>
@@ -118,7 +119,7 @@ public class SettingsMenuControl : MonoBehaviour
     public void UpdateVolumeSlider(float volume)
     {
         if (volumeSlider)
-            volumeSlider.value = Mathf.InverseLerp(minVolume, maxVolume, volume);
+            volumeSlider.value = Mathf.InverseLerp(masterVolBounds.x, masterVolBounds.y, volume);
     }
 
     /// <summary>
@@ -127,12 +128,12 @@ public class SettingsMenuControl : MonoBehaviour
     /// <param name="volume"> value volume </param>
     public void UpdateMuteToggle(float volume)
     {
-        mute = volume == minVolume;
+        mute = volume == masterVolBounds.x;
         if (buttonMute != null && onMuteSprite != null && offMuteSprite != null)
             buttonMute.sprite = mute ? onMuteSprite : offMuteSprite;
     }
 
-    private float midVolume()
+    private static float midVolume(float minVolume, float maxVolume)
     {
         return maxVolume - (maxVolume - minVolume) / 2;
     }

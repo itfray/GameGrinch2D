@@ -61,7 +61,7 @@ public class GameMenuControl : MonoBehaviour
     private GameSceneHandler.GameSceneEventHnd ConstructLevel = null;       // pointer on ConstructLevel method
     void Start()
     {
-        if (audioPlayer) audioPlayer.Play();                                                           // start music list playing
+        if (audioPlayer) audioPlayer.Play(Random.Range(0, audioPlayer.musicList.Length - 1));          // start music list playing
 
         LoadingMenu();                                                                                 // open loading menu
 
