@@ -15,6 +15,7 @@ public class GameSceneHandler : MonoBehaviour
 
     public GameObject playerField;                                                  // field for created palyer
     public GameObject blocksField;                                                  // field for created blocks
+    public GameObject disappBlocksField;                                            // field for created disappearing blocks
     public GameObject sawsField;                                                    // field for created saws
     public GameObject spikesField;                                                  // field for created spikes
     public GameObject turretsField;                                                 // field for created turrets
@@ -23,6 +24,7 @@ public class GameSceneHandler : MonoBehaviour
 
     public const string playerTag = "Player";
     public const string blockTag = "Block";
+    public const string disappBlockTag = "DisappBlock";
     public const string sawTag = "Saw";
     public const string bigSawTag = "BigSaw";
     public const string movingSawTag = "MovingSaw";
@@ -79,6 +81,8 @@ public class GameSceneHandler : MonoBehaviour
     private Vector2 mapCenterPos;                                                   // central map position for current level
 
     private PlayerSpawner playerSpawner;                                            // spawner of player game object
+
+    private List<DisappBlockHnd> disappBlockHnds;                                   // disappearing blocks
 
     public enum GameState { Uninited, Initing, Inited, Constructing, Constructed, Deconstructing, Deconstructed, Started, Stoped }
     private GameState state = GameState.Uninited;
@@ -200,6 +204,9 @@ public class GameSceneHandler : MonoBehaviour
             foreach (Transform obj in field)
                 obj.gameObject.SetActive(true);
 
+        foreach (DisappBlockHnd block_hnd in disappBlockHnds)                                               // restore all diapearing blocks
+            block_hnd.Appear();
+
         if (playerSpawner) playerSpawner.Spawn();                                                           // spawn player
 
         gameTime = 0f;                                                                                      // reset game time
@@ -286,9 +293,11 @@ public class GameSceneHandler : MonoBehaviour
         }
 
         if (playerSpawner.spawnedObj)
-        {
             setTurretsTarget(playerSpawner.spawnedObj);                                                                     // specifies target for all created turrets and set player as target for turret
-        }
+
+        yield return null;
+
+        getDisappBlockHnds();                                                                                               // specifies all handlers of disappearing blocks
 
         yield return null;
 
@@ -309,6 +318,7 @@ public class GameSceneHandler : MonoBehaviour
         fields.Add(turretsField.transform);
         fields.Add(starsField.transform);
         fields.Add(giftsField.transform);
+        fields.Add(disappBlocksField.transform);
 
         List<Transform> objs = new List<Transform>();
         foreach (Transform field in fields)
@@ -350,6 +360,10 @@ public class GameSceneHandler : MonoBehaviour
             case blockTag:
                 genObj = gen_block_strtg;
                 genObj.objParentField = blocksField;
+                break;
+            case disappBlockTag:
+                genObj = gen_block_strtg;
+                genObj.objParentField = disappBlocksField;
                 break;
             case sawTag:
                 genObj = gen_saw_strtg;
@@ -404,6 +418,21 @@ public class GameSceneHandler : MonoBehaviour
             if (turret_hnd) turret_hnd.target = target;
         }
     }
+
+    /// <summary>
+    /// Specifies all handlers of disappearing blocks
+    /// </summary>
+    private void getDisappBlockHnds()
+    {
+        disappBlockHnds = new List<DisappBlockHnd>();
+        for (int i = 0; i < disappBlocksField.transform.childCount; i++)
+        {
+            Transform block = disappBlocksField.transform.GetChild(i);
+            DisappBlockHnd block_hnd = block.GetComponent<DisappBlockHnd>();
+            disappBlockHnds.Add(block_hnd);
+        }
+    }
+
 
     /// <summary>
     /// Method updates background on current level.
