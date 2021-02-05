@@ -27,7 +27,7 @@ public class MainMenuControl : MonoBehaviour
 
     void Start()
     {
-        if (audioPlayer) audioPlayer.Play();                                                                        // start music list playing
+        if (audioPlayer) audioPlayer.Play();                                                                         // start music list playing
 
         selectMenuCntrl.OnResetProgress += delegate                                                                  // add notification in callback
         {

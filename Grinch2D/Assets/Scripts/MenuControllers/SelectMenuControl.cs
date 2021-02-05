@@ -32,6 +32,8 @@ public class SelectMenuControl : MonoBehaviour
     public const string levelStarSufixPref = "_stars";
     public const string levelTimeSufixPref = "_times";
     public const string levelOpenedPref = "level_opened";
+
+    public const string startWithLevelPref = "start_with_level_pref";
     // ****************************************************
 
     public const string gameSceneName = "GameScene";                  // game scene name
@@ -42,10 +44,12 @@ public class SelectMenuControl : MonoBehaviour
     public const int defaultCountStars = 0;
     public const float defaultGameTime = -1f;
 
+    private const int defaultStartWith = 1;
+
     public delegate void SelectMenuCntrlHnd();
     public event SelectMenuCntrlHnd OnResetProgress;
 
-    private int start_with_level = 1;                                 // page starts with level
+    private int start_with_level;                                     // page starts with level
     private int selected_level = 0;                                   // selected level
     private int count_levels = 0;                                     // count levels
     public int CountLevels { get { return count_levels;} }
@@ -54,6 +58,21 @@ public class SelectMenuControl : MonoBehaviour
     {
         if (fileParser)
             count_levels = fileParser.countLevels();                  // count level files
+
+        SetStartWithLevel(PlayerPrefs.GetInt(startWithLevelPref, defaultStartWith));                // load data about start with level
+    }
+
+    /// <summary>
+    /// Set start_with_level variable
+    /// </summary>
+    /// <param name="level"> level number </param>
+    private void SetStartWithLevel(int level)
+    {
+        if (level > 0 && level <= count_levels)
+        {
+            start_with_level = level;
+            PlayerPrefs.SetInt(startWithLevelPref, level);                                          // store data about start with level
+        }
     }
 
     /// <summary>
@@ -97,9 +116,7 @@ public class SelectMenuControl : MonoBehaviour
     /// </summary>
     public void NextMenuPage()
     {
-        int level = start_with_level + levelBoxButtons.Length;
-        if (level <= count_levels)
-            start_with_level = level;
+        SetStartWithLevel(start_with_level + levelBoxButtons.Length);
         UpdateMenuPage();
     }
 
@@ -108,9 +125,7 @@ public class SelectMenuControl : MonoBehaviour
     /// </summary>
     public void PrevMenuPage()
     {
-        int level = start_with_level - levelBoxButtons.Length;
-        if (level > 0)
-            start_with_level = level;
+        SetStartWithLevel(start_with_level - levelBoxButtons.Length);
         UpdateMenuPage();
     }
 
