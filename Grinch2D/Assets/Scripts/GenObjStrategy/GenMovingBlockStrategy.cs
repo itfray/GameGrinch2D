@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// GenMovingStrategy is strategy of generation moving saw
+/// GenMovingBlockStrategy is strategy of generation moving saw
 /// </summary>
-public class GenMovingSawStrategy : GenObjStrategy
+public class GenMovingBlockStrategy : GenObjStrategy
 {
     public override void Generate()
     {
@@ -59,7 +59,7 @@ public class GenMovingSawStrategy : GenObjStrategy
         Vector2 max_pos = spwnr_pos;
         Vector2 direct = Vector2.zero;
 
-        if (has_other_pos)              // select min saw postion and max saw postion
+        if (has_other_pos)              // select min block postion and max block postion
         {
             other_pos = new Vector2(other_pos.x * spwnrSize.x, ((int)mapSize.y - 1 - other_pos.y) * spwnrSize.y);
             if (spwnr_pos.y > other_pos.y)
@@ -84,19 +84,16 @@ public class GenMovingSawStrategy : GenObjStrategy
             }
         }
 
-        GameObject moving_saw = Instantiate(objPrefab,                                                                         // creates moving saw game object
+        GameObject moving_block = Instantiate(objPrefab,                                                                         // creates moving block game object
                                             new Vector3(spwnr_pos.x, spwnr_pos.y, objPrefab.transform.position.z),
                                             Quaternion.identity) as GameObject;
-        moving_saw.transform.parent = objParentField.transform;
+        moving_block.transform.parent = objParentField.transform;
 
-        SelfRotator selfRotator = moving_saw.GetComponent<SelfRotator>();
-        selfRotator?.setRandDAngle();                                                       // set random value for angle of rotation
-
-        MoveSawHandler moveSawHnd = moving_saw.GetComponent<MoveSawHandler>();
-        if (moveSawHnd == null) return;
-        moveSawHnd.minPosition = min_pos;
-        moveSawHnd.maxPosition = max_pos;
-        moveSawHnd.direction = direct;
-        moveSawHnd.setRandSpeed();                                                          // set random value speed of moving
+        MoveBlockHandler moveBlockHnd = moving_block.GetComponent<MoveBlockHandler>();
+        if (moveBlockHnd == null) return;
+        moveBlockHnd.minPosition = min_pos;
+        moveBlockHnd.maxPosition = max_pos;
+        moveBlockHnd.direction = direct;
+        moveBlockHnd.setRandSpeed();                                                          // set random value speed of moving
     }
 }

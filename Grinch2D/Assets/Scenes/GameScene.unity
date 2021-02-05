@@ -1475,6 +1475,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   startAngle: 0
   dAngle: 1
+  randDAngle: 0
   dStartAngle: 0.5
   dEndAngle: 2
 --- !u!114 &428856006
@@ -5178,7 +5179,7 @@ MonoBehaviour:
   gen_block_strtg: {fileID: 1455934995}
   gen_saw_strtg: {fileID: 1455934993}
   gen_big_saw_strtg: {fileID: 1455934992}
-  gen_move_saw_strtg: {fileID: 1455934997}
+  gen_move_block_strtg: {fileID: 1455934997}
   gen_spike_strtg: {fileID: 1455934996}
 --- !u!114 &1455934991
 MonoBehaviour:

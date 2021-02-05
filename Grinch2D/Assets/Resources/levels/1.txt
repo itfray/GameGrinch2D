@@ -1,10 +1,10 @@
 0
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-a                                  a
+a2        1                       3a
 a                 !                a
 a    +b                            a
 a    ea      +             +       a
-a           bbb  ffffff   bbb      a
+a           bbb  ffffff   bbb     4a
 a        b                         a
-a p          2       1         #  a
-affffffffffbbbbbbbbbbbbbbbbbbbbbbbbba
+a p          2       1         #   a
+abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbba

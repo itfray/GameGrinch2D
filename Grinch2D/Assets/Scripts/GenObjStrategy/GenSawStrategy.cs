@@ -29,9 +29,6 @@ public class GenSawStrategy : GenBy4Strategy
                                          new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),
                                          Quaternion.identity) as GameObject;
             saw.transform.parent = objParentField.transform;
-            SelfRotator selfRotator = saw.GetComponent<SelfRotator>();
-            if (selfRotator == null) return;
-            selfRotator.setRandDAngle();
         }
     }
 }

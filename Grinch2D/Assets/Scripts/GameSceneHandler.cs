@@ -45,7 +45,7 @@ public class GameSceneHandler : MonoBehaviour
     public GenBlockStrategy gen_block_strtg;                                       // strategy of generation block
     public GenSawStrategy gen_saw_strtg;                                           // strategy of generation saw
     public GenBigSawStrategy gen_big_saw_strtg;                                    // strategy of generation big saw
-    public GenMovingSawStrategy gen_move_saw_strtg;                                // strategy of generation moving saw
+    public GenMovingBlockStrategy gen_move_block_strtg;                            // strategy of generation moving block
     public GenSpikeStrategy gen_spike_strtg;                                       // strategy of generation spike
 
     public delegate void GameSceneEventHnd();                                       // type handler of events of GameSceneHandler
@@ -378,7 +378,7 @@ public class GameSceneHandler : MonoBehaviour
                 genObj.objParentField = spikesField;
                 break;
             case movingSawTag:
-                genObj = gen_move_saw_strtg;
+                genObj = gen_move_block_strtg;
                 genObj.objParentField = sawsField;
                 break;
             case turretTag:

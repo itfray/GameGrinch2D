@@ -8,6 +8,7 @@ public class SelfRotator : MonoBehaviour
     public float startAngle = 0;                                    // start angle value
     public float dAngle = 1;                                        // angle derivative value
 
+    public bool randDAngle = false;
     public float dStartAngle = 0.5f;                                                                        // start value for creation dAngle value for saw
     public float dEndAngle = 2f;                                                                            // end value for creation dAngle value for saw
 
@@ -17,6 +18,8 @@ public class SelfRotator : MonoBehaviour
     void Start()
     {
         curr_angle = startAngle;                                    // init current angle value
+
+        if (randDAngle) setRandDAngle();                            // set random value for angle of rotation
     }
 
     // Update is called once per frame

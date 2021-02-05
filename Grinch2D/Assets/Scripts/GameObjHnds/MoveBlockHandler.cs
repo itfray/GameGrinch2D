@@ -2,9 +2,9 @@
 
 
 /// <summary>
-/// class MoveSawHandler is handler to control move moving saw.
+/// class MoveBlockHandler is handler to control move moving saw.
 /// </summary>
-public class MoveSawHandler : MoveHandler
+public class MoveBlockHandler : MoveHandler
 {
     public Vector2 minPosition = Vector2.zero;
     public Vector2 maxPosition = Vector2.zero;
