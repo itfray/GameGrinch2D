@@ -4,7 +4,7 @@ a                                  a
 a                 !                a
 a    +b                            a
 a    ea      +             +       a
-a           bbb  e  f  e  bbb      a
+a           bbb  ffffff   bbb      a
 a        b                         a
-a p   b       2       1         #  a
-abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbba
+a p          2       1         #  a
+affffffffffbbbbbbbbbbbbbbbbbbbbbbbbba
