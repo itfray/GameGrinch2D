@@ -275,6 +275,7 @@ MonoBehaviour:
   - {fileID: 1286023049779711281, guid: 3a141e822bc63ff42908afd465cf328d, type: 3}
   - {fileID: 5818134098678246762, guid: 3ba483859558c7f4084ff8024c976861, type: 3}
   - {fileID: 308226852408147019, guid: e39541e374d9ff945a339a524488dfc7, type: 3}
+  - {fileID: 308226852408147019, guid: 706712202721673468cbb5afdafd52c6, type: 3}
   released_pos: {x: 0, y: 0}
   explod_obj: {fileID: 0}
   dDirect: 0.01
