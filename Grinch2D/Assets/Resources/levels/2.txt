@@ -2,10 +2,10 @@
 aaaaaaaaaaaaaaaaaaa
 a                 a
 a       p         a
-a       b         a
+a+      b        +a
 a      b          a
 a     b      #    a
 a           bbb   a
 a                 a
-a                 a
+a+                a
 aaaaaaaaaaaaaaaaaaa

@@ -46,10 +46,6 @@ public class GameMenuControl : MonoBehaviour
     public const string timeBarText = "Time ";
     public const string levelBarText = "Level ";
 
-    // ************ preference names **********************
-    public const string levelPref = "level";                            // preference name that store number of level
-    // ****************************************************
-
     // ************* Game play menu elements ***********
     public Image gameStarBar;                                           // game play menu star bar
     public Text gameTimeBar;                                            // game play menu time bar
@@ -69,7 +65,8 @@ public class GameMenuControl : MonoBehaviour
 
         LoadingMenu();                                                                                 // open loading menu
 
-        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(PlayerPrefs.GetInt(levelPref, 1));      // add callback after initialization of game scene handler
+        int level = PlayerPrefs.GetInt(SelectMenuControl.levelPref, 1);                                // get level number
+        gameScnHnd.OnInited += () => gameScnHnd.ConstructLevel(level);                                 // add callback after initialization of game scene handler
 
         gameScnHnd.OnConstructedLevel += () =>
         {
@@ -161,6 +158,31 @@ public class GameMenuControl : MonoBehaviour
         {
             WinMenu();
             gameScnHnd.StopGame(true);
+
+            string cstars_key = SelectMenuControl.levelPrefixPref + gameScnHnd.CurrentLevel + SelectMenuControl.levelStarSufixPref;
+            int old_count_stars = PlayerPrefs.GetInt(cstars_key, SelectMenuControl.defaultCountStars);
+
+            string time_key = SelectMenuControl.levelPrefixPref + gameScnHnd.CurrentLevel + SelectMenuControl.levelTimeSufixPref;
+            float old_game_time = PlayerPrefs.GetFloat(time_key, SelectMenuControl.defaultGameTime);
+
+            if (old_game_time < 0)
+                old_game_time = gameScnHnd.GameTime + 1;
+
+            if (gameScnHnd.CountStars > old_count_stars)                                                    // if new star record
+            {
+                PlayerPrefs.SetInt(cstars_key, gameScnHnd.CountStars);                                      // store new result by count stars
+                PlayerPrefs.SetFloat(time_key, gameScnHnd.GameTime);                                        // store new result by game time
+            }
+            else if (gameScnHnd.CountStars == old_count_stars && gameScnHnd.GameTime < old_game_time)       // if new time record
+            {
+                PlayerPrefs.SetFloat(time_key, gameScnHnd.GameTime);                                        // store new result by game time
+            }
+
+            int old_opened_level = PlayerPrefs.GetInt(SelectMenuControl.levelOpenedPref, SelectMenuControl.defaultOpenedLevel);
+            int new_opened_level = gameScnHnd.CurrentLevel + 1;
+
+            if (old_opened_level < new_opened_level)                                                        // if new opened level
+                PlayerPrefs.SetInt(SelectMenuControl.levelOpenedPref, new_opened_level);                    // open next level for player
         }
     }
 

@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using static MenuControlHelper;
+using UnityEngine.UI;
 using static CoroutineScripts;
+using static MenuControlHelper;
 
 /// <summary>
 /// SelectMenuControl is class for control select level menu
@@ -38,9 +38,14 @@ public class SelectMenuControl : MonoBehaviour
 
     public float waitForSecGame = 0.5f;                               // wait for seconds of transition to game
 
+    public const int defaultOpenedLevel = 1;
+    public const int defaultCountStars = 0;
+    public const float defaultGameTime = -1f;
+
     private int start_with_level = 1;                                 // page starts with level
     private int selected_level = 0;                                   // selected level
     private int count_levels = 0;                                     // count levels
+    public int CountLevels { get { return count_levels;} }
 
     void Start()
     {
@@ -55,7 +60,7 @@ public class SelectMenuControl : MonoBehaviour
     /// </summary>
     public void UpdateMenuPage()
     {
-        int opened_level = PlayerPrefs.GetInt(levelOpenedPref, 1);
+        int opened_level = PlayerPrefs.GetInt(levelOpenedPref, defaultOpenedLevel);
 
         for (int ilvbox = 0; ilvbox < levelBoxButtons.Length; ilvbox++)
         {
@@ -115,7 +120,7 @@ public class SelectMenuControl : MonoBehaviour
     /// <param name="level"> level number </param>
     public void LevelBoxSelect(Button levelBox, int level)
     {
-        int opened_level = PlayerPrefs.GetInt(levelOpenedPref, 1);
+        int opened_level = PlayerPrefs.GetInt(levelOpenedPref, defaultOpenedLevel);
 
         if (level > opened_level)
         {
@@ -141,5 +146,22 @@ public class SelectMenuControl : MonoBehaviour
         PlayerPrefs.SetInt(levelPref, selected_level);                                                  // set level for playing with level
 
         StartCoroutine(ExecWithWait(() => SceneManager.LoadScene(gameSceneName), waitForSecGame));      // load game scene
+    }
+
+    /// <summary>
+    /// Reset game progress
+    /// </summary>
+    public void ResetGameProgress()
+    {
+        PlayerPrefs.SetInt(levelOpenedPref, defaultOpenedLevel);                                        // reset opened levels
+
+        for (int ilevel = 1; ilevel <= count_levels; ilevel++)
+        {
+            string cstar_key = levelPrefixPref + ilevel + levelStarSufixPref;
+            string time_key = levelPrefixPref + ilevel + levelTimeSufixPref;
+
+            PlayerPrefs.SetInt(cstar_key, defaultCountStars);                                           // reset count stars for level
+            PlayerPrefs.SetFloat(time_key, defaultGameTime);                                            // reset game time for level
+        }
     }
 }
