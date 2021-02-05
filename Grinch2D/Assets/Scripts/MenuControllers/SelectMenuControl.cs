@@ -42,6 +42,9 @@ public class SelectMenuControl : MonoBehaviour
     public const int defaultCountStars = 0;
     public const float defaultGameTime = -1f;
 
+    public delegate void SelectMenuCntrlHnd();
+    public event SelectMenuCntrlHnd OnResetProgress;
+
     private int start_with_level = 1;                                 // page starts with level
     private int selected_level = 0;                                   // selected level
     private int count_levels = 0;                                     // count levels
@@ -51,8 +54,6 @@ public class SelectMenuControl : MonoBehaviour
     {
         if (fileParser)
             count_levels = fileParser.countLevels();                  // count level files
-
-        UpdateMenuPage();
     }
 
     /// <summary>
@@ -163,5 +164,7 @@ public class SelectMenuControl : MonoBehaviour
             PlayerPrefs.SetInt(cstar_key, defaultCountStars);                                           // reset count stars for level
             PlayerPrefs.SetFloat(time_key, defaultGameTime);                                            // reset game time for level
         }
+
+        OnResetProgress?.Invoke();
     }
 }

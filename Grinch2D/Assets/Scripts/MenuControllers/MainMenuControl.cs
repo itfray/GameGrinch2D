@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using static CoroutineScripts;
 
 
 
@@ -8,6 +9,7 @@
 public class MainMenuControl : MonoBehaviour
 {
     public AudioPlayer audioPlayer;                                     // Audio player in menu
+    public SelectMenuControl selectMenuCntrl;                           // Select menu control
 
     // *************** All menu objects ******************
     public GameObject mainMenu;                                         // main menu
@@ -16,11 +18,24 @@ public class MainMenuControl : MonoBehaviour
     public GameObject loadingMenu;                                      // loading menu
     // ***************************************************
 
+    // *************** All dialog objects ******************
+    public GameObject resetProgressDialog;                              // reset game progress dialog
+    public GameObject notifyProgressDialog;                             // notify if game progress reseted
+    // ***************************************************
+
+    public float waitForSecNotify = 1f;                                 // duration of notification
+
     void Start()
     {
-        if (audioPlayer) audioPlayer.Play();                                                           // start music list playing
+        if (audioPlayer) audioPlayer.Play();                                                                        // start music list playing
 
-        MainMenu();                                                                                    // open main menu
+        selectMenuCntrl.OnResetProgress += delegate                                                                  // add notification in callback
+        {
+            notifyProgressDialog.SetActive(true);                                                                    // show notification
+            StartCoroutine(ExecWithWait(() => notifyProgressDialog.SetActive(false), waitForSecNotify));             // close notification
+        };
+
+        MainMenu();                                                                                                  // open main menu
     }
 
     public void ExitGame()
@@ -35,12 +50,13 @@ public class MainMenuControl : MonoBehaviour
 
     public void SettingMenu()
     {
-        CallMenu(settingsMenu, mainMenu, selectLevelMenu, loadingMenu);
+        CallMenu(settingsMenu, mainMenu, selectLevelMenu, loadingMenu, resetProgressDialog, notifyProgressDialog);
     }
 
     public void SelectLevelMenu()
     {
         CallMenu(selectLevelMenu, settingsMenu, mainMenu, loadingMenu);
+        selectMenuCntrl.UpdateMenuPage();
     }
 
     public void LoadingMenu()
