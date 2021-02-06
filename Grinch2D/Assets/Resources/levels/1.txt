@@ -2,11 +2,11 @@
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 a                                 6a
 a                                  a
-a    +b                            a
+a6   +b                            a
 a    ea            &       +       a
 a           bbb  ffffff   bbb      a
-ap         b                      5a
-a5    6      2       1         #   a
+a5         b                      5a
+a p          2       1         #   a
 a%%%%%bbbbbbbbbbbbbbbbbbbbbbbbbbbbba
 a     a
 a     aaaaaaaaaaaaaaaaaaaaaaaa
