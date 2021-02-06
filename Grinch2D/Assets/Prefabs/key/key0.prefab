@@ -93,7 +93,7 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -121,6 +121,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f8e2988cbdafa4680b33e32071e2ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  activators:
+  - {fileID: 4915263352331208298, guid: e0b5f47f988f9864fbc85518f924d91a, type: 3}
   lockBlockPrefab: {fileID: 308226852408147019, guid: b84107dfdf693cd4fa0fd8bb196ed5b2,
     type: 3}
   lockBlockParent: {fileID: 0}

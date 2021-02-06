@@ -26,7 +26,7 @@ public abstract class DisappearHandler : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collisions)
     {
-        for (int icol = 0; icol < collisions.contactCount && !is_appeared; icol++)
+        for (int icol = 0; icol < collisions.contactCount && is_appeared; icol++)
         {
             foreach (GameObject activator in activators)
             {
