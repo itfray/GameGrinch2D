@@ -1,6 +1,6 @@
 0
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-a5        6                       6a
+a5        6        !              6a
 a                                  a
 a    +b                            a
 a    ea            &       +       a

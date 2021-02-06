@@ -28,6 +28,8 @@ public class KeyHandler : DisappearHandler
     private bool is_blocks_created = false;                                        // locked block is created
     public bool isLockBlocksCreated { get { return is_blocks_created; } }
 
+    private Coroutine appear_crtine;
+
     /// <summary>
     /// Creates locked blocks by specified positions
     /// </summary>
@@ -51,8 +53,10 @@ public class KeyHandler : DisappearHandler
     /// <param name="value"> value { true : appearing, false : disappearing } </param>
     public override void Appear(bool value)
     {
+        if (appear_crtine != null)
+            StopCoroutine(appear_crtine);
         AppearKey(value);
-        StartCoroutine(AppearBlocks(value, value ? waitSecAppearBlocks : waitSecDiappearBlocks));
+        appear_crtine = StartCoroutine(AppearBlocks(value, value ? waitSecAppearBlocks : waitSecDiappearBlocks));
     }
 
     /// <summary>
