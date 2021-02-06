@@ -11,12 +11,15 @@ public abstract class JumpHandler : MoveHandler
 
     private int count_step;                                 // number of step to peform jump
     private bool jumping = false;                           // game object peforms jump?
+    public bool isJumping { get { return jumping; } }
 
     /// <summary>
     /// Method UpdateDirection pefrom jump
     /// </summary>
-    protected override void UpdateDirection()
+    protected override void UpdatePosition()
     {
+        base.UpdatePosition();
+
         if (!jumping) return;
 
         if (count_step <= 0)
@@ -26,6 +29,7 @@ public abstract class JumpHandler : MoveHandler
         }
 
         direction.y = count_step * count_step * ddirect;            // parabolic change of direction
+        speed.y = max_speed.y * direction.y;
         count_step--;
     }
 
@@ -37,11 +41,13 @@ public abstract class JumpHandler : MoveHandler
         jumping = true;
         count_step = Mathf.RoundToInt(max_ddirect / ddirect);
         direction.y = 0;
+        speed.y = 0;
     }
 
     public void StopJump()
     {
         jumping = false;
         direction.y = 0;
+        speed.y = 0;
     }
 }

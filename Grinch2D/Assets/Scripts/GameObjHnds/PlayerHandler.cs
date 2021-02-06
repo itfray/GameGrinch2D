@@ -29,7 +29,6 @@ public class PlayerHandler : JumpHandler
     /// </summary>
     protected override void UpdateDirection()
     {
-
         float inputx = Input.GetAxis("Horizontal");                 // change move direction on left or right
         direction.x = inputx;
 
@@ -97,8 +96,20 @@ public class PlayerHandler : JumpHandler
                                                               getDirectsMinCollisions(CollisionDirect.Right, CollisionDirect.Down, CollisionDirect.Up);
         animator.SetBool("Falling", counts_collisions[(int)CollisionDirect.Down] == 0 || min_collds_wthout[CollisionDirect.Down]);
         animator.SetBool("Running", direction.x != 0);
+    }
 
-        base.UpdateDirection();
+    /// <summary>
+    /// Update player position by Rigidbody2D
+    /// </summary>
+    protected override void UpdatePosition()
+    {
+        base.UpdatePosition();
+
+        if (rgbody2d)
+        {
+            Vector2 velocity = new Vector2(rgbody2d.velocity.x + speed.x, rgbody2d.velocity.y + speed.y);
+            rgbody2d.velocity = velocity;
+        }
     }
 
     /// <summary>
@@ -170,15 +181,6 @@ public class PlayerHandler : JumpHandler
             }
         }
         return dict_directs;
-    }
-
-    /// <summary>
-    /// Update player position by Rigidbody2D
-    /// </summary>
-    protected override void UpdatePosition()
-    {
-        if (rgbody2d)
-            rgbody2d.MovePosition(rgbody2d.position + speed * Time.deltaTime);
     }
 
     /// <summary>

@@ -13,7 +13,6 @@ public abstract class MoveHandler : MonoBehaviour
     void Update()
     {
         UpdateDirection();                                                                      // update current move direction
-        speed = new Vector2(max_speed.x * direction.x, max_speed.y * direction.y);              // update current speed value
     }
 
     void FixedUpdate()
@@ -29,5 +28,8 @@ public abstract class MoveHandler : MonoBehaviour
     /// <summary>
     /// Method for updating game object position
     /// </summary>
-    protected abstract void UpdatePosition();
+    protected virtual void UpdatePosition()
+    {
+        speed = new Vector2(max_speed.x * direction.x, max_speed.y * direction.y);              // update current speed value
+    }
 }
