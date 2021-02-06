@@ -13,25 +13,23 @@ public class MoveBlockHandler : MoveHandler
 
     protected override void UpdateDirection()
     {
-        if (transform.position.y >= maxPosition.y || transform.position.y <= minPosition.y)                 // check boundaries
-            direction.y = -direction.y;
+        float dir_x = Mathf.Abs(direction.x);
+        float dir_y = Mathf.Abs(direction.y);
 
-        if (transform.position.x >= maxPosition.x || transform.position.x <= minPosition.x)
-            direction.x = -direction.x;
+        if (transform.position.x > maxPosition.x)
+            direction.x = -dir_x;
+        else if (transform.position.x < minPosition.x)
+            direction.x = dir_x;
+
+        if (transform.position.y > maxPosition.y)                 // check boundaries
+            direction.y = -dir_y;
+        else if (transform.position.y < minPosition.y)
+            direction.y = dir_y;
     }
 
     protected override void UpdatePosition()
     {
         base.UpdatePosition();
-
-        if ((transform.position.x > maxPosition.x && speed.x > 0) ||                                        // check boundaries
-            (transform.position.x < minPosition.x && speed.x < 0))
-            speed.x = 0;
-
-        if ((transform.position.y > maxPosition.y && speed.y > 0) ||
-            (transform.position.y < minPosition.y && speed.y < 0))
-            speed.y = 0;
-
         transform.position = transform.position + new Vector3(speed.x * Time.deltaTime, speed.y * Time.deltaTime, 0);
     }
 
