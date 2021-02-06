@@ -21,6 +21,8 @@ public class KeyHandler : DisappearHandler
     public event KeyEventHandler OnDestroyLockBlocks;                           // event called when all blocks destoyed
     public event KeyEventHandler OnAppearKey;                                   // event called when key appeared
     public event KeyEventHandler OnDisappearKey;                                // event called when key disappeared
+    public event KeyEventHandler OnAppearLockBlock;                             // event called when one of locked blocks appeared
+    public event KeyEventHandler OnDisappearLockBlock;
 
     private List<GameObject> lock_blocks = new List<GameObject>();              // locked blocks
     public List<GameObject> lockedBlocks { get { return lock_blocks; } }        // locked blocks
@@ -123,6 +125,11 @@ public class KeyHandler : DisappearHandler
         foreach (GameObject block in lock_blocks)
         {
             block.SetActive(value);
+            if (value)
+                OnAppearLockBlock?.Invoke();
+            else
+                OnDisappearLockBlock?.Invoke();
+
             yield return new WaitForSeconds(waitSec);
         }
 

@@ -4,13 +4,13 @@
 /// <summary>
 /// TurretSounder is class for playing turret action sounds
 /// </summary>
-public class TurretSounder : MonoBehaviour
+public class TurretSounder : Sounder
 {
-    public AudioSource shootSound;                                                                // shoo sound
+    public AudioSource shootSound;                                                                // shoot sound
 
     public TurretWeaponHnd weaponHnd;                                                           // weapon handler of turret
 
-    void Start()
+    protected override void Init()
     {
         if (weaponHnd)
         {
@@ -18,13 +18,11 @@ public class TurretSounder : MonoBehaviour
             {
                 shootSound.transform.parent = null;
                 weaponHnd.OnAttacked += () => shootSound.Play();         // add playing of sound in callback
+
+                audios.Add(shootSound);
             }
         }
-    }
 
-    void OnDestroy()
-    {
-        if (shootSound) 
-            Destroy(shootSound.gameObject);
+        base.Init();
     }
 }

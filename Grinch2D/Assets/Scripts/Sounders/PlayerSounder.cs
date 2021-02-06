@@ -5,7 +5,7 @@ using System.Collections.Generic;
 /// <summary>
 /// PlayerSounder is class for playing player action sounds
 /// </summary>
-public class PlayerSounder : MonoBehaviour
+public class PlayerSounder : Sounder
 {
     public AudioSource takeStarSound;                                                                   // sound getting of star
     public AudioSource takeGiftSound;                                                                   // sound getting of gift
@@ -23,11 +23,13 @@ public class PlayerSounder : MonoBehaviour
     Dictionary<string, AudioSource> diedSoundDict = new Dictionary<string, AudioSource>();              // dicitionary of audio clips for appointing sounds for death ways
 
 
-    void Start()
+    protected override void Init()
     {
         AddDiedSounds();
         AddStarSounds();
         AddGiftSounds();
+
+        base.Init();
     }
 
     /// <summary>
@@ -40,10 +42,9 @@ public class PlayerSounder : MonoBehaviour
             if (sawObject) diedSoundDict.Add(sawObject.tag, dieFromSawSound);                                           // add this sound and tag of sawObject if killer is sawObject
             if (bigSawObject) diedSoundDict.Add(bigSawObject.tag, dieFromSawSound);
             if (movingSawObject) diedSoundDict.Add(movingSawObject.tag, dieFromSawSound);                               // add this sound and tag of movingSawObject if killer is movingSawObject
-        }
 
-        foreach (KeyValuePair<string, AudioSource> pair in diedSoundDict)
-            pair.Value.transform.parent = null;
+            audios.Add(dieFromSawSound);
+        }
     }
 
     /// <summary>
@@ -55,8 +56,8 @@ public class PlayerSounder : MonoBehaviour
 
         if (dieSound)                                                                                                    // add death sound for death event
         {
-            dieSound.transform.parent = null;
             playerHealthHnd.OnDied += obj => dieSound.Play();                                                            // add playing of sound in callback
+            audios.Add(dieSound);
         }
 
         FillDiedSoundDict();                                                                                             // fill diedSoundDict
@@ -81,8 +82,8 @@ public class PlayerSounder : MonoBehaviour
 
         if (takeGiftSound)
         {
-            takeGiftSound.transform.parent = null;
             playerGiftHnd.OnTaked += () => takeGiftSound.Play();
+            audios.Add(takeGiftSound);
         }
     }
 
@@ -95,20 +96,8 @@ public class PlayerSounder : MonoBehaviour
 
         if (takeStarSound)
         {
-            takeStarSound.transform.parent = null;
             playerStarHnd.OnTaked += () => takeStarSound.Play();                                                        // add playing of sound in callback
-        }
-    }
-
-    void OnDestroy()
-    {
-        if (takeGiftSound) Destroy(takeGiftSound.gameObject);                                                           // destroy all of used sounds
-        if (takeStarSound) Destroy(takeStarSound.gameObject);
-        if (dieSound) Destroy(dieSound.gameObject);
-
-        foreach (KeyValuePair<string, AudioSource> pair in diedSoundDict)
-        {
-            if (pair.Value) Destroy(pair.Value.gameObject);
+            audios.Add(takeStarSound);
         }
     }
 }

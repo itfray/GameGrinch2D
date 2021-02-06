@@ -237,6 +237,7 @@ public class GameSceneHandler : MonoBehaviour
         playerField.SetActive(!value);                                                                      // stop player field activity
         sawsField.SetActive(!value);                                                                        // stop saws field activity
         turretsField.SetActive(!value);                                                                     // stop turrets field activity
+        keysField.SetActive(!value);
 
         state = value ? GameState.Stoped : GameState.Started;
     }

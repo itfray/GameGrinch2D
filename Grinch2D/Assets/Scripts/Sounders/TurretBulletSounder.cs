@@ -4,27 +4,23 @@
 /// <summary>
 /// TurretBulletSounder is class for playing bullet of turret action sounds
 /// </summary>
-public class TurretBulletSounder: MonoBehaviour
+public class TurretBulletSounder: Sounder
 {
     public AudioSource bulletExplosion;                                                             // sound explosion
 
     public BulletHandler bulletHnd;                                                                 // bullet handler
 
-    void Start()
+    protected override void Init()
     {
         if (bulletHnd)
         {
             if (bulletExplosion)
             {
-                bulletExplosion.transform.parent = null;
                 bulletHnd.OnDestructed += () => bulletExplosion.Play();                             // add playing of sound in callback
+                audios.Add(bulletExplosion);
             }
         }
-    }
 
-    void OnDestroy()
-    {
-        if (bulletExplosion) 
-            Destroy(bulletExplosion.gameObject);
+        base.Init();
     }
 }
