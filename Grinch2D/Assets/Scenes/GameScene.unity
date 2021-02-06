@@ -5203,6 +5203,8 @@ MonoBehaviour:
   - {fileID: 308226852408147019, guid: 4720126678fcd0d4fa7f51ba0843ed28, type: 3}
   - {fileID: 308226852408147019, guid: 706712202721673468cbb5afdafd52c6, type: 3}
   - {fileID: 308226852408147019, guid: 3e681ba5d8525094ba05c4a55afb9e0c, type: 3}
+  - {fileID: 308226852408147019, guid: 340a751a2e05fc54c93341237b25513f, type: 3}
+  - {fileID: 308226852408147019, guid: bd84c840008a3c24bb22b57762821e96, type: 3}
   spawnPrefabs:
   - {fileID: 2800488443666946498, guid: d7c27377f932f9449a8f1a1d8715638d, type: 3}
   emptyPrefabName: empty

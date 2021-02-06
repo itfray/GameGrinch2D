@@ -21,3 +21,7 @@ f : concrete1_1
 6 : moving_block_end
 & : key0
 % : key0_lock
+i : key1
+Q : key1_lock
+j : key2
+G : key2_lock

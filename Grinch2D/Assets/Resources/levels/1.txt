@@ -5,11 +5,11 @@ a                                  a
 a    +b                            a
 a    ea            &       +       a
 a           bbb  ffffff   bbb     5a
-a%%      b                         a
-a%p          2       1         #   a
+a        b                         a
+ap           2       1         #   a
 a%%%%%bbbbbbbbbbbbbbbbbbbbbbbbbbbbba
 a     a
-a     aaaaaaaa
-a            a
-a           +a
-abbbbbbbbbbbbb
+a     aaaaaaaaaaaaaaaaaaaaaaaa
+a            Q      G        a
+a i          Q  j   G   +    a
+abbbbbbbbbbbbbbbbbbbbbbbbbbbbb
