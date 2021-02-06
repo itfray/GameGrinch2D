@@ -1,31 +1,4 @@
-0
-                                       
-        p                           
-                                       
-                                      
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
-                                       
+0                                   
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 a                                 6a
 a                                  a
@@ -33,7 +6,7 @@ a6   +b                            a
 a    ea            &       +       a
 a           bbb  ffffff   bbb      a
 a5       b b                      5a
-a  5      6   2       1         #   a
+a  p 5    6   2       1         #   a
 a%%%%%bbbbbbbbbbbbbbbbbbbbbbbbbbbbba
 a     a
 a     aaaaaaaaaaaaaaaaaaaaaaaa

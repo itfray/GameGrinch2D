@@ -22,6 +22,8 @@ public class MoveBlockHandler : MoveHandler
 
     protected override void UpdatePosition()
     {
+        base.UpdatePosition();
+
         if ((transform.position.x > maxPosition.x && speed.x > 0) ||                                        // check boundaries
             (transform.position.x < minPosition.x && speed.x < 0))
             speed.x = 0;

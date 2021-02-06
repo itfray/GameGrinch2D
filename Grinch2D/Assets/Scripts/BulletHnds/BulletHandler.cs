@@ -78,6 +78,8 @@ public class BulletHandler : MoveHandler
     /// </summary>
     protected override void UpdatePosition()
     {
+        base.UpdatePosition();
+
         if (!is_released && rgbody2d != null)
             rgbody2d.velocity = speed;
     }
