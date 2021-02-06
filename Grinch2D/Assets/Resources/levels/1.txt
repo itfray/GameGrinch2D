@@ -1,12 +1,12 @@
 0
 aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-a5        6        !              6a
+a                                 6a
 a                                  a
 a    +b                            a
 a    ea            &       +       a
-a           bbb  ffffff   bbb     5a
-a        b                         a
-ap           2       1         #   a
+a           bbb  ffffff   bbb      a
+ap         b                      5a
+a5    6      2       1         #   a
 a%%%%%bbbbbbbbbbbbbbbbbbbbbbbbbbbbba
 a     a
 a     aaaaaaaaaaaaaaaaaaaaaaaa

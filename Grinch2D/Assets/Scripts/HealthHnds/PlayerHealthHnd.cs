@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// PlayerHealthHnd is class for player, that 
@@ -11,6 +12,8 @@ public class PlayerHealthHnd : HealthHandler
     private Animator blood_spltr_anmtr;                             // animator of blood splatter object
 
     private Animator animator;
+
+    private List<ContactPoint2D> stay_contacts = new List<ContactPoint2D>();
 
     protected override void InitHealthHnd()
     {
@@ -67,5 +70,37 @@ public class PlayerHealthHnd : HealthHandler
                 if (blood_spltr_anmtr.parameterCount > 0)
                     blood_spltr_anmtr.SetTrigger(blood_spltr_anmtr.parameters[0].name);
         }
+    }
+
+    void OnCollisionStay2D(Collision2D collisions)
+    {
+        stay_contacts.AddRange(collisions.contacts);
+    }
+
+    void FixedUpdate()
+    {
+        Debug.Log(stay_contacts.Count);
+
+        MoveHandler move_hnd = null;
+        Vector2 move_normal = Vector2.zero;
+        for (int i = 0; i < stay_contacts.Count; i++)                               // if player have collision with 
+        {
+            ContactPoint2D contact = stay_contacts[i];
+            GameObject obj = contact.collider.gameObject;
+            move_normal = contact.normal;
+            move_hnd = obj.GetComponent<MoveHandler>();
+            if (move_hnd != null) break;
+        }
+
+        for (int i = 0; i < stay_contacts.Count && move_hnd != null; i++)
+        {
+            ContactPoint2D contact = stay_contacts[i];
+            GameObject obj = contact.collider.gameObject;
+            Vector2 move_dir_normal = new Vector2(move_hnd.direction.x, move_hnd.direction.y);
+            move_dir_normal.Normalize();
+            if (contact.normal == -move_normal && move_dir_normal == move_normal)
+                Damage(health, move_hnd.gameObject);
+        }
+        stay_contacts.Clear();
     }
 }

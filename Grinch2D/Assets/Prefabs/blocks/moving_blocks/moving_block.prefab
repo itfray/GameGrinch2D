@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 308226852408147023}
   - component: {fileID: -8355006378054721049}
   m_Layer: 0
-  m_Name: move_block
+  m_Name: moving_block
   m_TagString: MovingBlock
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -70,7 +70,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -449530997
-  m_SortingLayer: -6
+  m_SortingLayer: -7
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: ac2bc88f65c33734c97fa482844e00c6, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -121,9 +121,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 034e4caaf53c2c04f8ed2650f3862829, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  max_speed: {x: 10, y: 10}
+  max_speed: {x: 3, y: 3}
   direction: {x: 0, y: 0}
   minPosition: {x: 0, y: 0}
   maxPosition: {x: 0, y: 0}
-  minMaxSpeed: {x: 5, y: 5}
-  maxMaxSpeed: {x: 10, y: 10}
+  minMaxSpeed: {x: 1, y: 1}
+  maxMaxSpeed: {x: 5, y: 5}
