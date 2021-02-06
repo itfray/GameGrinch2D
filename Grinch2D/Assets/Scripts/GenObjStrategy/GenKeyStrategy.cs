@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// GenKeyStrategy is strategy of generation key
+/// </summary>
 public class GenKeyStrategy : GenObjStrategy
 {
     public override void Generate()
@@ -12,32 +15,29 @@ public class GenKeyStrategy : GenObjStrategy
             throw new System.ArgumentNullException("levelDict || levelMap || spwnrPrefab ||" +
                                                   " spwnrParentField || objParentField");
 
-        int row_pos = (int)map_spwnr_pos.y;
-        int col_pos = (int)map_spwnr_pos.x;
+        GameObject key_obj = Instantiate(spwnrPrefab,                                                                          // create key
+                                         new Vector3(spwnr_pos.x, spwnr_pos.y, spwnrPrefab.transform.position.z),
+                                         Quaternion.identity) as GameObject;
+        key_obj.transform.parent = spwnrParentField.transform;                                                                 // set parent field for key
 
-        GameObject spwnr_obj = Instantiate(spwnrPrefab,                                                                          // create spawner object
-                                  new Vector3(spwnr_pos.x, spwnr_pos.y, spwnrPrefab.transform.position.z),
-                                  Quaternion.identity) as GameObject;
-        spwnr_obj.transform.parent = spwnrParentField.transform;
-
-        // some code ...
-
-        List<Vector2> lock_blocks_poss = new List<Vector2>();
-
+        List<Vector2> lock_blocks_poss = new List<Vector2>();                                                                  // search lock block positions
         for (int iy = 0; iy < (int)mapSize.y; iy++)
         {
             for (int jx = 0; jx < (int)mapSize.x; jx++)
             {
                 string next_prefname;
-                if (!levelDict.TryGetValue(levelMap[iy, jx], out next_prefname))                                                // check name central block (middle center, right center, left center)
+                if (!levelDict.TryGetValue(levelMap[iy, jx], out next_prefname))
                     next_prefname = emptyPrefabName;
-                if (next_prefname != spwnrPrefab.name && next_prefname.Contains(spwnrPrefab.name))
-                {
+                if (next_prefname != spwnrPrefab.name && next_prefname.Contains(spwnrPrefab.name))                             // if name is like key name
                     lock_blocks_poss.Add(new Vector2(jx * spwnrSize.x, ((int)mapSize.y - 1 - iy) * spwnrSize.y));
-                }
             }
         }
 
-
+        KeyHandler key_hnd = key_obj.GetComponent<KeyHandler>();
+        if (key_hnd)
+        {
+            key_hnd.lockBlockParent = objParentField;                                                                          // set parent field for locked blocks
+            key_hnd.CreateLockBlocks(lock_blocks_poss);                                                                        // create blocks by positions
+        }
     }
 }

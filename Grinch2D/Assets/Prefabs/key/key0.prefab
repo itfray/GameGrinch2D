@@ -121,3 +121,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 63f8e2988cbdafa4680b33e32071e2ca, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lockBlockPrefab: {fileID: 308226852408147019, guid: b84107dfdf693cd4fa0fd8bb196ed5b2,
+    type: 3}
+  lockBlockParent: {fileID: 0}
+  waitSecAppearBlocks: 0
+  waitSecDiappearBlocks: 1
+  collider2d: {fileID: 308226852408147023}
+  spriteRndr: {fileID: 308226852408147017}

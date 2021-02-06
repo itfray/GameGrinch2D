@@ -209,7 +209,7 @@ public class GameSceneHandler : MonoBehaviour
                 obj.gameObject.SetActive(true);
 
         foreach (DisappBlockHnd block_hnd in disappBlockHnds)                                               // restore all diapearing blocks
-            block_hnd.Appear();
+            block_hnd.Appear(true);
 
         if (playerSpawner) playerSpawner.Spawn();                                                           // spawn player
 

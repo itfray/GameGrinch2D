@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 /// <summary>
-/// GenMovingBlockStrategy is strategy of generation moving saw
+/// GenMovingBlockStrategy is strategy of generation moving block
 /// </summary>
 public class GenMovingBlockStrategy : GenObjStrategy
 {
