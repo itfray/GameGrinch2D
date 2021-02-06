@@ -7136,7 +7136,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mixer: {fileID: 24300002, guid: e79dfacdd485e744bb7fd063cd1b304f, type: 2}
   masterVolBounds: {x: -80, y: 0}
-  musicVolBounds: {x: -80, y: -10}
+  musicVolBounds: {x: -80, y: 0}
   effectsVolBounds: {x: -80, y: 0}
   buttonMute: {fileID: 1446898619}
   onMuteSprite: {fileID: 21300000, guid: 283d1f0f18a23a441a5bae3a4114bd59, type: 3}
