@@ -77,13 +77,14 @@ public class PlayerHealthHnd : HealthHandler
         stay_contacts.AddRange(collisions.contacts);
     }
 
+    /// <summary>
+    /// Contains check of condition of player object pressing(crushing)
+    /// </summary>
     void FixedUpdate()
     {
-        Debug.Log(stay_contacts.Count);
-
         MoveHandler move_hnd = null;
         Vector2 move_normal = Vector2.zero;
-        for (int i = 0; i < stay_contacts.Count; i++)                               // if player have collision with 
+        for (int i = 0; i < stay_contacts.Count; i++)                               // if player have collision with move object
         {
             ContactPoint2D contact = stay_contacts[i];
             GameObject obj = contact.collider.gameObject;
@@ -92,14 +93,14 @@ public class PlayerHealthHnd : HealthHandler
             if (move_hnd != null) break;
         }
 
-        for (int i = 0; i < stay_contacts.Count && move_hnd != null; i++)
+        for (int i = 0; i < stay_contacts.Count && move_hnd != null; i++)           // if there is object behind the player
         {
             ContactPoint2D contact = stay_contacts[i];
             GameObject obj = contact.collider.gameObject;
             Vector2 move_dir_normal = new Vector2(move_hnd.direction.x, move_hnd.direction.y);
             move_dir_normal.Normalize();
-            if (contact.normal == -move_normal && move_dir_normal == move_normal)
-                Damage(health, move_hnd.gameObject);
+            if (contact.normal == -move_normal && move_dir_normal == move_normal)   // and if move object crushs player
+                Damage(health, move_hnd.gameObject);                                // kill player
         }
         stay_contacts.Clear();
     }
