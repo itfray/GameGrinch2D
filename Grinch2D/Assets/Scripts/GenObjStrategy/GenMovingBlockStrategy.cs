@@ -13,6 +13,8 @@ public class GenMovingBlockStrategy : GenObjStrategy
             throw new System.ArgumentNullException("levelDict || levelMap || " +
                                                    "objPrefab || objParentField");
 
+        base.Generate();
+
         int row_pos = (int)map_spwnr_pos.y;
         int col_pos = (int)map_spwnr_pos.x;
 
@@ -95,5 +97,7 @@ public class GenMovingBlockStrategy : GenObjStrategy
         moveBlockHnd.maxPosition = max_pos;
         moveBlockHnd.direction = direct;
         moveBlockHnd.setRandSpeed();                                                          // set random value speed of moving
+
+        created_objs.Add(moving_block);
     }
 }

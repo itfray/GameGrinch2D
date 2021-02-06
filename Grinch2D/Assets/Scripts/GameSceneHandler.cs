@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using System.Collections;
 
 
 /// <summary>
@@ -86,7 +87,11 @@ public class GameSceneHandler : MonoBehaviour
 
     private PlayerSpawner playerSpawner;                                            // spawner of player game object
 
-    private List<DisappBlockHnd> disappBlockHnds;                                   // disappearing blocks
+    private List<TurretHandler> turretHnds = new List<TurretHandler>();             // handlers of turrets
+
+    private List<DisappBlockHnd> disappBlockHnds = new List<DisappBlockHnd>();      // disappearing blocks
+
+    private List<KeyHandler> keyHnds = new List<KeyHandler>();                      // handlers of key objects
 
     public enum GameState { Uninited, Initing, Inited, Constructing, Constructed, Deconstructing, Deconstructed, Started, Stoped }
     private GameState state = GameState.Uninited;
@@ -208,8 +213,12 @@ public class GameSceneHandler : MonoBehaviour
             foreach (Transform obj in field)
                 obj.gameObject.SetActive(true);
 
-        foreach (DisappBlockHnd block_hnd in disappBlockHnds)                                               // restore all diapearing blocks
-            block_hnd.Appear(true);
+        List<DisappearHandler> disappHnds = new List<DisappearHandler>();
+        disappHnds.AddRange(disappBlockHnds);
+        disappHnds.AddRange(keyHnds);
+
+        foreach (DisappearHandler disapp_hnd in disappHnds)                                                 // restore all diapearing blocks
+            disapp_hnd.Appear(true);
 
         if (playerSpawner) playerSpawner.Spawn();                                                           // spawn player
 
@@ -269,7 +278,7 @@ public class GameSceneHandler : MonoBehaviour
     /// Method create level objects by level dictionary and level map
     /// </summary>
     /// <returns> void </returns>
-    private IEnumerator<object> CreateLevelObjsByMap()
+    private IEnumerator CreateLevelObjsByMap()
     {
         if (gamePrefabs.Length <= 0) yield break;
 
@@ -301,9 +310,8 @@ public class GameSceneHandler : MonoBehaviour
 
         yield return null;
 
-        getDisappBlockHnds();                                                                                               // specifies all handlers of disappearing blocks
-
-        yield return null;
+        foreach (object step in whileKeysNotCompleted())                                                                    // executes while have keys that not created all locked blocks
+            yield return null;
 
         state = GameState.Constructed;
         OnConstructedLevel?.Invoke();
@@ -312,8 +320,12 @@ public class GameSceneHandler : MonoBehaviour
     /// <summary>
     /// Method destoru level objects
     /// </summary>
-    private IEnumerator<object> DeleteLevelObjs()
+    private IEnumerator DeleteLevelObjs()
     {
+        disappBlockHnds.Clear();
+        turretHnds.Clear();
+        keyHnds.Clear();
+
         List<Transform> fields = new List<Transform>();
         fields.Add(playerField.transform);                                          // get all fields
         fields.Add(blocksField.transform);
@@ -323,6 +335,7 @@ public class GameSceneHandler : MonoBehaviour
         fields.Add(starsField.transform);
         fields.Add(giftsField.transform);
         fields.Add(disappBlocksField.transform);
+        fields.Add(keysField.transform);
 
         List<Transform> objs = new List<Transform>();
         foreach (Transform field in fields)
@@ -416,8 +429,24 @@ public class GameSceneHandler : MonoBehaviour
         genObj.setSpwnrPosInMap(row_pos, col_pos);
         genObj.Generate();                                                                                                          // create game object
 
-        if (prefab.tag == playerTag)
-            playerSpawner = genObj.spwnrHnd as PlayerSpawner;                                                                       // get playerSpawner
+        switch (prefab.tag)
+        {
+            case playerTag:
+                playerSpawner = genObj.createdSpwnrs[0].GetComponent<PlayerSpawner>();                                             // get playerSpawner
+                break;
+            case disappBlockTag:
+                DisappBlockHnd block_hnd = genObj.createdObjs[0].GetComponent<DisappBlockHnd>();
+                disappBlockHnds.Add(block_hnd);
+                break;
+            case turretTag:
+                TurretHandler turret_hnd = genObj.createdObjs[0].GetComponent<TurretHandler>();
+                turretHnds.Add(turret_hnd);
+                break;
+            case keyTag:
+                KeyHandler key_hnd = genObj.createdSpwnrs[0].GetComponent<KeyHandler>();
+                keyHnds.Add(key_hnd);
+                break;
+        }
     }
 
     /// <summary>
@@ -425,26 +454,40 @@ public class GameSceneHandler : MonoBehaviour
     /// </summary>
     private void setTurretsTarget(GameObject target)
     {
-        for (int i = 0; i < turretsField.transform.childCount; i++)
+        foreach (TurretHandler turret_hnd in turretHnds)
         {
-            Transform turret = turretsField.transform.GetChild(i);
-            TurretHandler turret_hnd = turret.GetComponent<TurretHandler>();
             if (turret_hnd) turret_hnd.target = target;
         }
     }
 
     /// <summary>
-    /// Specifies all handlers of disappearing blocks
+    /// Calculate count completed key objects that created all locked blocks
     /// </summary>
-    private void getDisappBlockHnds()
+    /// <returns> count </returns>
+    private int countCompletedKeys()
     {
-        disappBlockHnds = new List<DisappBlockHnd>();
-        for (int i = 0; i < disappBlocksField.transform.childCount; i++)
+        int count_keys = 0;
+        foreach (KeyHandler key_hnd in keyHnds)
         {
-            Transform block = disappBlocksField.transform.GetChild(i);
-            DisappBlockHnd block_hnd = block.GetComponent<DisappBlockHnd>();
-            disappBlockHnds.Add(block_hnd);
+            if (key_hnd.isLockBlocksCreated)
+                count_keys++;
         }
+        return count_keys;
+    }
+
+    /// <summary>
+    /// Executes while have keys that not created all locked blocks
+    /// </summary>
+    /// <returns> null </returns>
+    private IEnumerable whileKeysNotCompleted()
+    {
+        int count_keys;                                                                                                     // checks that all locked blocks created
+        do
+        {
+            count_keys = countCompletedKeys();
+            yield return null;
+        }
+        while (count_keys != keyHnds.Count);
     }
 
 

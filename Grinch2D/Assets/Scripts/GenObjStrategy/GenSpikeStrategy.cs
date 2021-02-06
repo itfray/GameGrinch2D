@@ -16,6 +16,8 @@ public class GenSpikeStrategy : GenBy4Strategy
             throw new System.ArgumentNullException("levelDict || levelMap || " +
                                                    "objPrefab || objParentField");
 
+        base.Generate();
+
         Vector2 spike_size = SizeScripts.sizeObjBy(objPrefab.GetComponent<BoxCollider2D>());
         int row_pos = (int)map_spwnr_pos.y;
         int col_pos = (int)map_spwnr_pos.x;
@@ -47,6 +49,8 @@ public class GenSpikeStrategy : GenBy4Strategy
             else if (spawn_pos.y > spwnr_pos.y)
                 angle = 180;
             spike.transform.eulerAngles = Vector3.forward * angle;                                                             // correctly rotate spike
+
+            created_objs.Add(spike);
         }
     }
 }

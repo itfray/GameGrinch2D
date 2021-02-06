@@ -16,6 +16,8 @@ public class GenSawStrategy : GenBy4Strategy
             throw new System.ArgumentNullException("levelDict || levelMap || " +
                                                    "objPrefab || objParentField");
 
+        base.Generate();
+
         /* checks nearby blocks in the following way:
          *  x 
          * x x
@@ -29,6 +31,8 @@ public class GenSawStrategy : GenBy4Strategy
                                          new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),
                                          Quaternion.identity) as GameObject;
             saw.transform.parent = objParentField.transform;
+
+            created_objs.Add(saw);
         }
     }
 }

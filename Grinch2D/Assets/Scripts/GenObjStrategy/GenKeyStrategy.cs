@@ -15,10 +15,13 @@ public class GenKeyStrategy : GenObjStrategy
             throw new System.ArgumentNullException("levelDict || levelMap || spwnrPrefab ||" +
                                                   " spwnrParentField || objParentField");
 
+        base.Generate();
+
         GameObject key_obj = Instantiate(spwnrPrefab,                                                                          // create key
                                          new Vector3(spwnr_pos.x, spwnr_pos.y, spwnrPrefab.transform.position.z),
                                          Quaternion.identity) as GameObject;
         key_obj.transform.parent = spwnrParentField.transform;                                                                 // set parent field for key
+        created_spwnrs.Add(key_obj);
 
         List<Vector2> lock_blocks_poss = new List<Vector2>();                                                                  // search lock block positions
         for (int iy = 0; iy < (int)mapSize.y; iy++)
@@ -37,6 +40,13 @@ public class GenKeyStrategy : GenObjStrategy
         if (key_hnd)
         {
             key_hnd.lockBlockParent = objParentField;                                                                          // set parent field for locked blocks
+            key_hnd.OnCreateLockBlocks += delegate
+            {
+                foreach (GameObject block in key_hnd.lockedBlocks)
+                {
+                    created_objs.Add(block);
+                }
+            };
             key_hnd.CreateLockBlocks(lock_blocks_poss);                                                                        // create blocks by positions
         }
     }

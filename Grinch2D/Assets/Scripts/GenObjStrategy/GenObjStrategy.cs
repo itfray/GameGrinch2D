@@ -10,12 +10,18 @@ public abstract class GenObjStrategy : MonoBehaviour
     public GameObject objPrefab { set; get; }                       // main prefab for generation of object
     public GameObject objParentField { set; get; }                  // parent field for generation of object
 
+    protected List<GameObject> created_objs = new List<GameObject>();
+
+    public List<GameObject> createdObjs { get { return created_objs; } }
+
     public string emptyPrefabName { get; set; }                     // text name of empty prefab
 
     public GameObject spwnrPrefab { set; get; }                     // spawner prefab for generation of spawner object for generation of main game object
     public GameObject spwnrParentField { set; get; }                // parent field for generation spawner object
 
-    public GameObjSpawner spwnrHnd { set; get; }                    // spawner handler for generation of main game object
+    protected List<GameObject> created_spwnrs = new List<GameObject>();
+
+    public List<GameObject> createdSpwnrs { get { return created_spwnrs; } }
 
     public Vector2 spwnrSize { set; get; }                          // size spawner block
 
@@ -43,7 +49,11 @@ public abstract class GenObjStrategy : MonoBehaviour
     /// <summary>
     /// Method generates game object by prefab and spawner prefab.
     /// </summary>
-    public abstract void Generate();
+    public virtual void Generate()
+    {
+        created_objs.Clear();
+        created_spwnrs.Clear();
+    }
 
     public void setMapParams(Dictionary<char, string> level_dict, char[,] level_map, Vector2 map_size, string empty_pref_name)
     {

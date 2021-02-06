@@ -23,6 +23,10 @@ public class KeyHandler : DisappearHandler
     public event KeyEventHandler OnDisappearKey;                                // event called when key disappeared
 
     private List<GameObject> lock_blocks = new List<GameObject>();              // locked blocks
+    public List<GameObject> lockedBlocks { get { return lock_blocks; } }        // locked blocks
+
+    private bool is_blocks_created = false;                                        // locked block is created
+    public bool isLockBlocksCreated { get { return is_blocks_created; } }
 
     /// <summary>
     /// Creates locked blocks by specified positions
@@ -66,6 +70,7 @@ public class KeyHandler : DisappearHandler
             yield return null;
         }
 
+        is_blocks_created = true;
         OnCreateLockBlocks?.Invoke();
     }
 
@@ -82,6 +87,7 @@ public class KeyHandler : DisappearHandler
         }
         lock_blocks.Clear();
 
+        is_blocks_created = false;
         OnDestroyLockBlocks?.Invoke();
     }
 

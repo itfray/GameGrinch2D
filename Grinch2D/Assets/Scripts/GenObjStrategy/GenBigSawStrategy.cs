@@ -18,6 +18,8 @@ public class GenBigSawStrategy : GenBy4Strategy
             throw new System.ArgumentNullException("levelDict || levelMap || " +
                                                    "objPrefab || objParentField");
 
+        base.Generate();
+
         /* checks nearby blocks in the following way:
          *  x
          * x x
@@ -105,5 +107,7 @@ public class GenBigSawStrategy : GenBy4Strategy
         SelfRotator selfRotator = saw.GetComponent<SelfRotator>();
         if (selfRotator == null) return;
         selfRotator.setRandDAngle();                                                                             // set random rotation
+
+        created_objs.Add(saw);
     }
 }

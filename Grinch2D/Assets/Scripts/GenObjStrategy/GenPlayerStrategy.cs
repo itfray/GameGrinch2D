@@ -17,6 +17,8 @@ public class GenPlayerStrategy : GenObjStrategy
             throw new System.ArgumentNullException("levelDict || levelMap || spwnrPrefab ||" +
                                                   " objPrefab || spwnrParentField || objParentField");
 
+        base.Generate();
+
         int row_pos = (int)map_spwnr_pos.y;
         int col_pos = (int)map_spwnr_pos.x;
 
@@ -24,6 +26,7 @@ public class GenPlayerStrategy : GenObjStrategy
                                           new Vector3(spwnr_pos.x, spwnr_pos.y, spwnrPrefab.transform.position.z),
                                           Quaternion.identity) as GameObject;
         spwnr_obj.transform.parent = spwnrParentField.transform;
+        created_spwnrs.Add(spwnr_obj);
 
         Vector2 spawn_pos = Vector2.zero;                                                                                        // spawn position of player
         Vector2 player_size = SizeScripts.sizeObjBy(objPrefab.GetComponent<BoxCollider2D>());
@@ -71,9 +74,9 @@ public class GenPlayerStrategy : GenObjStrategy
         PlayerSpawner player_spwnr = spwnr_obj.GetComponent<PlayerSpawner>();
         if (player_spwnr)
         {
-            spwnrHnd = player_spwnr;
             player_spwnr.InitSpawner(objPrefab, objParentField, spawn_pos);                                                   // init player spawner
             player_spwnr.Create();                                                                                            // create player object
+            created_objs.Add(player_spwnr.spawnedObj);
         }                                                                                           
     }
 }
