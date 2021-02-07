@@ -306,7 +306,7 @@ public class GameSceneHandler : MonoBehaviour
             }
         }
 
-        if (playerSpawner.spawnedObj)
+        if (playerSpawner?.spawnedObj)
             setTurretsTarget(playerSpawner.spawnedObj);                                                                     // specifies target for all created turrets and set player as target for turret
 
         yield return null;
