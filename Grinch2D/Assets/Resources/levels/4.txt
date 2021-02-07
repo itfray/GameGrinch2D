@@ -1,0 +1,95 @@
+0
+@                                                              @
+b                                                              b
+a*                                                @            a
+a*                                                b            a
+a                                            bbbbba           @a
+a                                            a                 a
+a                                            a  p              a
+a                                            abbbbbbbbbbbbbb   a
+a                                            a             a   a
+a                                            a             a   a
+a                                            a #           a   a
+a                                            abbbbbbbbba   a   a
+a                                                      a   a   a
+a                                                     *a   a   a
+a                                                      a   a   a
+a                                                      a   af  a 
+a                                                      a   aa  a 
+a                                                      a   a*  a 
+a                                                      a   a   a 
+a                                                      a   a   a
+a                                                      a   a   a
+a                                                      a   a   a 
+a                                                      a   a   a 
+a                                                     *a   a   a 
+a                                                      a   a   a 
+a                                                      a   a  fa 
+a                                                      a   a  aa 
+a                                                      a   a  *a 
+a                                                      a   a   a 
+a                                                      a   a   a 
+a                                                     *a   a   a 
+a                                                  aaaaa%%%a   a 
+a                                                  aj  ai +a   a 
+a                                                  a   a   a   a 
+a                                                  a   a   a   a 
+a                                                 *a   a   a   a 
+a                                                  a   a   af  a 
+a                                                  a   a   aa  a 
+a                                                  a   a   a*  a
+a                                                 *a   a   a   a
+a                                                  a   a   a   a
+a                                                  a   a   a   a
+a                                                  a   a   a   a
+a                                                  a  *a   a   a
+a                                                  a   a   a   a
+a                                                  a   a   a   a
+a                                                 *a   a   a   a
+a                                                  a   a   a  fa
+a                                                  a   a   a  aa
+a                                                  a   a   a  *a
+a                                                  a  *a   a   a
+a                                                  a   a   a   a
+a                                                  a   a   a   a
+a                                                  a   a   a   a
+a                                                  a   a   a   a
+a                                                  a   a       a
+a                                                  a   a       a
+a                                                              a
+a                                                            @ a
+a                                                            b a
+aQQQQQbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbaba
+a                                                              a
+a                                                              a
+a                                                              a
+a3                                                        4    a
+abbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb    a
+                                                          a    a
+                                                          a    a
+                                                          a1   a
+                                                          a    a
+                                                          a    a
+                                                          a    a
+                                                          a    a
+                                                          a    a
+                                                          a    a
+                                                          a    a
+                                                          a    a
+                                                          a    a
+                                                          a2   a
+                                                          a    a
+                                 bbbb                     a    a
+bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbba  abbbbbbbbbbbbbbbbbbbbba    a
+a                                                              a
+a                                                              a
+a    1                                                   2     a
+a    bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbba
+a                                                G             a
+a                                                G             a
+a                                                G             a
+a  &                                 b           G+           !a
+aGGGGGbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbabbbbbbbbbbbbbbbbbbbbbbbbba
+a     a
+a  +  a
+abbbbba
