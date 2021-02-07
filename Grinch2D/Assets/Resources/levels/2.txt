@@ -1,11 +1,42 @@
 0
-aaaaaaaaaaaaaaaaaaa
-a                 a
-a       p         a
-a+      b        +a
-a      b          a
-a     b      #    a
-a           bbb   a
-a                 a
-a+                a
-aaaaaaaaaaaaaaaaaaa
+ *                                                                                                *
+ c                                                                                                c
+ c*                                                                                              *c
+ c*                                                                                              *c
+ c*                                                                                              *c
+ c*                                                                                              *c
+ c*                                                                                              *c
+ c*                                                                                              *c
+ c*                                                                                               c*
+ c*                                                                                              @c
+ c*                                       cdddddddddddddddddddddddddddddddddddddddddddddddddddddddc
+ c*                                       c@                                                      c
+ c*                                       c                                                      ~c
+ c*                                       c                                                      ~c
+ c*                                       c                                                   #  ~c
+ c*                                       c   c    ff    ff    ff    ff    ff    ff    ff    dd  ~c
+ c*                                       c   c                                                  ~c
+ c*                                       c   c                                                  ~c
+ c*                                       c   c                                                  ~c
+ c*                                       c   c                             +                    ~c
+ c                                        c   c                             ff                   ~c
+ cdddddddddddddddddc                      c   c   c                                              ~c
+ c@        *      @c                      c   c   c                     ff                       ~c
+ c                 c                      c   c   c                                              ~c
+ c         +       c                      c   c   c                ff                            ~c
+ c        ddd      c                      c   c   c                                              ~c
+ c    p            c******                    c   cdddddc     ff                                 ~c
+ c   ddd           cdddddd                    c        @c                                        ~c
+ c                                            c         c~                                       ~c
+ c@                                           c         c~                                       ~c
+ cddddddddddddddddddddddddddddddddd     ddddddcddddd    c~                                       ~c
+ c                                                      c~                                       ~c
+ c~                                                     c~                                       ~c
+ c~                                                     c~                                       ~c
+ c~                                                     c~                                       ~c
+ c~                     +                               c~                                       ~c
+ c~                    ff      dd    ff   dd        dd  c~                                       ~c
+ c~                                                    ~c~                                       ~c
+ c~                                                    ~c~                                       ~c
+ c~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~c
+ cddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddc
