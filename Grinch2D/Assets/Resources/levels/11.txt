@@ -1,0 +1,27 @@
+0                                              
+c@                                           cdddc
+c                                            c@ @c
+c*                                           c + c
+c*                                           c%%%c
+c*                                           c   c
+c                                            c   c
+c                                            c   c
+c                                            c   cddddddddddddddddddddd
+c                                            c                       +c
+c                                            c                        c
+c                                            c         *       *     &c
+c                                            c   dddddddddddddddddddddc
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                            c   c
+c                                                cdddddd
+c                                                %     c
+cp          +       @      *      @              %  #  c
+cddddddddddddddddddddddddddddddddddddddddddddddddddddddc
