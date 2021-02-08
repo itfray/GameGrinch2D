@@ -1119,9 +1119,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 93c5591b86633ea449f64b5c36d6c7f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  levelDictPath: Assets/Resources/level_dict.txt
-  bgDictPath: Assets/Resources/bg_dict.txt
-  levelsPath: Assets/Resources/levels
+  levelDictPath: level/level_dict.txt
+  bgDictPath: level/bg_dict.txt
+  levelsPath: Assets/Resources/level/levels
   maxLevelSize: {x: 0, y: 0}
 --- !u!1 &205154442
 GameObject:

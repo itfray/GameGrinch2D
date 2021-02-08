@@ -151,7 +151,7 @@ public class GameSceneHandler : MonoBehaviour
         if (state == GameState.Started || state == GameState.Stoped)
         {
             UpdateBackgroundLevel();                                                    // update background sprites and background postions
-            if (state == GameState.Started) 
+            if (state == GameState.Started)
                 gameTime += Time.deltaTime;                                             // count game time
         }
     }
@@ -252,7 +252,10 @@ public class GameSceneHandler : MonoBehaviour
 
         string bgName;
         if (!bg_dict.TryGetValue(bg_sign, out bgName))                                                  // get background sprite name from background dictionary
+        {
             Debug.LogError("Uncorrect level background symbol!!!", this);
+            return;
+        }
 
         levelBgSprites = new List<Sprite>();                                                            // get list background sprites for level
         foreach (Sprite bg in bgSprites)

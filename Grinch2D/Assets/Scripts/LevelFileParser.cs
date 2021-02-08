@@ -36,6 +36,8 @@ public class LevelFileParser : MonoBehaviour
     public Vector2 mapSize { get { return map_size; } }                                 // size map matrix, (x: count columns, y: count rows)
     public char levelBackground { get { return level_bg; } }                            // level background, background key
 
+    public const string dictSeparator = ":";
+
     /// <summary>
     /// Method parse file with level dictionary
     /// </summary>
@@ -60,24 +62,22 @@ public class LevelFileParser : MonoBehaviour
     {
         dict.Clear();
 
-        if (!File.Exists(dictPath)) return;                                    // check file exists
+        TextAsset file = Resources.Load<TextAsset>(dictPath);                       // load dict text file
+        if (file == null) return;
 
-        using (StreamReader sr = File.OpenText(dictPath))                      // open text file with level dictionary
+        foreach (string line in file.text.ReadLines())                              // load lines of file text
         {
-            string line;
-            while ((line = sr.ReadLine()) != null)                             // load line of file
+            if (line.Contains(dictSeparator))
             {
-                string[] pair = line.Split(':');
-                if (pair[0].Length == 0) continue;
-                dict.Add(pair[0][0], pair[1].Split(' ')[1]);                    // load pair of file, example: "e : evil_block"
+                string[] pair = line.Split(new string[] { dictSeparator }, System.StringSplitOptions.None);
+
+                dict.Add(pair[0][0], pair[1].Trim());                               // load pair of file, example: "e : evil_block"
             }
         }
+
+        Resources.UnloadAsset(file);                                                 // free file
     }
 
-    /// <summary>
-    /// Method parse file with level map
-    /// </summary>
-    /// <param name="ind_level"> level number </param>
     public void parseLevelFile(int ind_level)
     {
         int max_h = (int)maxLevelSize.y;
@@ -85,33 +85,43 @@ public class LevelFileParser : MonoBehaviour
 
         level_map = null;
         map_size = new Vector2(0, 0);
-        if (max_h <= 0 || max_w <= 0) return;                                   // check params correctness
+        if (max_h <= 0 || max_w <= 0) return;                                                       // check params correctness
 
-        string levelPath = levelsPath + "/" + ind_level.ToString() + ".txt";
-        if (!File.Exists(levelPath)) return;                                    // check file exists
+        TextAsset file = Resources.Load<TextAsset>(levelsPath + "/" + ind_level.ToString());
+        if (file == null) return;                                                                   // check file exists
 
         level_map = new char[max_h, max_w];
 
-        using (StreamReader sr = File.OpenText(levelPath))                      // open text file with level map
+        IEnumerable<string> readlines = file.text.ReadLines();
+
+        foreach (string line in readlines)
         {
-            string line;
-            if ((line = sr.ReadLine()) == null) return;
-            
-            if (line.Length > 0) level_bg = line[0];                            // the first byte is a value level background
-
-            int row;
-            int file_max_w = 0;                                                 // max level width in file
-            for (row = 0; (line = sr.ReadLine()) != null && row < max_h; row++)
-            {
-                for (int col = 0; col < line.Length && col < max_w; col++)
-                    level_map[row, col] = line[col];
-
-                if (file_max_w < line.Length)                                  // find max level width in file
-                    file_max_w = line.Length;
-            }
-            map_size.y = row;                                                  // store fact map size
-            map_size.x = file_max_w;                  
+            if (line.Length > 0)
+                level_bg = line[0];
+            break;
         }
+
+        int row = 0;
+        int file_max_w = 0;                                                    // max level width in file
+        foreach (string line in readlines)
+        {
+            if (row >= max_h) break;
+
+            int col;
+            for (col = 0; col < line.Length && col < max_w; col++)             // read map line
+                level_map[row, col] = line[col];
+
+            if (file_max_w < col)                                               // find max level width in file
+                file_max_w = col;
+
+            row++;
+        }
+        map_size.y = row;                                                       // store fact map size
+        map_size.x = file_max_w;
+
+        Debug.Log(map_size);
+
+        Resources.UnloadAsset(file);                                            // free file
     }
 
     /// <summary>
@@ -120,6 +130,6 @@ public class LevelFileParser : MonoBehaviour
     /// <returns> number of levels </returns>
     public int countLevels()
     {
-        return Directory.GetFiles(levelsPath, "*.txt").Length;
+        return Directory.GetFiles("Assets/Resources/level/levels", "*.txt").Length;
     }
 }
