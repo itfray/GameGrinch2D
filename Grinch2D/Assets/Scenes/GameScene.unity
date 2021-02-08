@@ -5159,7 +5159,7 @@ MonoBehaviour:
   levelDictPath: level/level_dict
   bgDictPath: level/bg_dict
   levelsPath: level/levels
-  maxLevelSize: {x: 1000, y: 1000}
+  maxLevelSize: {x: 300, y: 300}
 --- !u!114 &1455934992
 MonoBehaviour:
   m_ObjectHideFlags: 0

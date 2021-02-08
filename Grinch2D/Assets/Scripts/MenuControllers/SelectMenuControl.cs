@@ -10,7 +10,6 @@ using static MenuControlHelper;
 /// </summary>
 public class SelectMenuControl : MonoBehaviour
 {
-    public LevelFileParser fileParser;                                  // file parser
     public EventSystem eventSystem;                                     // event system
     public MainMenuControl mainMenuControl;                             // main menu control script
 
@@ -38,6 +37,8 @@ public class SelectMenuControl : MonoBehaviour
 
     public const string gameSceneName = "GameScene";                  // game scene name
 
+    public const int countLevels = 14;
+
     public float waitForSecGame = 0.5f;                               // wait for seconds of transition to game
 
     public const int defaultOpenedLevel = 1;
@@ -51,14 +52,9 @@ public class SelectMenuControl : MonoBehaviour
 
     private int start_with_level;                                     // page starts with level
     private int selected_level = 0;                                   // selected level
-    private int count_levels = 0;                                     // count levels
-    public int CountLevels { get { return count_levels;} }
 
     void Start()
     {
-        if (fileParser)
-            count_levels = fileParser.countLevels();                  // count level files
-
         SetStartWithLevel(PlayerPrefs.GetInt(startWithLevelPref, defaultStartWith));                // load data about start with level
     }
 
@@ -68,7 +64,7 @@ public class SelectMenuControl : MonoBehaviour
     /// <param name="level"> level number </param>
     private void SetStartWithLevel(int level)
     {
-        if (level > 0 && level <= count_levels)
+        if (level > 0 && level <= countLevels)
         {
             start_with_level = level;
             PlayerPrefs.SetInt(startWithLevelPref, level);                                          // store data about start with level
@@ -86,7 +82,7 @@ public class SelectMenuControl : MonoBehaviour
         {
             Button levelbox = levelBoxButtons[ilvbox];                                                                  
             int level = ilvbox + start_with_level;
-            bool active_box = level <= count_levels;                                                                            // if level exists than activate level button
+            bool active_box = level <= countLevels;                                                                            // if level exists than activate level button
             levelbox.gameObject.SetActive(active_box);
             if (!active_box) continue;
 
@@ -107,7 +103,7 @@ public class SelectMenuControl : MonoBehaviour
             levelbox.onClick.AddListener(() => LevelBoxSelect(levelbox, level));                                                // add callback that handle level select
         }
 
-        if (nextButton) nextButton.gameObject.SetActive(start_with_level + levelBoxButtons.Length <= count_levels);             // if next page exists that activate "Next page" button
+        if (nextButton) nextButton.gameObject.SetActive(start_with_level + levelBoxButtons.Length <= countLevels);             // if next page exists that activate "Next page" button
         if (prevButton) prevButton.gameObject.SetActive(start_with_level - levelBoxButtons.Length > 0);
     }
 
@@ -171,7 +167,7 @@ public class SelectMenuControl : MonoBehaviour
     {
         PlayerPrefs.SetInt(levelOpenedPref, defaultOpenedLevel);                                        // reset opened levels
 
-        for (int ilevel = 1; ilevel <= count_levels; ilevel++)
+        for (int ilevel = 1; ilevel <= countLevels; ilevel++)
         {
             string cstar_key = levelPrefixPref + ilevel + levelStarSufixPref;
             string time_key = levelPrefixPref + ilevel + levelTimeSufixPref;

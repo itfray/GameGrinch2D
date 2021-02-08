@@ -1,5 +1,4 @@
-﻿using System.IO;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 
@@ -122,14 +121,5 @@ public class LevelFileParser : MonoBehaviour
         Debug.Log(map_size);
 
         Resources.UnloadAsset(file);                                            // free file
-    }
-
-    /// <summary>
-    /// Method getting number of level files
-    /// </summary>
-    /// <returns> number of levels </returns>
-    public int countLevels()
-    {
-        return Directory.GetFiles("Assets/Resources/level/levels", "*.txt").Length;
     }
 }

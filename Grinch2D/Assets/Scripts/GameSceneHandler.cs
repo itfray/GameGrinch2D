@@ -126,7 +126,7 @@ public class GameSceneHandler : MonoBehaviour
         if (state == GameState.Uninited)
         {
             state = GameState.Initing;
-            StartCoroutine(InitGameSceneHnd());                                             // start initialization
+            StartCoroutine(InitGameSceneHnd());                                    // start initialization
         }
     }
 
@@ -136,7 +136,8 @@ public class GameSceneHandler : MonoBehaviour
     /// <returns> null </returns>
     private IEnumerator<object> InitGameSceneHnd()
     {
-        count_levels = fileParser.countLevels();                                    // parse data of number of levels
+        count_levels = SelectMenuControl.countLevels;                               // get data of number of levels
+
         fileParser.parseBgLevelDict();                                              // parse data of background dictionary file
         yield return null;
 
