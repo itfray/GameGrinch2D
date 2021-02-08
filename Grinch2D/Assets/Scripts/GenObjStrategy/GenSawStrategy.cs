@@ -26,7 +26,7 @@ public class GenSawStrategy : GenBy4Strategy
          */
         foreach (Vector2 busy_pos in getBusyPositions(objPrefab.name))
         {
-            Vector2 spawn_pos = new Vector2(busy_pos.x * spwnrSize.x, ((int)mapSize.y - 1 - busy_pos.y) * spwnrSize.y);
+            Vector2 spawn_pos = new Vector2(busy_pos.x * spwnrSize.x, busy_pos.y * spwnrSize.y);
             GameObject saw = Instantiate(objPrefab,                                                                         // creates saw game object
                                          new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),
                                          Quaternion.identity) as GameObject;

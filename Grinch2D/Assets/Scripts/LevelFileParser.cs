@@ -91,20 +91,15 @@ public class LevelFileParser : MonoBehaviour
 
         level_map = new char[max_h, max_w];
 
-        IEnumerable<string> readlines = file.text.ReadLines();
-
-        foreach (string line in readlines)
-        {
-            if (line.Length > 0)
-                level_bg = line[0];
-            break;
-        }
+        IEnumerable<string> readlines = file.text.ReadLinesEnd();
+        int count_lines = file.text.CountLines();
 
         int row = 0;
         int file_max_w = 0;                                                    // max level width in file
         foreach (string line in readlines)
         {
-            if (row >= max_h) break;
+            if (row >= max_h) 
+                break;
 
             int col;
             for (col = 0; col < line.Length && col < max_w; col++)             // read map line
@@ -114,11 +109,18 @@ public class LevelFileParser : MonoBehaviour
                 file_max_w = col;
 
             row++;
+
+            if (row >= count_lines - 1) 
+                break;
         }
         map_size.y = row;                                                       // store fact map size
         map_size.x = file_max_w;
 
-        Debug.Log(map_size);
+        foreach (string line in readlines)
+        {
+            if (line.Length > 0)
+                level_bg = line[0];
+        }
 
         Resources.UnloadAsset(file);                                            // free file
     }

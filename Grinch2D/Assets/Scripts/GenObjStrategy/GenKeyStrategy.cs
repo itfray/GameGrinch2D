@@ -32,7 +32,7 @@ public class GenKeyStrategy : GenObjStrategy
                 if (!levelDict.TryGetValue(levelMap[iy, jx], out next_prefname))
                     next_prefname = emptyPrefabName;
                 if (next_prefname != spwnrPrefab.name && next_prefname.Contains(spwnrPrefab.name))                             // if name is like key name
-                    lock_blocks_poss.Add(new Vector2(jx * spwnrSize.x, ((int)mapSize.y - 1 - iy) * spwnrSize.y));
+                    lock_blocks_poss.Add(new Vector2(jx * spwnrSize.x, iy * spwnrSize.y));
             }
         }
 

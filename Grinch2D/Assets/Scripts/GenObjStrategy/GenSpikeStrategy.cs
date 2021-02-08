@@ -33,8 +33,8 @@ public class GenSpikeStrategy : GenBy4Strategy
             Vector2 spawn_pos = Vector2.zero;                                                                                 // calculate spawn position
             spawn_pos.x = busy_pos.x * spwnrSize.x;
             spawn_pos.x += (col_pos - busy_pos.x) * (spwnrSize.x / 2 + spike_size.y / 2);
-            spawn_pos.y = ((int)mapSize.y - 1 - busy_pos.y) * spwnrSize.y;
-            spawn_pos.y -= (row_pos - busy_pos.y) * (spwnrSize.y / 2 + spike_size.y / 2);
+            spawn_pos.y = busy_pos.y * spwnrSize.y;
+            spawn_pos.y += (row_pos - busy_pos.y) * (spwnrSize.y / 2 + spike_size.y / 2);
 
             GameObject spike = Instantiate(objPrefab,                                                                         // creates spike game object
                                            new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),

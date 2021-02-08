@@ -80,6 +80,6 @@ public abstract class GenObjStrategy : MonoBehaviour
     public void setSpwnrPosInMap(Vector2 map_pos)
     {
         map_spwnr_pos = map_pos;
-        spwnr_pos = new Vector2(map_spwnr_pos.x * spwnrSize.x, ((int)mapSize.y - 1 - map_spwnr_pos.y) * spwnrSize.y);            // calculate position on game scene
+        spwnr_pos = new Vector2(map_spwnr_pos.x * spwnrSize.x, map_spwnr_pos.y * spwnrSize.y);            // calculate position on game scene
     }
 }

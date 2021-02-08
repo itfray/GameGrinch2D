@@ -98,7 +98,7 @@ public class GenBigSawStrategy : GenBy4Strategy
                 return;
         }
 
-        spawn_pos = new Vector2(spawn_pos.x * spwnrSize.x, ((int)mapSize.y - 1 - spawn_pos.y) * spwnrSize.y);
+        spawn_pos = new Vector2(spawn_pos.x * spwnrSize.x, spawn_pos.y * spwnrSize.y);
 
         GameObject saw = Instantiate(objPrefab,                                                                  // create block game object
                                      new Vector3(spawn_pos.x, spawn_pos.y, objPrefab.transform.position.z),

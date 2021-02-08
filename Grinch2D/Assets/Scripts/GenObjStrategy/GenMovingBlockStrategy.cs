@@ -63,7 +63,7 @@ public class GenMovingBlockStrategy : GenObjStrategy
 
         if (has_other_pos)              // select min block postion and max block postion
         {
-            other_pos = new Vector2(other_pos.x * spwnrSize.x, ((int)mapSize.y - 1 - other_pos.y) * spwnrSize.y);
+            other_pos = new Vector2(other_pos.x * spwnrSize.x, other_pos.y * spwnrSize.y);
             if (spwnr_pos.y > other_pos.y)
             {
                 min_pos = other_pos;

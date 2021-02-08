@@ -64,7 +64,7 @@ public class GenPlayerStrategy : GenObjStrategy
                 if (next_prefname != emptyPrefabName) continue;
 
                 spawn_pos.x = spwnr_pos.x + col_ofst * spwnrSize.x;                                           // calculate spawn position
-                spawn_pos.y = spwnr_pos.y + rofst * spwnrSize.y / 2 - rofst * player_size.y / 2 ;
+                spawn_pos.y = spwnr_pos.y - rofst * spwnrSize.y / 2 + rofst * player_size.y / 2;
                 found_spwn_pos = true;
                 break;
             }
@@ -77,6 +77,6 @@ public class GenPlayerStrategy : GenObjStrategy
             player_spwnr.InitSpawner(objPrefab, objParentField, spawn_pos);                                                   // init player spawner
             player_spwnr.Create();                                                                                            // create player object
             created_objs.Add(player_spwnr.spawnedObj);
-        }                                                                                           
+        }
     }
 }

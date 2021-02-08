@@ -79,4 +79,22 @@ public static class StringExtension
             pos += one;
         }
     }
+
+    /// <summary>
+    /// Calculate count lines in string
+    /// </summary>
+    /// <param name="text"> string </param>
+    /// <returns> count lines </returns>
+    public static int CountLines(this string text)
+    {
+        int pos = 0;                                                            // position in text
+        int count = 0;
+        while (pos < text.Length)
+        {
+            if (text[pos] == '\n' || pos == text.Length - 1)                    // if line break or text end
+                count++;
+            pos++;
+        }
+        return count;
+    }
 }
