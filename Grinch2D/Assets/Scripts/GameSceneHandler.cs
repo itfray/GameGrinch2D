@@ -293,7 +293,7 @@ public class GameSceneHandler : MonoBehaviour
 
         Vector2 blockSmplSize = SizeScripts.sizeObjBy(blocksmpl_collider);                                                  // get block sample size
 
-        for (int i = 0; i < (int)map_size.y; i++)                                                                           // reverse step, because file with map was readed top down
+        for (int i = 0; i < (int)map_size.y; i++)                                                                           
         {
             for (int j = 0; j < (int)map_size.x; j++)
             {
